@@ -6,13 +6,8 @@ import (
 	_ "embed"
 )
 
-//go:embed sql/get_team.sql
+//go:embed sql/get_lineup.sql
 var getLineupQuery string
-
-type Repository struct {
-	db        *sql.DB
-	getLineup *sql.Stmt
-}
 
 func NewRepository(db *sql.DB) (*repository, error) {
 	getLineupStmt, err := db.Prepare(getLineupQuery)

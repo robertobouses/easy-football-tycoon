@@ -7,7 +7,7 @@ import (
 )
 
 func (h Handler) GetLineup(ctx *gin.Context) {
-	lineup, err := h.App.GetLineup()
+	lineup, err := h.app.GetLineup()
 	if err != nil {
 		ctx.JSON(nethttp.StatusBadRequest, gin.H{"error": err.Error()})
 		return

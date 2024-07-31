@@ -1,18 +1,15 @@
 package lineup
 
 import (
+	"database/sql"
 	"log"
 
 	"github.com/robertobouses/easy-football-tycoon/app"
-	"github.com/robertobouses/easy-football-tycoon/repository" // Importa el paquete repository
 )
 
-type Handler struct {
-	repo *repository.Repository // Asegúrate de usar el tipo correcto
-}
+func (r *repository) GetLineup() ([]app.Lineup, error) {
 
-func (h *Handler) GetLineup() ([]app.Lineup, error) {
-	rows, err := h.repo.getLineup.Query()
+	rows, err := r.getLineup.Query()
 	if err != nil {
 		return nil, err
 	}
@@ -35,4 +32,9 @@ func (h *Handler) GetLineup() ([]app.Lineup, error) {
 	}
 
 	return lineups, nil
+}
+
+type repository struct {
+	db        *sql.DB
+	getLineup *sql.Stmt
 }

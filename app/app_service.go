@@ -1,11 +1,14 @@
 package app
 
-type Repository interface {
+type LineupRepository interface {
 	GetLineup() ([]Lineup, error)
+}
+
+type TeamRepository interface {
 	GetTeam() ([]Team, error)
 }
 
-func NewApp(repo1, repo2 Repository) AppService {
+func NewApp(repo1 LineupRepository, repo2 TeamRepository) AppService {
 	return AppService{
 		lineupRepo: repo1,
 		teamRepo:   repo2,
@@ -13,6 +16,6 @@ func NewApp(repo1, repo2 Repository) AppService {
 }
 
 type AppService struct {
-	lineupRepo Repository
-	teamRepo   Repository
+	lineupRepo LineupRepository
+	teamRepo   TeamRepository
 }

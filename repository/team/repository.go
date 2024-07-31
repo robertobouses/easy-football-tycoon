@@ -9,11 +9,6 @@ import (
 //go:embed sql/get_team.sql
 var getTeamQuery string
 
-type repository struct {
-	db      *sql.DB
-	getTeam *sql.Stmt
-}
-
 func NewRepository(db *sql.DB) (*repository, error) {
 	getTeamStmt, err := db.Prepare(getTeamQuery)
 	if err != nil {

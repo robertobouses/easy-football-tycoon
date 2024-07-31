@@ -1,0 +1,3 @@
+BEGIN;
+    CREATE SCHEMA eft;
+COMMIT;
