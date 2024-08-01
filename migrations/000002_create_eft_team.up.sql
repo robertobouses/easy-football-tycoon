@@ -12,7 +12,7 @@ CREATE TABLE eft.team (
     physique INT,
     injurydays INT,
     lined BOOLEAN,
-    PRIMARY KEY (playerid)
+    
 );
 
 COMMIT;

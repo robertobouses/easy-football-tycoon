@@ -6,6 +6,7 @@ import (
 
 type App interface {
 	GetTeam() ([]app.Team, error)
+	PostTeam(app.Team) error
 }
 
 func NewHandler(app app.AppService) Handler {

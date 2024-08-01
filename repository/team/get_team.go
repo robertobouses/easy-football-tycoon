@@ -1,7 +1,7 @@
 package team
 
 import (
-	"database/sql"
+	//"database/sql"
 	"log"
 
 	"github.com/robertobouses/easy-football-tycoon/app"
@@ -37,9 +37,4 @@ func (r *repository) GetTeam() ([]app.Team, error) {
 	}
 
 	return teams, nil
-}
-
-type repository struct {
-	db      *sql.DB
-	getTeam *sql.Stmt
 }

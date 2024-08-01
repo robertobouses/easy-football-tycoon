@@ -46,6 +46,7 @@ func (s *Server) Run(port string) error {
 
 	team := s.engine.Group("/team")
 	team.GET("", s.team.GetTeam)
+	team.POST("/player", s.team.PostTeam)
 
 	lineup := s.engine.Group("/lineup")
 	lineup.GET("", s.lineup.GetLineup)

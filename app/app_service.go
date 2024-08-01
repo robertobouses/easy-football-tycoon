@@ -6,6 +6,7 @@ type LineupRepository interface {
 
 type TeamRepository interface {
 	GetTeam() ([]Team, error)
+	PostTeam(req Team) error
 }
 
 func NewApp(repo1 LineupRepository, repo2 TeamRepository) AppService {

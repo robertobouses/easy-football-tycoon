@@ -7,7 +7,7 @@ CREATE TABLE eft.lineup (
     technique INT,
     mental INT,
     physique INT,
-    PRIMARY KEY (playerid)
+    FOREIGN KEY (playerid) REFERENCES eft.team(playerid)
 );
 
 COMMIT;

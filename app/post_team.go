@@ -1,0 +1,16 @@
+package app
+
+import (
+	"log"
+)
+
+func (a AppService) PostTeam(req Team) error {
+
+	log.Printf("Valores de player creado: %+v\n", req)
+	err := a.teamRepo.PostTeam(req)
+	if err != nil {
+		log.Println("Error en InsertCrop:", err)
+		return err
+	}
+	return nil
+}
