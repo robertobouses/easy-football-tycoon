@@ -46,6 +46,5 @@ func (h Handler) PostTeam(c *gin.Context) {
 		return
 	}
 
-	c.JSON(nethttp.StatusOK, req)
 	c.JSON(nethttp.StatusOK, gin.H{"mensaje": "jugador insertado correctamente"})
 }

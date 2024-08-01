@@ -1,9 +1,10 @@
 SELECT
-    playerName,
-	position
-	technique,
-	mental,
-	physique
-
+    t.playername,
+    t.position,
+    t.technique,
+    t.mental,
+    t.physique
 FROM
-     eft.lineup
+    eft.lineup l
+JOIN
+    eft.team t ON l.playerid = t.playerid;
