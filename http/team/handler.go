@@ -7,6 +7,7 @@ import (
 type App interface {
 	GetTeam() ([]app.Team, error)
 	PostTeam(app.Team) error
+	UpdatePlayerLinedStatus(app.Lineup)
 }
 
 func NewHandler(app app.AppService) Handler {
