@@ -13,14 +13,21 @@ type TeamRepository interface {
 	GetPlayerByPlayerId(playerId string) (*Team, error)
 }
 
-func NewApp(repo1 LineupRepository, repo2 TeamRepository) AppService {
+type RivalRepository interface {
+	GetRival() ([]Rival, error)
+	PostRival(req Rival) error
+}
+
+func NewApp(repo1 LineupRepository, repo2 TeamRepository, repo3 RivalRepository) AppService {
 	return AppService{
 		lineupRepo: repo1,
 		teamRepo:   repo2,
+		rivalRepo:  repo3,
 	}
 }
 
 type AppService struct {
 	lineupRepo LineupRepository
 	teamRepo   TeamRepository
+	rivalRepo  RivalRepository
 }
