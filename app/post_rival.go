@@ -4,12 +4,12 @@ import (
 	"log"
 )
 
-func (a AppService) PostTeam(req Team) error {
+func (a AppService) PostRival(req Rival) error {
 
 	log.Printf("Valores de player creado: %+v\n", req)
-	err := a.teamRepo.PostTeam(req)
+	err := a.rivalRepo.PostRival(req)
 	if err != nil {
-		log.Println("Error en InsertCrop:", err)
+		log.Println("Error en PostRival:", err)
 		return err
 	}
 	return nil

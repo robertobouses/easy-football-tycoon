@@ -14,23 +14,26 @@ import (
 )
 
 type Server struct {
-	lineup lineup.Handler
-	team   team.Handler
-	rival  rivalServer.Handler
-	engine *gin.Engine
+	lineup   lineup.Handler
+	team     team.Handler
+	rival    rivalServer.Handler
+	prospect prospect.Handler
+	engine   *gin.Engine
 }
 
 func NewServer(
 	lineup lineup.Handler,
 	team team.Handler,
 	rival rivalServer.Handler,
+	prospect prospect.Handler,
 
 ) Server {
 	return Server{
-		lineup: lineup,
-		team:   team,
-		rival:  rival,
-		engine: gin.Default(),
+		lineup:   lineup,
+		team:     team,
+		rival:    rival,
+		prospect: prospect,
+		engine:   gin.Default(),
 	}
 }
 
@@ -58,7 +61,11 @@ func (s *Server) Run(port string) error {
 
 	rival := s.engine.Group("/rival")
 	rival.GET("", s.rival.GetRival)
-	rival.POST("/rival", s.rival.PostRival)
+	rival.POST("/team", s.rival.PostRival)
+
+	prospect := s.engine.Group("/prospect")
+	prospect.GET("", s.rival.GetProspect)
+	prospect.POST("/person", s.rival.PostProspect)
 
 	log.Printf("running api at %s port\n", port)
 	return s.engine.Run(fmt.Sprintf(":%s", port))
