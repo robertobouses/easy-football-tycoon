@@ -2,20 +2,14 @@ package team
 
 import (
 	"log"
-
-	"github.com/robertobouses/easy-football-tycoon/app"
 )
 
-func (r *repository) UpdatePlayerLinedStatus(req app.Lineup) error {
-	log.Println("Antes de ejecutar la consulta preparada")
-	_, err := r.updatePlayerLinedStatus.Exec(
-		req.PlayerId,
-	)
-
+func (r *repository) UpdatePlayerLinedStatus(playerID string) error {
+	_, err := r.updatePlayerLinedStatus.Exec(playerID)
 	if err != nil {
-		log.Print("Error en updatePlayerLinedStatus repo", err)
+		log.Printf("Error en updatePlayerLinedStatus repo: %v", err)
 		return err
 	}
-	log.Println("Después de ejecutar la consulta preparada")
+	log.Println("Estado de 'lined' actualizado correctamente")
 	return nil
 }

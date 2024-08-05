@@ -7,7 +7,6 @@ import (
 )
 
 func (r *repository) PostTeam(req app.Team) error {
-	log.Println("Antes de ejecutar la consulta preparada")
 	_, err := r.postTeam.Exec(
 		req.PlayerName,
 		req.Position,

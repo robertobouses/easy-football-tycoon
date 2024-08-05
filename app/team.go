@@ -1,7 +1,7 @@
 package app
 
 type Team struct {
-	PlayerId   int
+	PlayerId   string
 	PlayerName string
 	Position   string
 	Age        int

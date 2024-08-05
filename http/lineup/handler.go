@@ -6,7 +6,8 @@ import (
 
 type App interface {
 	GetLineup() ([]app.Lineup, error)
-	PostLineup(app.Lineup)
+	PostLineup(req string) error
+}
 
 func NewHandler(app app.AppService) Handler {
 	return Handler{

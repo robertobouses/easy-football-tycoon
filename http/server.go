@@ -50,6 +50,7 @@ func (s *Server) Run(port string) error {
 
 	lineup := s.engine.Group("/lineup")
 	lineup.GET("", s.lineup.GetLineup)
+	lineup.POST("/player", s.lineup.PostLineup)
 
 	log.Printf("running api at %s port\n", port)
 	return s.engine.Run(fmt.Sprintf(":%s", port))

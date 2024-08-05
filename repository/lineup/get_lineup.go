@@ -1,7 +1,6 @@
 package lineup
 
 import (
-	"database/sql"
 	"log"
 
 	"github.com/robertobouses/easy-football-tycoon/app"
@@ -32,9 +31,4 @@ func (r *repository) GetLineup() ([]app.Lineup, error) {
 	}
 
 	return lineups, nil
-}
-
-type repository struct {
-	db        *sql.DB
-	getLineup *sql.Stmt
 }

@@ -20,13 +20,15 @@ func (h Handler) PostLineup(c *gin.Context) {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
-	lineup := app.Lineup{
-		PlayerId: req.PlayerID,
-	}
-	err := h.app.PostLineup(lineup)
+
+	err := h.app.PostLineup(req.PlayerID)
 
 	if err != nil {
-		c.JSON(nethttp.StatusInternalServerError, gin.H{"error al llamar desde http la app": err.Error()})
+		if err == app.ErrPlayerNotFound {
+			c.JSON(nethttp.StatusNotFound, gin.H{"error": "El jugador no existe en la base de datos"})
+		} else {
+			c.JSON(nethttp.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
 		return
 	}
 
