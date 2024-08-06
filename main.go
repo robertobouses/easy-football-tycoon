@@ -7,10 +7,12 @@ import (
 	"github.com/robertobouses/easy-football-tycoon/app"
 	"github.com/robertobouses/easy-football-tycoon/http"
 	"github.com/robertobouses/easy-football-tycoon/http/lineup"
+	prospectServer "github.com/robertobouses/easy-football-tycoon/http/prospect"
 	rivalServer "github.com/robertobouses/easy-football-tycoon/http/rival"
 	"github.com/robertobouses/easy-football-tycoon/http/team"
 	"github.com/robertobouses/easy-football-tycoon/internal"
 	lineupRepository "github.com/robertobouses/easy-football-tycoon/repository/lineup"
+	prospectRepository "github.com/robertobouses/easy-football-tycoon/repository/prospect"
 	rivalRepository "github.com/robertobouses/easy-football-tycoon/repository/rival"
 	teamRepository "github.com/robertobouses/easy-football-tycoon/repository/team"
 )
@@ -54,7 +56,12 @@ func main() {
 		panic(err)
 	}
 
-	app := app.NewApp(lineupRepo, teamRepo, rivalRepo)
+	prospectRepo, err := prospectRepository.NewRepository(db)
+	if err != nil {
+		panic(err)
+	}
+
+	app := app.NewApp(lineupRepo, teamRepo, rivalRepo, prospectRepo)
 
 	lineupHandler := lineup.NewHandler(app)
 
@@ -62,7 +69,9 @@ func main() {
 
 	rivalHandler := rivalServer.NewHandler(app)
 
-	s := http.NewServer(lineupHandler, teamHandler, rivalHandler)
+	prospectHandler := prospectServer.NewHandler(app)
+
+	s := http.NewServer(lineupHandler, teamHandler, rivalHandler, prospectHandler)
 	s.Run("8080")
 
 }

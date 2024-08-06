@@ -9,6 +9,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/robertobouses/easy-football-tycoon/http/lineup"
+	prospectServer "github.com/robertobouses/easy-football-tycoon/http/prospect"
 	rivalServer "github.com/robertobouses/easy-football-tycoon/http/rival"
 	"github.com/robertobouses/easy-football-tycoon/http/team"
 )
@@ -17,7 +18,7 @@ type Server struct {
 	lineup   lineup.Handler
 	team     team.Handler
 	rival    rivalServer.Handler
-	prospect prospect.Handler
+	prospect prospectServer.Handler
 	engine   *gin.Engine
 }
 
@@ -25,7 +26,7 @@ func NewServer(
 	lineup lineup.Handler,
 	team team.Handler,
 	rival rivalServer.Handler,
-	prospect prospect.Handler,
+	prospect prospectServer.Handler,
 
 ) Server {
 	return Server{
@@ -64,8 +65,8 @@ func (s *Server) Run(port string) error {
 	rival.POST("/team", s.rival.PostRival)
 
 	prospect := s.engine.Group("/prospect")
-	prospect.GET("", s.rival.GetProspect)
-	prospect.POST("/person", s.rival.PostProspect)
+	prospect.GET("", s.prospect.GetProspect)
+	prospect.POST("/person", s.prospect.PostProspect)
 
 	log.Printf("running api at %s port\n", port)
 	return s.engine.Run(fmt.Sprintf(":%s", port))

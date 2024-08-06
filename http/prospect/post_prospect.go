@@ -10,8 +10,8 @@ import (
 )
 
 type PostProspectRequest struct {
-	ProspectId   string `json:"playerid"`
-	ProspectName string `json:"playername"`
+	ProspectId   string `json:"prospectid"`
+	ProspectName string `json:"prospectname"`
 	Position     string `json:"position"`
 	Age          int    `json:"age"`
 	Fee          int    `json:"fee"`
@@ -34,19 +34,19 @@ func (h Handler) PostProspect(c *gin.Context) {
 	}
 
 	prospect := app.Prospect{
-		PlayerId:   req.ProspectId,
-		PlayerName: req.ProspectName,
-		Position:   req.Position,
-		Age:        req.Age,
-		Fee:        req.Fee,
-		Salary:     req.Salary,
-		Technique:  req.Technique,
-		Mental:     req.Mental,
-		Physique:   req.Physique,
-		InjuryDays: req.InjuryDays,
-		Lined:      req.Lined,
-		Job:        req.Job,
-		Rarity:     req.Rarity,
+		ProspectId:   req.ProspectId,
+		ProspectName: req.ProspectName,
+		Position:     req.Position,
+		Age:          req.Age,
+		Fee:          req.Fee,
+		Salary:       req.Salary,
+		Technique:    req.Technique,
+		Mental:       req.Mental,
+		Physique:     req.Physique,
+		InjuryDays:   req.InjuryDays,
+		Lined:        req.Lined,
+		Job:          req.Job,
+		Rarity:       req.Rarity,
 	}
 
 	err := h.app.PostProspect(prospect)

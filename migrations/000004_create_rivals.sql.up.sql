@@ -8,3 +8,5 @@ CREATE TABLE eft.rivals (
     physique INT,
     
 );
+
+COMMIT;

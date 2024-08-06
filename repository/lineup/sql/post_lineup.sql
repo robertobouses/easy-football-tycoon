@@ -1,4 +1,4 @@
-INSERT  into EFT.team
+INSERT  into EFT.lineup
     	(playerid,
         playerName,
 		position,
