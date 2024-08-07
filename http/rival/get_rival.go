@@ -1,4 +1,4 @@
-package team
+package rival
 
 import (
 	nethttp "net/http"
@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h Handler) GetTeam(ctx *gin.Context) {
-	team, err := h.app.GetTeam()
+func (h Handler) GetRival(ctx *gin.Context) {
+	team, err := h.app.GetRival()
 	if err != nil {
 		ctx.JSON(nethttp.StatusBadRequest, gin.H{"error": err.Error()})
 	}

@@ -23,18 +23,25 @@ type ProspectRepository interface {
 	PostProspect(req Prospect) error
 }
 
-func NewApp(repo1 LineupRepository, repo2 TeamRepository, repo3 RivalRepository, repo4 ProspectRepository) AppService {
+type CalendaryRepository interface {
+	GetCalendary() ([]Calendary, error)
+	PostCalendary(calendary []string) error
+}
+
+func NewApp(repo1 LineupRepository, repo2 TeamRepository, repo3 RivalRepository, repo4 ProspectRepository, repo5 CalendaryRepository) AppService {
 	return AppService{
-		lineupRepo:   repo1,
-		teamRepo:     repo2,
-		rivalRepo:    repo3,
-		prospectRepo: repo4,
+		lineupRepo:    repo1,
+		teamRepo:      repo2,
+		rivalRepo:     repo3,
+		prospectRepo:  repo4,
+		calendaryRepo: repo5,
 	}
 }
 
 type AppService struct {
-	lineupRepo   LineupRepository
-	teamRepo     TeamRepository
-	rivalRepo    RivalRepository
-	prospectRepo ProspectRepository
+	lineupRepo    LineupRepository
+	teamRepo      TeamRepository
+	rivalRepo     RivalRepository
+	prospectRepo  ProspectRepository
+	calendaryRepo CalendaryRepository
 }

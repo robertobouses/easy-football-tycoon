@@ -6,6 +6,7 @@ import (
 
 	"github.com/robertobouses/easy-football-tycoon/app"
 	"github.com/robertobouses/easy-football-tycoon/http"
+
 	"github.com/robertobouses/easy-football-tycoon/http/lineup"
 	prospectServer "github.com/robertobouses/easy-football-tycoon/http/prospect"
 	rivalServer "github.com/robertobouses/easy-football-tycoon/http/rival"
@@ -15,6 +16,9 @@ import (
 	prospectRepository "github.com/robertobouses/easy-football-tycoon/repository/prospect"
 	rivalRepository "github.com/robertobouses/easy-football-tycoon/repository/rival"
 	teamRepository "github.com/robertobouses/easy-football-tycoon/repository/team"
+
+	calendaryServer "github.com/robertobouses/easy-football-tycoon/http/calendary"
+	calendaryRepository "github.com/robertobouses/easy-football-tycoon/repository/calendary"
 )
 
 func main() {
@@ -61,7 +65,12 @@ func main() {
 		panic(err)
 	}
 
-	app := app.NewApp(lineupRepo, teamRepo, rivalRepo, prospectRepo)
+	calendaryRepo, err := calendaryRepository.NewRepository(db)
+	if err != nil {
+		panic(err)
+	}
+
+	app := app.NewApp(lineupRepo, teamRepo, rivalRepo, prospectRepo, calendaryRepo)
 
 	lineupHandler := lineup.NewHandler(app)
 
@@ -71,7 +80,9 @@ func main() {
 
 	prospectHandler := prospectServer.NewHandler(app)
 
-	s := http.NewServer(lineupHandler, teamHandler, rivalHandler, prospectHandler)
+	calendaryHandler := calendaryServer.NewHandler(app)
+
+	s := http.NewServer(lineupHandler, teamHandler, rivalHandler, prospectHandler, calendaryHandler)
 	s.Run("8080")
 
 }

@@ -10,9 +10,9 @@ CREATE TABLE eft.lineup (
     
 );
 
-
-
 COMMIT;
+
+
 
 -- BEGIN;
 

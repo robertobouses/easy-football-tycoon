@@ -1,4 +1,4 @@
-package team
+package rival
 
 import (
 	"log"

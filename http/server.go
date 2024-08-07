@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/robertobouses/easy-football-tycoon/http/calendary"
 	"github.com/robertobouses/easy-football-tycoon/http/lineup"
 	prospectServer "github.com/robertobouses/easy-football-tycoon/http/prospect"
 	rivalServer "github.com/robertobouses/easy-football-tycoon/http/rival"
@@ -15,11 +16,12 @@ import (
 )
 
 type Server struct {
-	lineup   lineup.Handler
-	team     team.Handler
-	rival    rivalServer.Handler
-	prospect prospectServer.Handler
-	engine   *gin.Engine
+	lineup    lineup.Handler
+	team      team.Handler
+	rival     rivalServer.Handler
+	prospect  prospectServer.Handler
+	calendary calendary.Handler
+	engine    *gin.Engine
 }
 
 func NewServer(
@@ -27,14 +29,16 @@ func NewServer(
 	team team.Handler,
 	rival rivalServer.Handler,
 	prospect prospectServer.Handler,
+	calendary calendary.Handler,
 
 ) Server {
 	return Server{
-		lineup:   lineup,
-		team:     team,
-		rival:    rival,
-		prospect: prospect,
-		engine:   gin.Default(),
+		lineup:    lineup,
+		team:      team,
+		rival:     rival,
+		prospect:  prospect,
+		calendary: calendary,
+		engine:    gin.Default(),
 	}
 }
 
@@ -67,6 +71,10 @@ func (s *Server) Run(port string) error {
 	prospect := s.engine.Group("/prospect")
 	prospect.GET("", s.prospect.GetProspect)
 	prospect.POST("/person", s.prospect.PostProspect)
+
+	calendary := s.engine.Group("/calendary")
+	calendary.GET("", s.calendary.GetCalendary)
+	calendary.POST("/create", s.calendary.PostCalendary)
 
 	log.Printf("running api at %s port\n", port)
 	return s.engine.Run(fmt.Sprintf(":%s", port))

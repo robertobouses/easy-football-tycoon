@@ -1,4 +1,4 @@
-package team
+package prospect
 
 import (
 	"database/sql"
@@ -6,31 +6,31 @@ import (
 	_ "embed"
 )
 
-//go:embed sql/get_rival.sql
-var getRivalQuery string
+//go:embed sql/get_prospect.sql
+var getProspectQuery string
 
-//go:embed sql/post_rival.sql
-var postRivalQuery string
+//go:embed sql/post_prospect.sql
+var postProspectQuery string
 
 func NewRepository(db *sql.DB) (*repository, error) {
-	getRivalStmt, err := db.Prepare(getRivalQuery)
+	getProspectStmt, err := db.Prepare(getProspectQuery)
 	if err != nil {
 		return nil, err
 	}
-	postRivalStmt, err := db.Prepare(postRivalQuery)
+	postProspectStmt, err := db.Prepare(postProspectQuery)
 	if err != nil {
 		return nil, err
 	}
 
 	return &repository{
-		db:        db,
-		getRival:  getRivalStmt,
-		postRival: postRivalStmt,
+		db:           db,
+		getProspect:  getProspectStmt,
+		postProspect: postProspectStmt,
 	}, nil
 }
 
 type repository struct {
-	db        *sql.DB
-	getRival  *sql.Stmt
-	postRival *sql.Stmt
+	db           *sql.DB
+	getProspect  *sql.Stmt
+	postProspect *sql.Stmt
 }

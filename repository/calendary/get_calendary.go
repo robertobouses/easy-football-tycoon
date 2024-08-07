@@ -1,4 +1,4 @@
-package rival
+package calendary
 
 import (
 	//"database/sql"
@@ -7,29 +7,25 @@ import (
 	"github.com/robertobouses/easy-football-tycoon/app"
 )
 
-func (r *repository) GetRival() ([]app.Rival, error) {
+func (r *repository) GetCalendary() ([]app.Calendary, error) {
 
-	rows, err := r.getRival.Query()
+	rows, err := r.getCalendary.Query()
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var teams []app.Rival
+	var completeCalendary []app.Calendary
 	for rows.Next() {
-		var team app.Rival
+		var daytype app.Calendary
 		if err := rows.Scan(
-			&team.TeamId,
-			&team.TeamName,
-			&team.Technique,
-			&team.Mental,
-			&team.Physique,
+			&daytype.DayType,
 		); err != nil {
 			log.Printf("Error al escanear las filas: %v", err)
 			return nil, err
 		}
-		teams = append(teams, team)
+		completeCalendary = append(completeCalendary, daytype)
 	}
 
-	return teams, nil
+	return completeCalendary, nil
 }

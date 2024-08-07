@@ -1,12 +1,12 @@
-package prospect
+package calendary
 
 import (
 	"github.com/robertobouses/easy-football-tycoon/app"
 )
 
 type App interface {
-	GetProspect() ([]app.Prospect, error)
-	PostProspect(app.Prospect) error
+	GetCalendary() ([]app.Calendary, error)
+	PostCalendary() error
 }
 
 func NewHandler(app app.AppService) Handler {

@@ -1,4 +1,4 @@
-package team
+package rival
 
 import (
 	"github.com/robertobouses/easy-football-tycoon/app"
