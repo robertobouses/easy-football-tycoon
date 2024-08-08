@@ -1,7 +1,9 @@
 package app
 
+import "github.com/google/uuid"
+
 type Prospect struct {
-	ProspectId   string
+	ProspectId   uuid.UUID
 	ProspectName string
 	Position     string
 	Age          int
@@ -11,7 +13,6 @@ type Prospect struct {
 	Mental       int
 	Physique     int
 	InjuryDays   int
-	Lined        bool
 	Job          string
 	Rarity       int
 }

@@ -6,11 +6,12 @@ import (
 	nethttp "net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/robertobouses/easy-football-tycoon/app"
 )
 
 type PostLineupRequest struct {
-	PlayerID string `json:"playerid"`
+	PlayerID uuid.UUID `json:"playerid"`
 }
 
 func (h Handler) PostLineup(c *gin.Context) {

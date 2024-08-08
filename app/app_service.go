@@ -1,16 +1,18 @@
 package app
 
+import "github.com/google/uuid"
+
 type LineupRepository interface {
 	GetLineup() ([]Lineup, error)
 	PostLineup(player Team) error
-	PlayerExistsInLineup(playerId string) (bool, error)
+	PlayerExistsInLineup(playerId uuid.UUID) (bool, error)
 }
 
 type TeamRepository interface {
 	GetTeam() ([]Team, error)
 	PostTeam(req Team) error
-	UpdatePlayerLinedStatus(req string) error
-	GetPlayerByPlayerId(playerId string) (*Team, error)
+	UpdatePlayerLinedStatus(req uuid.UUID) error
+	GetPlayerByPlayerId(playerId uuid.UUID) (*Team, error)
 }
 
 type RivalRepository interface {

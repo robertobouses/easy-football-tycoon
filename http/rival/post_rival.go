@@ -6,15 +6,16 @@ import (
 	nethttp "net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/robertobouses/easy-football-tycoon/app"
 )
 
 type PostTeamRequest struct {
-	TeamId    string `json:"teamid"`
-	TeamName  string `json:"teamname"`
-	Technique int    `json:"technique"`
-	Mental    int    `json:"mental"`
-	Physique  int    `json:"physique"`
+	TeamId    uuid.UUID `json:"teamid"`
+	TeamName  string    `json:"teamname"`
+	Technique int       `json:"technique"`
+	Mental    int       `json:"mental"`
+	Physique  int       `json:"physique"`
 }
 
 func (h Handler) PostRival(c *gin.Context) {

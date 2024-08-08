@@ -1,7 +1,9 @@
 package app
 
+import "github.com/google/uuid"
+
 type Rival struct {
-	TeamId    string
+	TeamId    uuid.UUID
 	TeamName  string
 	Technique int
 	Mental    int

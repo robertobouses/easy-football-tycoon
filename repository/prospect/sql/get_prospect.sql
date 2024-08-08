@@ -9,7 +9,6 @@ SELECT
     mental,
     physique,
     injurydays,
-    lined,
     job,
     rarity
 FROM

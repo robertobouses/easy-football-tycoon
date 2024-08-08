@@ -17,7 +17,6 @@ func (r *repository) PostProspect(req app.Prospect) error {
 		req.Mental,
 		req.Physique,
 		req.InjuryDays,
-		req.Lined,
 		req.Job,
 		req.Rarity,
 	)

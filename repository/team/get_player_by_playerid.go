@@ -5,10 +5,11 @@ import (
 	"database/sql"
 	"log"
 
+	"github.com/google/uuid"
 	"github.com/robertobouses/easy-football-tycoon/app"
 )
 
-func (r *repository) GetPlayerByPlayerId(playerId string) (*app.Team, error) {
+func (r *repository) GetPlayerByPlayerId(playerId uuid.UUID) (*app.Team, error) {
 
 	row := r.getPlayerByPlayerId.QueryRow(playerId)
 	var player app.Team

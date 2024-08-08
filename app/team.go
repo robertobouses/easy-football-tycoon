@@ -1,7 +1,9 @@
 package app
 
+import "github.com/google/uuid"
+
 type Team struct {
-	PlayerId   string
+	PlayerId   uuid.UUID
 	PlayerName string
 	Position   string
 	Age        int

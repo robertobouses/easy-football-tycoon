@@ -11,7 +11,6 @@ technique INT,
 mental INT,
 physique INT,
 injurydays INT DEFAULT 0,
-lined BOOLEAN DEFAULT false,
 job VARCHAR(255) NOT NULL,
 rarity INT
 );

@@ -29,7 +29,6 @@ func (r *repository) GetProspect() ([]app.Prospect, error) {
 			&team.Mental,
 			&team.Physique,
 			&team.InjuryDays,
-			&team.Lined,
 			&team.Job,
 			&team.Rarity,
 		); err != nil {

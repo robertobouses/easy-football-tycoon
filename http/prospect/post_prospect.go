@@ -6,23 +6,23 @@ import (
 	nethttp "net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/robertobouses/easy-football-tycoon/app"
 )
 
 type PostProspectRequest struct {
-	ProspectId   string `json:"prospectid"`
-	ProspectName string `json:"prospectname"`
-	Position     string `json:"position"`
-	Age          int    `json:"age"`
-	Fee          int    `json:"fee"`
-	Salary       int    `json:"salary"`
-	Technique    int    `json:"technique"`
-	Mental       int    `json:"mental"`
-	Physique     int    `json:"physique"`
-	InjuryDays   int    `json:"injurydays"`
-	Lined        bool   `json:"lined"`
-	Job          string `json:"job"`
-	Rarity       int    `json:"rarity"`
+	ProspectId   uuid.UUID `json:"prospectid"`
+	ProspectName string    `json:"prospectname"`
+	Position     string    `json:"position"`
+	Age          int       `json:"age"`
+	Fee          int       `json:"fee"`
+	Salary       int       `json:"salary"`
+	Technique    int       `json:"technique"`
+	Mental       int       `json:"mental"`
+	Physique     int       `json:"physique"`
+	InjuryDays   int       `json:"injurydays"`
+	Job          string    `json:"job"`
+	Rarity       int       `json:"rarity"`
 }
 
 func (h Handler) PostProspect(c *gin.Context) {
@@ -44,7 +44,6 @@ func (h Handler) PostProspect(c *gin.Context) {
 		Mental:       req.Mental,
 		Physique:     req.Physique,
 		InjuryDays:   req.InjuryDays,
-		Lined:        req.Lined,
 		Job:          req.Job,
 		Rarity:       req.Rarity,
 	}
