@@ -1,6 +1,6 @@
 SELECT
     teamid,
-    teamname,
+    rivalname,
     technique,
     mental,
     physique

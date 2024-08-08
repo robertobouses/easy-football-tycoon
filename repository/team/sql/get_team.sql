@@ -1,5 +1,5 @@
 SELECT  
-    	playerName,
+    	playername,
 		position,
 		age,
 		fee,
@@ -7,7 +7,7 @@ SELECT
 		technique,
 		mental,
 		physique,
-		injuryDays,
+		injurydays,
 		lined
 FROM
     eft.team

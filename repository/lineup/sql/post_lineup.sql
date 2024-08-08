@@ -1,6 +1,6 @@
 INSERT  into EFT.lineup
     	(playerid,
-        playerName,
+        playername,
 		position,
 		technique,
 		mental,

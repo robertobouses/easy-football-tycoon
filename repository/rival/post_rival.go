@@ -8,7 +8,7 @@ import (
 
 func (r *repository) PostRival(req app.Rival) error {
 	_, err := r.postRival.Exec(
-		req.TeamName,
+		req.RivalName,
 		req.Technique,
 		req.Mental,
 		req.Physique,

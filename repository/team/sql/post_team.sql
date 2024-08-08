@@ -1,5 +1,5 @@
 INSERT  into EFT.team
-    	(playerName,
+    	(playername,
 		position,
 		age,
 		fee,
@@ -7,7 +7,7 @@ INSERT  into EFT.team
 		technique,
 		mental,
 		physique,
-		injuryDays,
+		injurydays,
 		lined)
 VALUES
    ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);

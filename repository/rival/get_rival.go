@@ -19,8 +19,8 @@ func (r *repository) GetRival() ([]app.Rival, error) {
 	for rows.Next() {
 		var team app.Rival
 		if err := rows.Scan(
-			&team.TeamId,
-			&team.TeamName,
+			&team.RivalId,
+			&team.RivalName,
 			&team.Technique,
 			&team.Mental,
 			&team.Physique,
