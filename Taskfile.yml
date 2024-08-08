@@ -7,20 +7,20 @@ vars:
 tasks:
   default:
     cmds:
-      - echo "Please specify a task to run. Available tasks migrate-up, migrate-down, migrate-down-all"
+      - echo "Please specify a task to run. Available tasks: migrate-up, migrate-down, migrate-down-all"
     silent: true
 
   migrate-up:
     desc: "Run migrations up"
     cmds:
-      - migrate -path {{.MIGRATION_DIR}} -database {{.DATABASE_URL}} up
+      - "{{migrate}} -path {{.MIGRATION_DIR}} -database {{.DATABASE_URL}} up"
 
   migrate-down:
     desc: "Run migrations down"
     cmds:
-      - migrate -path {{.MIGRATION_DIR}} -database {{.DATABASE_URL}} down
+      - "{{migrate}} -path {{.MIGRATION_DIR}} -database {{.DATABASE_URL}} down"
 
   migrate-down-all:
     desc: "Run all migrations down"
     cmds:
-      - migrate -path {{.MIGRATION_DIR}} -database {{.DATABASE_URL}} down all
+      - "{{migrate}} -path {{.MIGRATION_DIR}} -database {{.DATABASE_URL}} down all"

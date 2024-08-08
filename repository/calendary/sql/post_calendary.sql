@@ -1,4 +1,1 @@
-INSERT into eft.calendary
-(daytype)
-VALUES
-  (?);
+INSERT INTO eft.calendary (daytype) VALUES ($1);

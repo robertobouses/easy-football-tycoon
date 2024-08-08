@@ -8,7 +8,6 @@ import (
 
 func (r *repository) PostProspect(req app.Prospect) error {
 	_, err := r.postProspect.Exec(
-		req.ProspectId,
 		req.ProspectName,
 		req.Position,
 		req.Age,

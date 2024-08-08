@@ -5,8 +5,8 @@ CREATE TABLE eft.rivals (
     teamname VARCHAR(255) NOT NULL,
     technique INT,
     mental INT,
-    physique INT,
-    
+    physique INT
 );
+
 
 COMMIT;

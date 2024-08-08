@@ -6,7 +6,7 @@ CREATE TABLE eft.lineup (
     position VARCHAR(255) NOT NULL,
     technique INT,
     mental INT,
-    physique INT,
+    physique INT
     
 );
 
