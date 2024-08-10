@@ -1,5 +1,6 @@
 package app
 
 type Calendary struct {
-	DayType string `json:"daytype"`
+	CalendaryId int    `json:"calendaryid"`
+	DayType     string `json:"daytype"`
 }

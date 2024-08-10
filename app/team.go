@@ -15,3 +15,9 @@ type Team struct {
 	InjuryDays int
 	Lined      bool
 }
+
+type Analytics struct {
+	Finances      int
+	Scouting      int
+	Physiotherapy int
+}

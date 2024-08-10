@@ -30,13 +30,18 @@ type CalendaryRepository interface {
 	PostCalendary(calendary []string) error
 }
 
-func NewApp(repo1 LineupRepository, repo2 TeamRepository, repo3 RivalRepository, repo4 ProspectRepository, repo5 CalendaryRepository) AppService {
+type ContinueRepository interface {
+	GetContinue() ([]Calendary, error)
+}
+
+func NewApp(repo1 LineupRepository, repo2 TeamRepository, repo3 RivalRepository, repo4 ProspectRepository, repo5 CalendaryRepository, repo6 ContinueRepository) AppService {
 	return AppService{
 		lineupRepo:    repo1,
 		teamRepo:      repo2,
 		rivalRepo:     repo3,
 		prospectRepo:  repo4,
 		calendaryRepo: repo5,
+		continueRepo:  repo6,
 	}
 }
 
@@ -46,4 +51,5 @@ type AppService struct {
 	rivalRepo     RivalRepository
 	prospectRepo  ProspectRepository
 	calendaryRepo CalendaryRepository
+	continueRepo  ContinueRepository
 }

@@ -19,7 +19,6 @@ func (r *repository) GetProspect() ([]app.Prospect, error) {
 	for rows.Next() {
 		var team app.Prospect
 		if err := rows.Scan(
-
 			&team.ProspectId,
 			&team.ProspectName,
 			&team.Position,

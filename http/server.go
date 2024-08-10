@@ -13,6 +13,7 @@ import (
 	prospectServer "github.com/robertobouses/easy-football-tycoon/http/prospect"
 	rivalServer "github.com/robertobouses/easy-football-tycoon/http/rival"
 	"github.com/robertobouses/easy-football-tycoon/http/team"
+	"github.com/robertobouses/easy-football-tycoon/http/continue"
 )
 
 type Server struct {
@@ -21,6 +22,7 @@ type Server struct {
 	rival     rivalServer.Handler
 	prospect  prospectServer.Handler
 	calendary calendary.Handler
+	continue continue.Handler
 	engine    *gin.Engine
 }
 
@@ -30,6 +32,7 @@ func NewServer(
 	rival rivalServer.Handler,
 	prospect prospectServer.Handler,
 	calendary calendary.Handler,
+	continue continue.Handler,
 
 ) Server {
 	return Server{
@@ -38,6 +41,7 @@ func NewServer(
 		rival:     rival,
 		prospect:  prospect,
 		calendary: calendary,
+		continue: continue,
 		engine:    gin.Default(),
 	}
 }
@@ -75,6 +79,9 @@ func (s *Server) Run(port string) error {
 	calendary := s.engine.Group("/calendary")
 	calendary.GET("", s.calendary.GetCalendary)
 	calendary.POST("/create", s.calendary.PostCalendary)
+
+	continue:=s.engine.Group("/continue")
+	continue.GET(""s.continue.GetContinue)
 
 	log.Printf("running api at %s port\n", port)
 	return s.engine.Run(fmt.Sprintf(":%s", port))

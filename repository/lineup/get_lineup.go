@@ -23,6 +23,9 @@ func (r *repository) GetLineup() ([]app.Lineup, error) {
 			&lineup.Technique,
 			&lineup.Mental,
 			&lineup.Physique,
+			&lineup.TotalTechnique,
+			&lineup.TotalMental,
+			&lineup.TotalPhysique,
 		); err != nil {
 			log.Printf("Error al escanear las filas: %v", err)
 			return nil, err

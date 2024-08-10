@@ -3,7 +3,10 @@ SELECT
     t.position,
     t.technique,
     t.mental,
-    t.physique
+    t.physique,
+    SUM(t.technique) OVER () AS total_technique,
+    SUM(t.mental) OVER () AS total_mental,
+    SUM(t.physique) OVER () AS total_physique
 FROM
     eft.lineup l
 JOIN
