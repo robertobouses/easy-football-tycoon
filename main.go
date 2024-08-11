@@ -70,7 +70,12 @@ func main() {
 		panic(err)
 	}
 
-	app := app.NewApp(lineupRepo, teamRepo, rivalRepo, prospectRepo, calendaryRepo)
+	analyticsRepo, err := analyticsRepository.NewRepository(db)
+	if err != nil {
+		panic(err)
+	}
+
+	app := app.NewApp(lineupRepo, teamRepo, rivalRepo, prospectRepo, calendaryRepo, analyticsRepo)
 
 	lineupHandler := lineup.NewHandler(app)
 
@@ -82,7 +87,9 @@ func main() {
 
 	calendaryHandler := calendaryServer.NewHandler(app)
 
-	s := http.NewServer(lineupHandler, teamHandler, rivalHandler, prospectHandler, calendaryHandler)
+	analyticsHandler := analyticsServer.NewHandler(app)
+
+	s := http.NewServer(lineupHandler, teamHandler, rivalHandler, prospectHandler, calendaryHandler, analyticsHandler)
 	s.Run("8080")
 
 }

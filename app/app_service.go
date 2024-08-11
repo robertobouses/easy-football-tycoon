@@ -34,7 +34,12 @@ type ContinueRepository interface {
 	GetContinue() ([]Calendary, error)
 }
 
-func NewApp(repo1 LineupRepository, repo2 TeamRepository, repo3 RivalRepository, repo4 ProspectRepository, repo5 CalendaryRepository, repo6 ContinueRepository) AppService {
+type AnalyticsRepository interface {
+	GetAnalytics() (Analytics, error)
+	ProspectAnalytics()
+}
+
+func NewApp(repo1 LineupRepository, repo2 TeamRepository, repo3 RivalRepository, repo4 ProspectRepository, repo5 CalendaryRepository, repo6 ContinueRepository, repo7 AnalyticsRepository) AppService {
 	return AppService{
 		lineupRepo:    repo1,
 		teamRepo:      repo2,
@@ -42,6 +47,7 @@ func NewApp(repo1 LineupRepository, repo2 TeamRepository, repo3 RivalRepository,
 		prospectRepo:  repo4,
 		calendaryRepo: repo5,
 		continueRepo:  repo6,
+		analyticsRepo: repo7,
 	}
 }
 
@@ -52,4 +58,5 @@ type AppService struct {
 	prospectRepo  ProspectRepository
 	calendaryRepo CalendaryRepository
 	continueRepo  ContinueRepository
+	analyticsRepo AnalyticsRepository
 }

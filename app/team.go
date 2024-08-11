@@ -17,6 +17,7 @@ type Team struct {
 }
 
 type Analytics struct {
+	AnalyticsId   uuid.UUID
 	Finances      int
 	Scouting      int
 	Physiotherapy int
