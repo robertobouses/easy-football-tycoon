@@ -6,31 +6,31 @@ import (
 	_ "embed"
 )
 
-//go:embed sql/get_prospect.sql
-var getProspectQuery string
+//go:embed sql/get_analytics.sql
+var getAnalyticsQuery string
 
-//go:embed sql/post_prospect.sql
-var postProspectQuery string
+//go:embed sql/post_analytics.sql
+var postAnalyticsQuery string
 
 func NewRepository(db *sql.DB) (*repository, error) {
-	getProspectStmt, err := db.Prepare(getProspectQuery)
+	getAnalyticsStmt, err := db.Prepare(getAnalyticsQuery)
 	if err != nil {
 		return nil, err
 	}
-	postProspectStmt, err := db.Prepare(postProspectQuery)
+	postAnalyticsStmt, err := db.Prepare(postAnalyticsQuery)
 	if err != nil {
 		return nil, err
 	}
 
 	return &repository{
-		db:           db,
-		getProspect:  getProspectStmt,
-		postProspect: postProspectStmt,
+		db:            db,
+		getAnalytics:  getAnalyticsStmt,
+		postAnalytics: postAnalyticsStmt,
 	}, nil
 }
 
 type repository struct {
-	db           *sql.DB
-	getProspect  *sql.Stmt
-	postProspect *sql.Stmt
+	db            *sql.DB
+	getAnalytics  *sql.Stmt
+	postAnalytics *sql.Stmt
 }

@@ -1,11 +1,11 @@
-package continue
+package resume
 
 import (
 	"github.com/robertobouses/easy-football-tycoon/app"
 )
 
 type App interface {
-	GetContinue() ([]app.Prospect, error)
+	GetResume() ([]app.Prospect, error)
 }
 
 func NewHandler(app app.AppService) Handler {

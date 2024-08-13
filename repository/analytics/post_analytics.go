@@ -7,7 +7,7 @@ import (
 )
 
 func (r *repository) PostAnalytics(req app.Analytics) error {
-	_, err := r.postTeam.Exec(
+	_, err := r.postAnalytics.Exec(
 		req.Finances,
 		req.Scouting,
 		req.Physiotherapy,

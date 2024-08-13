@@ -7,18 +7,19 @@ import (
 	"github.com/robertobouses/easy-football-tycoon/app"
 	"github.com/robertobouses/easy-football-tycoon/http"
 
+	analyticsServer "github.com/robertobouses/easy-football-tycoon/http/analytics"
+	calendaryServer "github.com/robertobouses/easy-football-tycoon/http/calendary"
 	"github.com/robertobouses/easy-football-tycoon/http/lineup"
 	prospectServer "github.com/robertobouses/easy-football-tycoon/http/prospect"
 	rivalServer "github.com/robertobouses/easy-football-tycoon/http/rival"
 	"github.com/robertobouses/easy-football-tycoon/http/team"
 	"github.com/robertobouses/easy-football-tycoon/internal"
+	analyticsRepository "github.com/robertobouses/easy-football-tycoon/repository/analytics"
+	calendaryRepository "github.com/robertobouses/easy-football-tycoon/repository/calendary"
 	lineupRepository "github.com/robertobouses/easy-football-tycoon/repository/lineup"
 	prospectRepository "github.com/robertobouses/easy-football-tycoon/repository/prospect"
 	rivalRepository "github.com/robertobouses/easy-football-tycoon/repository/rival"
 	teamRepository "github.com/robertobouses/easy-football-tycoon/repository/team"
-
-	calendaryServer "github.com/robertobouses/easy-football-tycoon/http/calendary"
-	calendaryRepository "github.com/robertobouses/easy-football-tycoon/repository/calendary"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-package prospect
+package resume
 
 import (
 	nethttp "net/http"
@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h Handler) GetContinue(ctx *gin.Context) {
-	player, err := h.app.GetContinue()
+func (h Handler) GetResume(ctx *gin.Context) {
+	player, err := h.app.GetResume()
 	if err != nil {
 		ctx.JSON(nethttp.StatusBadRequest, gin.H{"error": err.Error()})
 	}

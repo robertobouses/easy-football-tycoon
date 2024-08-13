@@ -1,4 +1,4 @@
-package prospect
+package analytics
 
 import (
 	"log"

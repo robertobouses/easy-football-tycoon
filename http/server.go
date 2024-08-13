@@ -13,7 +13,7 @@ import (
 	prospectServer "github.com/robertobouses/easy-football-tycoon/http/prospect"
 	rivalServer "github.com/robertobouses/easy-football-tycoon/http/rival"
 	"github.com/robertobouses/easy-football-tycoon/http/team"
-	"github.com/robertobouses/easy-football-tycoon/http/continue"
+	"github.com/robertobouses/easy-football-tycoon/http/resume"
 )
 
 type Server struct {
@@ -22,8 +22,10 @@ type Server struct {
 	rival     rivalServer.Handler
 	prospect  prospectServer.Handler
 	calendary calendary.Handler
-	continue continue.Handler
+	resume resume.Handler
+	analytics analytics.Handler
 	engine    *gin.Engine
+
 }
 
 func NewServer(
@@ -32,7 +34,8 @@ func NewServer(
 	rival rivalServer.Handler,
 	prospect prospectServer.Handler,
 	calendary calendary.Handler,
-	continue continue.Handler,
+	analytics analytics.Handler,
+	resume resume.Handler,
 
 ) Server {
 	return Server{
@@ -41,7 +44,8 @@ func NewServer(
 		rival:     rival,
 		prospect:  prospect,
 		calendary: calendary,
-		continue: continue,
+		resume: resume,
+		analytics: analytics,
 		engine:    gin.Default(),
 	}
 }
@@ -80,8 +84,13 @@ func (s *Server) Run(port string) error {
 	calendary.GET("", s.calendary.GetCalendary)
 	calendary.POST("/create", s.calendary.PostCalendary)
 
-	continue:=s.engine.Group("/continue")
-	continue.GET(""s.continue.GetContinue)
+	resume:=s.engine.Group("/resume")
+	resume.GET(""s.resume.GetResume)
+
+	analytics:=s.engine.Group("/analytics")
+	analytics.GET(""s.resume.GetAnalytics)
+	analytics.POST("/create", s.calendary.PostAnalytics)
+
 
 	log.Printf("running api at %s port\n", port)
 	return s.engine.Run(fmt.Sprintf(":%s", port))

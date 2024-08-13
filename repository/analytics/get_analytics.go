@@ -1,7 +1,6 @@
-package calendary
+package analytics
 
 import (
-	//"database/sql"
 	"database/sql"
 	"log"
 
@@ -10,7 +9,7 @@ import (
 
 func (r *repository) GetAnalytics() (app.Analytics, error) {
 
-	row, err := r.GetAnalytics.QueryRow()
+	row := r.getAnalytics.QueryRow()
 	var analytics app.Analytics
 	if err := row.Scan(
 		&analytics.AnalyticsId,
@@ -20,11 +19,11 @@ func (r *repository) GetAnalytics() (app.Analytics, error) {
 	); err != nil {
 		if err == sql.ErrNoRows {
 			log.Printf("No se encontraron datos")
-			return nil, nil
+			return app.Analytics{}, nil
 		}
 		log.Printf("Error al escanear la fila: %v", err)
-		return nil, err
+		return app.Analytics{}, err
 	}
 
-	return &analytics, nil
+	return analytics, nil
 }
