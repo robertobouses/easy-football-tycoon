@@ -12,6 +12,9 @@ var getProspectQuery string
 //go:embed sql/post_prospect.sql
 var postProspectQuery string
 
+//go:embed sql/post_prospect_random_by_analytics.sql
+var getProspectRandomByAnalyticsQuery string
+
 func NewRepository(db *sql.DB) (*repository, error) {
 	getProspectStmt, err := db.Prepare(getProspectQuery)
 	if err != nil {
@@ -21,16 +24,22 @@ func NewRepository(db *sql.DB) (*repository, error) {
 	if err != nil {
 		return nil, err
 	}
+	getProspectRandomByAnalyticsStmt, err := db.Prepare(getProspectRandomByAnalyticsQuery)
+	if err != nil {
+		return nil, err
+	}
 
 	return &repository{
-		db:           db,
-		getProspect:  getProspectStmt,
-		postProspect: postProspectStmt,
+		db:                           db,
+		getProspect:                  getProspectStmt,
+		postProspect:                 postProspectStmt,
+		getProspectRandomByAnalytics: getProspectRandomByAnalyticsStmt,
 	}, nil
 }
 
 type repository struct {
-	db           *sql.DB
-	getProspect  *sql.Stmt
-	postProspect *sql.Stmt
+	db                           *sql.DB
+	getProspect                  *sql.Stmt
+	postProspect                 *sql.Stmt
+	getProspectRandomByAnalytics *sql.Stmt
 }

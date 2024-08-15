@@ -23,6 +23,7 @@ type RivalRepository interface {
 type ProspectRepository interface {
 	GetProspect() ([]Prospect, error)
 	PostProspect(req Prospect) error
+	GetProspectRandomByAnalytics(scouting int) (Prospect, error)
 }
 
 type CalendaryRepository interface {

@@ -2,7 +2,7 @@ package app
 
 import "log"
 
-func (a AppService) Purchase() (Prospect, error) {
+func (a AppService) Injury() (, error) {
 	analytics, err := a.analyticsRepo.GetAnalytics()
 	if err != nil {
 		log.Println("Error al extraer GetAnalytics", err)
