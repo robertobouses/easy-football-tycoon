@@ -12,7 +12,7 @@ var getProspectQuery string
 //go:embed sql/post_prospect.sql
 var postProspectQuery string
 
-//go:embed sql/post_prospect_random_by_analytics.sql
+//go:embed sql/get_prospect_random_by_analytics.sql
 var getProspectRandomByAnalyticsQuery string
 
 func NewRepository(db *sql.DB) (*repository, error) {

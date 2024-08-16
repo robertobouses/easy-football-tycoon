@@ -14,13 +14,17 @@ func (a AppService) GetResume() ([]Calendary, error) {
 		case "purchase":
 			a.Purchase()
 		case "sale":
-			a.Sale()
+			err := a.Sale()
+			if err != nil {
+				log.Println("Error en la venta:", err)
+				return []Calendary{}, err
+			}
 		case "injury":
 			a.Injury()
 		case "match":
 			a.Match()
 		default:
-			log.Println("Tipo de día desconocido:", day.Daytype)
+			log.Println("Tipo de día desconocido:", day.DayType)
 		}
 	}
 

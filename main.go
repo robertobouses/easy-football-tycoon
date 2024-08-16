@@ -76,6 +76,11 @@ func main() {
 		panic(err)
 	}
 
+	// resumeRepo, err := resumeRepository.NewRepository(db)
+	// if err != nil {
+	// 	panic(err)
+	// }
+
 	app := app.NewApp(lineupRepo, teamRepo, rivalRepo, prospectRepo, calendaryRepo, analyticsRepo)
 
 	lineupHandler := lineup.NewHandler(app)
@@ -92,5 +97,4 @@ func main() {
 
 	s := http.NewServer(lineupHandler, teamHandler, rivalHandler, prospectHandler, calendaryHandler, analyticsHandler)
 	s.Run("8080")
-
 }

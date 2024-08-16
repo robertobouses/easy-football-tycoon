@@ -5,10 +5,17 @@ import (
 )
 
 type App interface {
-	GetResume() ([]app.Prospect, error)
+	GetResume() ([]app.Calendary, error)
+	Sale() error
+	AcceptSale(player app.Team) error
+	RejectSale(player app.Team)
+	Injury()
+	Match()
+	GetCurrentSalePlayer() *app.Team
+	SetCurrentSalePlayer(player *app.Team)
 }
 
-func NewHandler(app app.AppService) Handler {
+func NewHandler(app App) Handler {
 	return Handler{
 		app: app,
 	}

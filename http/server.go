@@ -8,12 +8,12 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/robertobouses/easy-football-tycoon/http/analytics"
 	"github.com/robertobouses/easy-football-tycoon/http/calendary"
 	"github.com/robertobouses/easy-football-tycoon/http/lineup"
 	prospectServer "github.com/robertobouses/easy-football-tycoon/http/prospect"
 	rivalServer "github.com/robertobouses/easy-football-tycoon/http/rival"
 	"github.com/robertobouses/easy-football-tycoon/http/team"
-	"github.com/robertobouses/easy-football-tycoon/http/resume"
 )
 
 type Server struct {
@@ -22,10 +22,9 @@ type Server struct {
 	rival     rivalServer.Handler
 	prospect  prospectServer.Handler
 	calendary calendary.Handler
-	resume resume.Handler
 	analytics analytics.Handler
-	engine    *gin.Engine
 
+	engine *gin.Engine
 }
 
 func NewServer(
@@ -35,7 +34,6 @@ func NewServer(
 	prospect prospectServer.Handler,
 	calendary calendary.Handler,
 	analytics analytics.Handler,
-	resume resume.Handler,
 
 ) Server {
 	return Server{
@@ -44,7 +42,7 @@ func NewServer(
 		rival:     rival,
 		prospect:  prospect,
 		calendary: calendary,
-		resume: resume,
+
 		analytics: analytics,
 		engine:    gin.Default(),
 	}
@@ -84,13 +82,13 @@ func (s *Server) Run(port string) error {
 	calendary.GET("", s.calendary.GetCalendary)
 	calendary.POST("/create", s.calendary.PostCalendary)
 
-	resume:=s.engine.Group("/resume")
-	resume.GET(""s.resume.GetResume)
+	resume := s.engine.Group("/resume")
+	resume.GET("", s.resume.GetResume)
+	//	resume.POST("/sale-decision", s.resume.ProcessSaleDecision)
 
-	analytics:=s.engine.Group("/analytics")
-	analytics.GET(""s.resume.GetAnalytics)
-	analytics.POST("/create", s.calendary.PostAnalytics)
-
+	analytics := s.engine.Group("/analytics")
+	analytics.GET("", s.analytics.GetAnalytics)
+	analytics.POST("/create", s.analytics.PostAnalytics)
 
 	log.Printf("running api at %s port\n", port)
 	return s.engine.Run(fmt.Sprintf(":%s", port))

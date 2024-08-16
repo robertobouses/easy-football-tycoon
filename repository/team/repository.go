@@ -18,6 +18,9 @@ var updatePlayerLinedStatusQuery string
 //go:embed sql/get_player_by_playerid.sql
 var getPlayerByPlayerIdQuery string
 
+//go:embed sql/delete_player_from_team.sql
+var deletePlayerFromTeamQuery string
+
 func NewRepository(db *sql.DB) (*repository, error) {
 	getTeamStmt, err := db.Prepare(getTeamQuery)
 	if err != nil {
@@ -37,6 +40,10 @@ func NewRepository(db *sql.DB) (*repository, error) {
 	if err != nil {
 		return nil, err
 	}
+	deletePlayerFromTeamStmt, err := db.Prepare(deletePlayerFromTeamQuery)
+	if err != nil {
+		return nil, err
+	}
 
 	return &repository{
 		db:                      db,
@@ -44,6 +51,7 @@ func NewRepository(db *sql.DB) (*repository, error) {
 		postTeam:                postTeamStmt,
 		updatePlayerLinedStatus: updatePlayerLinedStatusStmt,
 		getPlayerByPlayerId:     getPlayerByPlayerIdStmt,
+		deletePlayerFromTeam:    deletePlayerFromTeamStmt,
 	}, nil
 }
 
@@ -53,4 +61,5 @@ type repository struct {
 	postTeam                *sql.Stmt
 	updatePlayerLinedStatus *sql.Stmt
 	getPlayerByPlayerId     *sql.Stmt
+	deletePlayerFromTeam    *sql.Stmt
 }
