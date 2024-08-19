@@ -1,7 +1,7 @@
 BEGIN;
 
 CREATE TABLE eft.team (
-    playerid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    playerid UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     playername VARCHAR(255) NOT NULL,
     position VARCHAR(255) NOT NULL,
     age INT,
@@ -12,7 +12,7 @@ CREATE TABLE eft.team (
     physique INT,
     injurydays INT DEFAULT 0,
     lined BOOLEAN DEFAULT false
-    
+
 );
 
 COMMIT;

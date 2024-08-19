@@ -1,26 +1,17 @@
 version: '3'
 
-vars:
-  DATABASE_URL: "postgres://postgres:mysecretpassword@localhost:5432/easy_football_tycoon?sslmode=disable"
-  MIGRATION_DIR: "./migrations"
+env:
+  ENGINE: docker
+  DIR: "/migrations"
+  POSTGRES_URI: "postgres://postgres:mysecretpassword@localhost:5432/easy_football_tycoon?sslmode=disable"
 
 tasks:
-  default:
+  migration-create:
     cmds:
-      - echo "Please specify a task to run. Available tasks: migrate-up, migrate-down, migrate-down-all"
-    silent: true
-
-  migrate-up:
-    desc: "Run migrations up"
+      - ${ENGINE} run --rm -v ${PWD}${DIR}:/migrations/ --workdir="/migrations" migrate/migrate create -ext sql  {{.CLI_ARGS}}
+  migration-up:
     cmds:
-      - "{{migrate}} -path {{.MIGRATION_DIR}} -database {{.DATABASE_URL}} up"
-
-  migrate-down:
-    desc: "Run migrations down"
+      -  ${ENGINE} run --rm -v ${PWD}${DIR}:/migrations/ --workdir="/migrations" --network host migrate/migrate -database ${POSTGRES_URI} -source "file:///migrations" up {{.CLI_ARGS}}
+  migration-down:
     cmds:
-      - "{{migrate}} -path {{.MIGRATION_DIR}} -database {{.DATABASE_URL}} down"
-
-  migrate-down-all:
-    desc: "Run all migrations down"
-    cmds:
-      - "{{migrate}} -path {{.MIGRATION_DIR}} -database {{.DATABASE_URL}} down all"
+      - ${ENGINE} run --rm -v ${PWD}${DIR}:/migrations/ --workdir="/migrations" --network host migrate/migrate -database ${POSTGRES_URI} -source "file:///migrations" down {{.CLI_ARGS}}
