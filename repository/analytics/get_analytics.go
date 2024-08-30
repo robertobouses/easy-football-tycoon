@@ -16,6 +16,9 @@ func (r *repository) GetAnalytics() (app.Analytics, error) {
 		&analytics.Finances,
 		&analytics.Scouting,
 		&analytics.Physiotherapy,
+		&analytics.TotalFinances,
+		&analytics.TotalScouting,
+		&analytics.TotalPhysiotherapy,
 	); err != nil {
 		if err == sql.ErrNoRows {
 			log.Printf("No se encontraron datos")

@@ -1,4 +1,5 @@
 SELECT
+    t.analyticsid,
     t.finances,
     t.scouting,
     t.physiotherapy,

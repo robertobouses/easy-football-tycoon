@@ -11,7 +11,7 @@ func (a AppService) Purchase() (Prospect, error) {
 
 	prospect, err := a.prospectRepo.GetProspectRandomByAnalytics(analytics.Scouting)
 	if err != nil {
-		log.Println("Error al extraer GetProspect", err)
+		log.Println("Error al extraer GetProspectRandomByAnalytics", err)
 		return Prospect{}, err
 	}
 	return prospect, nil
