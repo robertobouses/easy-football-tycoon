@@ -84,7 +84,8 @@ func (s *Server) Run(port string) error {
 
 	resume := s.engine.Group("/resume")
 	resume.GET("", s.resume.GetResume)
-	//	resume.POST("/sale-decision", s.resume.ProcessSaleDecision)
+	resume.POST("/purchase-decision", s.resume.PostPurchaseDecision)
+	resume.POST("/sale-decision", s.resume.PostSaleDecision)
 
 	analytics := s.engine.Group("/analytics")
 	analytics.GET("", s.analytics.GetAnalytics)

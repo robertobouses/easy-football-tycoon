@@ -10,7 +10,7 @@ import (
 
 func (r *repository) GetProspectRandomByAnalytics(scouting int) (app.Prospect, error) {
 
-	row := r.getProspectRandomByAnalytics.QueryRow()
+	row := r.getProspectRandomByAnalytics.QueryRow(scouting)
 	var prospect app.Prospect
 	if err := row.Scan(
 		&prospect.ProspectId,

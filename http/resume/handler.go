@@ -13,6 +13,10 @@ type App interface {
 	Match()
 	GetCurrentSalePlayer() *app.Team
 	SetCurrentSalePlayer(player *app.Team)
+	GetCurrentProspect() (*app.Prospect, error)
+	SetCurrentProspect(prospect *app.Prospect)
+	AcceptPurchase(prospect *app.Prospect) error
+	RejectPurchase(prospect *app.Prospect)
 }
 
 func NewHandler(app App) Handler {

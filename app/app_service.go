@@ -56,4 +56,5 @@ type AppService struct {
 	calendaryRepo     CalendaryRepository
 	analyticsRepo     AnalyticsRepository
 	currentSalePlayer *Team
+	currentProspect   *Prospect
 }

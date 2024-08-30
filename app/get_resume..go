@@ -12,7 +12,12 @@ func (a AppService) GetResume() ([]Calendary, error) {
 	for _, day := range calendary {
 		switch day.DayType {
 		case "purchase":
-			a.Purchase()
+			prospect, err := a.Purchase()
+			if err != nil {
+				log.Println("Error en la compra:", err)
+				return []Calendary{}, err
+			}
+			a.SetCurrentProspect(&prospect)
 		case "sale":
 			err := a.Sale()
 			if err != nil {
