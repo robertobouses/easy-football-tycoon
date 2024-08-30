@@ -1,6 +1,6 @@
 SELECT
-			prospect_id,
-			prospect_name,
+			prospectid,
+			prospectname,
 			position,
 			age,
 			fee,
@@ -8,11 +8,11 @@ SELECT
 			technique,
 			mental,
 			physique,
-			injury_days,
+			injurydays,
 			job,
 			rarity
 		FROM
-			prospects
+			eft.prospect
 		WHERE
 			$1 > rarity
 		ORDER BY

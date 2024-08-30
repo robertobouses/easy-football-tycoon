@@ -6,4 +6,4 @@ SELECT
     SUM(t.scouting) OVER () AS total_scouting,
     SUM(t.physiotherapy) OVER () AS total_physiotherapy
 FROM
-    eft.analytics;
+    eft.analytics t;

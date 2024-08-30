@@ -15,21 +15,21 @@ func (r *repository) GetRival() ([]app.Rival, error) {
 	}
 	defer rows.Close()
 
-	var teams []app.Rival
+	var rivals []app.Rival
 	for rows.Next() {
-		var team app.Rival
+		var rival app.Rival
 		if err := rows.Scan(
-			&team.RivalId,
-			&team.RivalName,
-			&team.Technique,
-			&team.Mental,
-			&team.Physique,
+			&rival.RivalId,
+			&rival.RivalName,
+			&rival.Technique,
+			&rival.Mental,
+			&rival.Physique,
 		); err != nil {
 			log.Printf("Error al escanear las filas: %v", err)
 			return nil, err
 		}
-		teams = append(teams, team)
+		rivals = append(rivals, rival)
 	}
 
-	return teams, nil
+	return rivals, nil
 }

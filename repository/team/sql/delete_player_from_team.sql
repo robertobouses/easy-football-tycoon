@@ -1,1 +1,1 @@
-DELETE FROM team WHERE player_id = $1;
+DELETE FROM eft.team WHERE playerid = $1;

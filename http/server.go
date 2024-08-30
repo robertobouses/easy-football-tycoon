@@ -12,6 +12,7 @@ import (
 	"github.com/robertobouses/easy-football-tycoon/http/calendary"
 	"github.com/robertobouses/easy-football-tycoon/http/lineup"
 	prospectServer "github.com/robertobouses/easy-football-tycoon/http/prospect"
+	"github.com/robertobouses/easy-football-tycoon/http/resume"
 	rivalServer "github.com/robertobouses/easy-football-tycoon/http/rival"
 	"github.com/robertobouses/easy-football-tycoon/http/team"
 )
@@ -23,8 +24,8 @@ type Server struct {
 	prospect  prospectServer.Handler
 	calendary calendary.Handler
 	analytics analytics.Handler
-
-	engine *gin.Engine
+	resume    resume.Handler
+	engine    *gin.Engine
 }
 
 func NewServer(
