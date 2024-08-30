@@ -15,28 +15,28 @@ func (r *repository) GetProspect() ([]app.Prospect, error) {
 	}
 	defer rows.Close()
 
-	var teams []app.Prospect
+	var prospects []app.Prospect
 	for rows.Next() {
-		var team app.Prospect
+		var prospect app.Prospect
 		if err := rows.Scan(
-			&team.ProspectId,
-			&team.ProspectName,
-			&team.Position,
-			&team.Age,
-			&team.Fee,
-			&team.Salary,
-			&team.Technique,
-			&team.Mental,
-			&team.Physique,
-			&team.InjuryDays,
-			&team.Job,
-			&team.Rarity,
+			&prospect.ProspectId,
+			&prospect.ProspectName,
+			&prospect.Position,
+			&prospect.Age,
+			&prospect.Fee,
+			&prospect.Salary,
+			&prospect.Technique,
+			&prospect.Mental,
+			&prospect.Physique,
+			&prospect.InjuryDays,
+			&prospect.Job,
+			&prospect.Rarity,
 		); err != nil {
 			log.Printf("Error al escanear las filas: %v", err)
 			return nil, err
 		}
-		teams = append(teams, team)
+		prospects = append(prospects, prospect)
 	}
 
-	return teams, nil
+	return prospects, nil
 }

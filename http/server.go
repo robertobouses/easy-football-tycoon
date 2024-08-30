@@ -42,7 +42,6 @@ func NewServer(
 		rival:     rival,
 		prospect:  prospect,
 		calendary: calendary,
-
 		analytics: analytics,
 		engine:    gin.Default(),
 	}
