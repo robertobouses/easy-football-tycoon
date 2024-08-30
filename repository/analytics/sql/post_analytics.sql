@@ -4,4 +4,3 @@ INSERT  into EFT.analytics
 		physiotherapy)
 VALUES
    ($1, $2, $3);
-    

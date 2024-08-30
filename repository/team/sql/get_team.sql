@@ -11,4 +11,3 @@ SELECT
 		lined
 FROM
     eft.team
-    

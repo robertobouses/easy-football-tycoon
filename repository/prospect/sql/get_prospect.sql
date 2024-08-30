@@ -13,6 +13,3 @@ SELECT
     rarity
 FROM
     eft.prospect
-
-
-    
