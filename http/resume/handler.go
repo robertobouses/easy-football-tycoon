@@ -11,7 +11,7 @@ type App interface {
 	RejectSale(player app.Team)
 	Injury()
 	Match()
-	GetCurrentSalePlayer() *app.Team
+	GetCurrentSalePlayer() (*app.Team, error)
 	SetCurrentSalePlayer(player *app.Team)
 	GetCurrentProspect() (*app.Prospect, error)
 	SetCurrentProspect(prospect *app.Prospect)

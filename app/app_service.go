@@ -37,14 +37,14 @@ type AnalyticsRepository interface {
 	PostAnalytics(req Analytics) error
 }
 
-func NewApp(repo1 LineupRepository, repo2 TeamRepository, repo3 RivalRepository, repo4 ProspectRepository, repo5 CalendaryRepository, repo6 AnalyticsRepository) AppService {
+func NewApp(lineupRepository LineupRepository, teamRepository TeamRepository, rivalRepository RivalRepository, prospectRepository ProspectRepository, calendaryRepository CalendaryRepository, analyticsRepository AnalyticsRepository) AppService {
 	return AppService{
-		lineupRepo:    repo1,
-		teamRepo:      repo2,
-		rivalRepo:     repo3,
-		prospectRepo:  repo4,
-		calendaryRepo: repo5,
-		analyticsRepo: repo6,
+		lineupRepo:    lineupRepository,
+		teamRepo:      teamRepository,
+		rivalRepo:     rivalRepository,
+		prospectRepo:  prospectRepository,
+		calendaryRepo: calendaryRepository,
+		analyticsRepo: analyticsRepository,
 	}
 }
 

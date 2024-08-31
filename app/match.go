@@ -1,3 +1,3 @@
 package app
 
-func (a AppService) Match() {}
+func (a *AppService) Match() {}

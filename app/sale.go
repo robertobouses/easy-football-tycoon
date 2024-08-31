@@ -26,7 +26,7 @@ func (a AppService) GetRandomPlayerForSale() (Team, error) {
 	return player, nil
 }
 
-func (a AppService) Sale() error {
+func (a *AppService) Sale() error {
 	player, err := a.GetRandomPlayerForSale()
 	if err != nil {
 		return err
@@ -35,7 +35,7 @@ func (a AppService) Sale() error {
 
 	return nil
 }
-func (a AppService) AcceptSale(player Team) error {
+func (a *AppService) AcceptSale(player Team) error {
 	err := a.teamRepo.DeletePlayerFromTeam(player)
 	if err != nil {
 		return err
@@ -50,13 +50,13 @@ func (a AppService) AcceptSale(player Team) error {
 	return nil
 }
 
-func (a AppService) RejectSale(player Team) {
+func (a *AppService) RejectSale(player Team) {
 
 }
 
 // TODO ROBERTO CREO QUE ESTE MÉTODO DE TRAER Y LUEGO HACER ALEATORIO ES MÁS ÓPTIMO QUE EL QUE LO HACE TODO EN REPO GetProspectRandomByAnalytics
-func (a *AppService) GetCurrentSalePlayer() *Team {
-	return a.currentSalePlayer
+func (a *AppService) GetCurrentSalePlayer() (*Team, error) {
+	return a.currentSalePlayer, nil
 }
 
 func (a *AppService) SetCurrentSalePlayer(player *Team) {

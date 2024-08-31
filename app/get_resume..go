@@ -2,7 +2,7 @@ package app
 
 import "log"
 
-func (a AppService) GetResume() ([]Calendary, error) {
+func (a *AppService) GetResume() ([]Calendary, error) {
 	calendary, err := a.calendaryRepo.GetCalendary()
 	if err != nil {
 		log.Println("Error al extraer GetCalendary:", err)

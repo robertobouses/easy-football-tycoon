@@ -35,6 +35,7 @@ func NewServer(
 	prospect prospectServer.Handler,
 	calendary calendary.Handler,
 	analytics analytics.Handler,
+	resume resume.Handler,
 
 ) Server {
 	return Server{
