@@ -45,6 +45,7 @@ func NewServer(
 		prospect:  prospect,
 		calendary: calendary,
 		analytics: analytics,
+		resume:    resume,
 		engine:    gin.Default(),
 	}
 }
