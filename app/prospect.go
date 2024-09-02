@@ -16,3 +16,5 @@ type Prospect struct {
 	Job          string
 	Rarity       int
 }
+
+//TODO ROBERTO JOB PUEDE SER REDUNDANTE CON POSITION

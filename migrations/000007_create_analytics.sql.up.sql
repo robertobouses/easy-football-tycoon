@@ -1,7 +1,7 @@
 BEGIN;
 
 CREATE TABLE eft.analytics (
-analyticsid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+analyticsid UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 finances INT,
 scouting INT,
 physiotherapy INT

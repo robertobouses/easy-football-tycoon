@@ -6,11 +6,11 @@ import (
 
 type App interface {
 	GetResume() ([]app.Calendary, error)
-	Sale() error
+	ProcessSale() error
 	AcceptSale(player app.Team) error
 	RejectSale(player app.Team)
-	Injury()
-	Match()
+	ProcessInjury()
+	ProcessMatch()
 	GetCurrentSalePlayer() (*app.Team, error)
 	SetCurrentSalePlayer(player *app.Team)
 	GetCurrentProspect() (*app.Prospect, error)

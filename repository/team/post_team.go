@@ -24,6 +24,6 @@ func (r *repository) PostTeam(req app.Team) error {
 		log.Print("Error en PostTeam repo", err)
 		return err
 	}
-	log.Println("Después de ejecutar la consulta preparada")
+	log.Println("Después de ejecutar la consulta preparada PostTeam")
 	return nil
 }

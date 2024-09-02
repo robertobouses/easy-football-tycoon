@@ -1,37 +1,54 @@
 package app
 
-import "log"
+import (
+	"log"
+)
 
 func (a *AppService) GetResume() ([]Calendary, error) {
+
+	a.callCounter++
 	calendary, err := a.calendaryRepo.GetCalendary()
 	if err != nil {
 		log.Println("Error al extraer GetCalendary:", err)
 		return []Calendary{}, err
 	}
 
-	for _, day := range calendary {
-		switch day.DayType {
-		case "purchase":
-			prospect, err := a.Purchase()
-			if err != nil {
-				log.Println("Error en la compra:", err)
-				return []Calendary{}, err
-			}
-			a.SetCurrentProspect(&prospect)
-		case "sale":
-			err := a.Sale()
-			if err != nil {
-				log.Println("Error en la venta:", err)
-				return []Calendary{}, err
-			}
-		case "injury":
-			a.Injury()
-		case "match":
-			a.Match()
-		default:
-			log.Println("Tipo de día desconocido:", day.DayType)
-		}
+	if a.callCounter > len(calendary) {
+		log.Println("No hay más fechas disponibles en el calendario")
+		return []Calendary{}, ErrCalendaryDatesNoAvaliable
 	}
 
-	return calendary, nil
+	day := calendary[a.callCounter-1]
+
+	if day.DayType != "sale" {
+		a.SetCurrentSalePlayer(nil)
+	}
+
+	if day.DayType != "purchase" {
+		a.SetCurrentProspect(nil)
+	}
+
+	switch day.DayType {
+	case "purchase":
+		prospect, err := a.ProcessPurchase()
+		if err != nil {
+			log.Println("Error en la compra:", err)
+			return []Calendary{}, err
+		}
+		log.Println("current prospect is en GetResume de APP:", prospect)
+	case "sale":
+		err := a.ProcessSale()
+		if err != nil {
+			log.Println("Error en la venta:", err)
+			return []Calendary{}, err
+		}
+	case "injury":
+		a.ProcessInjury()
+	case "match":
+		a.ProcessMatch()
+	default:
+		log.Println("Tipo de día desconocido:", day.DayType)
+	}
+
+	return []Calendary{day}, nil
 }

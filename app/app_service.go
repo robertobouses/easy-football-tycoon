@@ -57,4 +57,5 @@ type AppService struct {
 	analyticsRepo     AnalyticsRepository
 	currentSalePlayer *Team
 	currentProspect   *Prospect
+	callCounter       int
 }

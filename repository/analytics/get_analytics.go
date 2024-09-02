@@ -21,7 +21,7 @@ func (r *repository) GetAnalytics() (app.Analytics, error) {
 		&analytics.TotalPhysiotherapy,
 	); err != nil {
 		if err == sql.ErrNoRows {
-			log.Printf("No se encontraron datos")
+			log.Printf("No se encontraron datos GetAnalytics")
 			return app.Analytics{}, nil
 		}
 		log.Printf("Error al escanear la fila: %v", err)

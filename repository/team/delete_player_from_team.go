@@ -7,11 +7,12 @@ import (
 )
 
 func (r *repository) DeletePlayerFromTeam(player app.Team) error {
+	log.Printf("Intentando eliminar jugador con PlayerId: %v", player.PlayerId)
 	_, err := r.deletePlayerFromTeam.Exec(player.PlayerId)
 	if err != nil {
 		log.Printf("Error en deletePlayerFromTeam repo: %v", err)
 		return err
 	}
-	log.Println("El jugador %v se fue de tu equipo", player.PlayerName)
+	log.Printf("El jugador %v se fue de tu equipo", player.PlayerName)
 	return nil
 }

@@ -1,5 +1,6 @@
 SELECT  
-    	playername,
+    	playerid,
+		playername,
 		position,
 		age,
 		fee,
