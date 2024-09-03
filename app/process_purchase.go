@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (a AppService) ProcessPurchase() (Prospect, error) {
+func (a *AppService) ProcessPurchase() (Prospect, error) {
 	analytics, err := a.analyticsRepo.GetAnalytics()
 	if err != nil {
 		log.Println("Error al extraer GetAnalytics", err)

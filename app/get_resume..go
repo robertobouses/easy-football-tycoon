@@ -28,6 +28,8 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 		a.SetCurrentProspect(nil)
 	}
 
+	log.Println("estasmos en GetResume con day type", day.DayType)
+
 	switch day.DayType {
 	case "purchase":
 		prospect, err := a.ProcessPurchase()
