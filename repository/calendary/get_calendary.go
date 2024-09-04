@@ -17,14 +17,15 @@ func (r *repository) GetCalendary() ([]app.Calendary, error) {
 
 	var completeCalendary []app.Calendary
 	for rows.Next() {
-		var daytype app.Calendary
+		var calendary app.Calendary
 		if err := rows.Scan(
-			&daytype.DayType,
+			&calendary.CalendaryId,
+			&calendary.DayType,
 		); err != nil {
 			log.Printf("Error al escanear las filas: %v", err)
 			return nil, err
 		}
-		completeCalendary = append(completeCalendary, daytype)
+		completeCalendary = append(completeCalendary, calendary)
 	}
 
 	return completeCalendary, nil

@@ -1,49 +1,74 @@
 package resume
 
 import (
+	"log"
 	nethttp "net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func (h Handler) GetResume(ctx *gin.Context) {
-	_, err := h.app.GetResume()
+	if h.app == nil {
+		ctx.JSON(nethttp.StatusInternalServerError, gin.H{"error": "App service is not initialized"})
+		return
+	}
+
+	calendary, err := h.app.GetResume()
 	if err != nil {
 		ctx.JSON(nethttp.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if h.app.GetCurrentSalePlayer() != nil {
+	playerOnSale, err := h.app.GetCurrentSalePlayer()
+	if err != nil {
+		ctx.JSON(nethttp.StatusInternalServerError, gin.H{"error": "Error fetching current sale player"})
+		return
+	}
+	if playerOnSale != nil {
 		ctx.JSON(nethttp.StatusOK, gin.H{
-			"message": "Player on sale",
-			"player":  h.app.GetCurrentSalePlayer(),
+			"message":            "Player on sale",
+			"player":             playerOnSale,
+			"type calendary day": calendary,
 		})
-	} else {
-		ctx.JSON(nethttp.StatusOK, gin.H{"message": "Day completed"})
-	}
-}
-
-func (h Handler) PostSaleDecision(ctx *gin.Context) {
-	var decision struct {
-		Accept bool `json:"accept"`
-	}
-
-	if err := ctx.BindJSON(&decision); err != nil {
-		ctx.JSON(nethttp.StatusBadRequest, gin.H{"error": "Invalid input"})
 		return
 	}
 
-	if decision.Accept {
-		err := h.app.AcceptSale(*h.app.GetCurrentSalePlayer())
-		if err != nil {
-			ctx.JSON(nethttp.StatusInternalServerError, gin.H{"error": "Sale could not be completed"})
-			return
-		}
-		ctx.JSON(nethttp.StatusOK, gin.H{"message": "Player sold successfully"})
-	} else {
-		h.app.RejectSale(*h.app.GetCurrentSalePlayer())
-		ctx.JSON(nethttp.StatusOK, gin.H{"message": "Player sale rejected"})
+	prospect, err := h.app.GetCurrentProspect()
+	if err != nil {
+		ctx.JSON(nethttp.StatusInternalServerError, gin.H{"error": "Error fetching current prospect"})
+		return
+	}
+	log.Println("el prospect en GetResume HHTP, es", prospect)
+
+	if prospect != nil && prospect.ProspectId != uuid.Nil {
+		ctx.JSON(nethttp.StatusOK, gin.H{
+			"message":            "Prospect on purchase",
+			"prospect":           prospect,
+			"type calendary day": calendary,
+		})
+		return
 	}
 
-	h.app.SetCurrentSalePlayer(nil)
+	injuredPlayer, injuryDays, err := h.app.GetCurrentInjuredPlayer()
+	if err != nil {
+		ctx.JSON(nethttp.StatusInternalServerError, gin.H{"error": "Error fetching current prospect"})
+		return
+	}
+	log.Println("The injured player in GetCurrentInjuredPlayer HTTP is", injuredPlayer)
+
+	if injuredPlayer != nil && injuredPlayer.PlayerId != uuid.Nil {
+		ctx.JSON(nethttp.StatusOK, gin.H{
+			"message":            "Player injured",
+			"player":             injuredPlayer,
+			"type calendary day": calendary,
+			"injury days":        injuryDays,
+		})
+		return
+	}
+
+	ctx.JSON(nethttp.StatusOK, gin.H{
+		"message":            "Day completed",
+		"type calendary day": calendary,
+	})
 }

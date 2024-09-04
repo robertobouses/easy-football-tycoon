@@ -14,6 +14,19 @@ type TeamRepository interface {
 	UpdatePlayerLinedStatus(req uuid.UUID) error
 	GetPlayerByPlayerId(playerId uuid.UUID) (*Team, error)
 	DeletePlayerFromTeam(player Team) error
+	UpdatePlayerData(
+		playerID uuid.UUID,
+		playerName *string,
+		position *string,
+		age *int,
+		fee *int,
+		salary *int,
+		technique *int,
+		mental *int,
+		physique *int,
+		injuryDays *int,
+		lined *bool,
+	) error
 }
 
 type RivalRepository interface {
@@ -37,23 +50,27 @@ type AnalyticsRepository interface {
 	PostAnalytics(req Analytics) error
 }
 
-func NewApp(repo1 LineupRepository, repo2 TeamRepository, repo3 RivalRepository, repo4 ProspectRepository, repo5 CalendaryRepository, repo6 AnalyticsRepository) AppService {
+func NewApp(lineupRepository LineupRepository, teamRepository TeamRepository, rivalRepository RivalRepository, prospectRepository ProspectRepository, calendaryRepository CalendaryRepository, analyticsRepository AnalyticsRepository) AppService {
 	return AppService{
-		lineupRepo:    repo1,
-		teamRepo:      repo2,
-		rivalRepo:     repo3,
-		prospectRepo:  repo4,
-		calendaryRepo: repo5,
-		analyticsRepo: repo6,
+		lineupRepo:    lineupRepository,
+		teamRepo:      teamRepository,
+		rivalRepo:     rivalRepository,
+		prospectRepo:  prospectRepository,
+		calendaryRepo: calendaryRepository,
+		analyticsRepo: analyticsRepository,
 	}
 }
 
 type AppService struct {
-	lineupRepo        LineupRepository
-	teamRepo          TeamRepository
-	rivalRepo         RivalRepository
-	prospectRepo      ProspectRepository
-	calendaryRepo     CalendaryRepository
-	analyticsRepo     AnalyticsRepository
-	currentSalePlayer *Team
+	lineupRepo           LineupRepository
+	teamRepo             TeamRepository
+	rivalRepo            RivalRepository
+	prospectRepo         ProspectRepository
+	calendaryRepo        CalendaryRepository
+	analyticsRepo        AnalyticsRepository
+	currentSalePlayer    *Team
+	currentProspect      *Prospect
+	currentInjuredPlayer *Team
+	injuryDays           *int
+	callCounter          int
 }

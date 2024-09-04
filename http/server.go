@@ -35,6 +35,7 @@ func NewServer(
 	prospect prospectServer.Handler,
 	calendary calendary.Handler,
 	analytics analytics.Handler,
+	resume resume.Handler,
 
 ) Server {
 	return Server{
@@ -44,6 +45,7 @@ func NewServer(
 		prospect:  prospect,
 		calendary: calendary,
 		analytics: analytics,
+		resume:    resume,
 		engine:    gin.Default(),
 	}
 }
@@ -84,7 +86,8 @@ func (s *Server) Run(port string) error {
 
 	resume := s.engine.Group("/resume")
 	resume.GET("", s.resume.GetResume)
-	//	resume.POST("/sale-decision", s.resume.ProcessSaleDecision)
+	resume.POST("/purchase-decision", s.resume.PostPurchaseDecision)
+	resume.POST("/sale-decision", s.resume.PostSaleDecision)
 
 	analytics := s.engine.Group("/analytics")
 	analytics.GET("", s.analytics.GetAnalytics)

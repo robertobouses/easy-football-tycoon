@@ -10,7 +10,8 @@ import (
 
 func (r *repository) GetProspectRandomByAnalytics(scouting int) (app.Prospect, error) {
 
-	row := r.getProspectRandomByAnalytics.QueryRow()
+	row := r.getProspectRandomByAnalytics.QueryRow(scouting)
+	log.Println("el valor del scouting es", scouting)
 	var prospect app.Prospect
 	if err := row.Scan(
 		&prospect.ProspectId,
@@ -27,7 +28,7 @@ func (r *repository) GetProspectRandomByAnalytics(scouting int) (app.Prospect, e
 		&prospect.Rarity,
 	); err != nil {
 		if err == sql.ErrNoRows {
-			log.Printf("No se encontraron datos")
+			log.Printf("No se encontraron datos GetProspectRandomByAnalytics")
 			return app.Prospect{}, nil
 		}
 		log.Printf("Error al escanear la fila: %v", err)

@@ -19,6 +19,7 @@ func (r *repository) GetTeam() ([]app.Team, error) {
 	for rows.Next() {
 		var team app.Team
 		if err := rows.Scan(
+			&team.PlayerId,
 			&team.PlayerName,
 			&team.Position,
 			&team.Age,
@@ -33,8 +34,10 @@ func (r *repository) GetTeam() ([]app.Team, error) {
 			log.Printf("Error al escanear las filas: %v", err)
 			return nil, err
 		}
+		log.Printf("Jugador recuperado de la base de datos: %+v", team)
+
 		teams = append(teams, team)
 	}
-
+	log.Printf("Jugadores obtenido con éxito: %+v", teams)
 	return teams, nil
 }

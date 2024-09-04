@@ -1,5 +1,6 @@
 SELECT  
-    	playername,
+    	playerid,
+		playername,
 		position,
 		age,
 		fee,
@@ -11,4 +12,3 @@ SELECT
 		lined
 FROM
     eft.team
-    

@@ -11,6 +11,7 @@ import (
 	calendaryServer "github.com/robertobouses/easy-football-tycoon/http/calendary"
 	"github.com/robertobouses/easy-football-tycoon/http/lineup"
 	prospectServer "github.com/robertobouses/easy-football-tycoon/http/prospect"
+	resumeServer "github.com/robertobouses/easy-football-tycoon/http/resume"
 	rivalServer "github.com/robertobouses/easy-football-tycoon/http/rival"
 	"github.com/robertobouses/easy-football-tycoon/http/team"
 	"github.com/robertobouses/easy-football-tycoon/internal"
@@ -76,11 +77,6 @@ func main() {
 		panic(err)
 	}
 
-	// resumeRepo, err := resumeRepository.NewRepository(db)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
 	app := app.NewApp(lineupRepo, teamRepo, rivalRepo, prospectRepo, calendaryRepo, analyticsRepo)
 
 	lineupHandler := lineup.NewHandler(app)
@@ -95,6 +91,8 @@ func main() {
 
 	analyticsHandler := analyticsServer.NewHandler(app)
 
-	s := http.NewServer(lineupHandler, teamHandler, rivalHandler, prospectHandler, calendaryHandler, analyticsHandler)
+	resumeHandler := resumeServer.NewHandler(&app)
+
+	s := http.NewServer(lineupHandler, teamHandler, rivalHandler, prospectHandler, calendaryHandler, analyticsHandler, resumeHandler)
 	s.Run("8080")
 }
