@@ -10,8 +10,8 @@ type App interface {
 	AcceptSale(player app.Team) error
 	RejectSale(player app.Team)
 	ProcessMatch()
-	GetCurrentSalePlayer() (*app.Team, error)
-	SetCurrentSalePlayer(player *app.Team)
+	GetCurrentSalePlayer() (*app.Team, *int, error)
+	SetCurrentSalePlayer(*app.Team, *int)
 	GetCurrentProspect() (*app.Prospect, error)
 	SetCurrentProspect(prospect *app.Prospect)
 	AcceptPurchase(prospect *app.Prospect) error

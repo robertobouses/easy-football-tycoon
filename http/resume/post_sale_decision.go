@@ -20,7 +20,7 @@ func (h Handler) PostSaleDecision(ctx *gin.Context) {
 		return
 	}
 
-	player, err := h.app.GetCurrentSalePlayer()
+	player, transferFeeReceived, err := h.app.GetCurrentSalePlayer()
 	if err != nil {
 		log.Printf("Error al obtener el jugador en venta: %v", err)
 		ctx.JSON(nethttp.StatusBadRequest, gin.H{"error": err.Error()})
@@ -46,12 +46,15 @@ func (h Handler) PostSaleDecision(ctx *gin.Context) {
 			return
 		}
 		log.Printf("Venta aceptada, jugador vendido con éxito")
-		ctx.JSON(nethttp.StatusOK, gin.H{"message": "Player sold successfully"})
+		ctx.JSON(nethttp.StatusOK, gin.H{
+			"player":  player.PlayerName,
+			"sold by": transferFeeReceived,
+			"message": "Player sold successfully"})
 	} else {
 		h.app.RejectSale(*player)
 		log.Printf("Venta rechazada, jugador no vendido")
 		ctx.JSON(nethttp.StatusOK, gin.H{"message": "Player sale rejected"})
 	}
 
-	h.app.SetCurrentSalePlayer(nil)
+	h.app.SetCurrentSalePlayer(nil, nil)
 }
