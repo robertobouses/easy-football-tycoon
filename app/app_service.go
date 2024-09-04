@@ -14,6 +14,19 @@ type TeamRepository interface {
 	UpdatePlayerLinedStatus(req uuid.UUID) error
 	GetPlayerByPlayerId(playerId uuid.UUID) (*Team, error)
 	DeletePlayerFromTeam(player Team) error
+	UpdatePlayerData(
+		playerID uuid.UUID,
+		playerName *string,
+		position *string,
+		age *int,
+		fee *int,
+		salary *int,
+		technique *int,
+		mental *int,
+		physique *int,
+		injuryDays *int,
+		lined *bool,
+	) error
 }
 
 type RivalRepository interface {
@@ -49,13 +62,15 @@ func NewApp(lineupRepository LineupRepository, teamRepository TeamRepository, ri
 }
 
 type AppService struct {
-	lineupRepo        LineupRepository
-	teamRepo          TeamRepository
-	rivalRepo         RivalRepository
-	prospectRepo      ProspectRepository
-	calendaryRepo     CalendaryRepository
-	analyticsRepo     AnalyticsRepository
-	currentSalePlayer *Team
-	currentProspect   *Prospect
-	callCounter       int
+	lineupRepo           LineupRepository
+	teamRepo             TeamRepository
+	rivalRepo            RivalRepository
+	prospectRepo         ProspectRepository
+	calendaryRepo        CalendaryRepository
+	analyticsRepo        AnalyticsRepository
+	currentSalePlayer    *Team
+	currentProspect      *Prospect
+	currentInjuredPlayer *Team
+	callCounter          int
+	injuryDays           *int
 }

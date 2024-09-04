@@ -21,6 +21,9 @@ var getPlayerByPlayerIdQuery string
 //go:embed sql/delete_player_from_team.sql
 var deletePlayerFromTeamQuery string
 
+//go:embed sql/update_player_data.sql
+var updatePlayerDataQuery string
+
 func NewRepository(db *sql.DB) (*repository, error) {
 	getTeamStmt, err := db.Prepare(getTeamQuery)
 	if err != nil {
@@ -44,6 +47,10 @@ func NewRepository(db *sql.DB) (*repository, error) {
 	if err != nil {
 		return nil, err
 	}
+	updatePlayerDataStmt, err := db.Prepare(updatePlayerDataQuery)
+	if err != nil {
+		return nil, err
+	}
 
 	return &repository{
 		db:                      db,
@@ -52,6 +59,7 @@ func NewRepository(db *sql.DB) (*repository, error) {
 		updatePlayerLinedStatus: updatePlayerLinedStatusStmt,
 		getPlayerByPlayerId:     getPlayerByPlayerIdStmt,
 		deletePlayerFromTeam:    deletePlayerFromTeamStmt,
+		updatePlayerData:        updatePlayerDataStmt,
 	}, nil
 }
 
@@ -62,4 +70,5 @@ type repository struct {
 	updatePlayerLinedStatus *sql.Stmt
 	getPlayerByPlayerId     *sql.Stmt
 	deletePlayerFromTeam    *sql.Stmt
+	updatePlayerData        *sql.Stmt
 }

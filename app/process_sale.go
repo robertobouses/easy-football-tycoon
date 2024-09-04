@@ -7,7 +7,7 @@ import (
 )
 
 func (a *AppService) ProcessSale() error {
-	player, err := a.GetRandomPlayerForSale()
+	player, err := a.GetRandomPlayer()
 	if err != nil {
 		return err
 	}
@@ -16,7 +16,6 @@ func (a *AppService) ProcessSale() error {
 	return nil
 }
 
-// TODO ROBERTO CREO QUE ESTE MÉTODO DE TRAER Y LUEGO HACER ALEATORIO ES MÁS ÓPTIMO QUE EL QUE LO HACE TODO EN REPO GetProspectRandomByAnalytics
 func (a *AppService) GetCurrentSalePlayer() (*Team, error) {
 	return a.currentSalePlayer, nil
 }
@@ -44,7 +43,8 @@ func (a *AppService) RejectSale(player Team) {
 	a.SetCurrentSalePlayer(nil)
 }
 
-func (a AppService) GetRandomPlayerForSale() (Team, error) {
+// TODO ROBERTO CREO QUE ESTE MÉTODO DE TRAER Y LUEGO HACER ALEATORIO ES MÁS ÓPTIMO QUE EL QUE LO HACE TODO EN REPO GetProspectRandomByAnalytics
+func (a AppService) GetRandomPlayer() (Team, error) {
 	players, err := a.teamRepo.GetTeam()
 	if err != nil {
 		log.Println("Error al extraer GetTeam:", err)

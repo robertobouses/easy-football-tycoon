@@ -28,6 +28,10 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 		a.SetCurrentProspect(nil)
 	}
 
+	if day.DayType != "injury" {
+		a.SetCurrentInjuredPlayer(nil)
+	}
+
 	log.Println("estasmos en GetResume con day type", day.DayType)
 
 	switch day.DayType {
@@ -45,7 +49,13 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 			return []Calendary{}, err
 		}
 	case "injury":
-		a.ProcessInjury()
+		player, err := a.ProcessInjury()
+		if err != nil {
+			log.Println("Error APP get_resume, ProcessInjury", err)
+			return []Calendary{}, err
+		}
+		log.Println("current injured player", player)
+
 	case "match":
 		a.ProcessMatch()
 	default:
