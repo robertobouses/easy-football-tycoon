@@ -17,9 +17,10 @@ func (a *AppService) ProcessInjury() (Team, error) {
 		return Team{}, err
 	}
 
-	a.SetCurrentInjuredPlayer(&player)
-
 	injuryDays := a.calculateInjurySeverity(analytics.Physiotherapy)
+	log.Println("injury Days son en ProcessInjury", injuryDays)
+	a.SetCurrentInjuredPlayer(&player, &injuryDays)
+
 	lined := false
 	a.teamRepo.UpdatePlayerData(player.PlayerId, nil, nil, nil, nil, nil, nil, nil, nil, &injuryDays, &lined)
 
@@ -55,6 +56,7 @@ func (a *AppService) calculateInjurySeverity(physiotherapy int) int {
 func (a *AppService) GetCurrentInjuredPlayer() (*Team, *int, error) {
 	return a.currentInjuredPlayer, a.injuryDays, nil
 }
-func (a *AppService) SetCurrentInjuredPlayer(player *Team) {
+func (a *AppService) SetCurrentInjuredPlayer(player *Team, injuryDays *int) {
 	a.currentInjuredPlayer = player
+	a.injuryDays = injuryDays
 }

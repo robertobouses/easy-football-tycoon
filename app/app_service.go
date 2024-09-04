@@ -71,6 +71,6 @@ type AppService struct {
 	currentSalePlayer    *Team
 	currentProspect      *Prospect
 	currentInjuredPlayer *Team
-	callCounter          int
 	injuryDays           *int
+	callCounter          int
 }

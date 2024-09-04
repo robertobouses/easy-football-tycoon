@@ -18,7 +18,7 @@ type App interface {
 	RejectPurchase(prospect *app.Prospect)
 	ProcessInjury() (app.Team, error)
 	GetCurrentInjuredPlayer() (*app.Team, *int, error)
-	SetCurrentInjuredPlayer(player *app.Team)
+	SetCurrentInjuredPlayer(*app.Team, *int)
 }
 
 func NewHandler(app App) Handler {

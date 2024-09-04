@@ -29,7 +29,7 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 	}
 
 	if day.DayType != "injury" {
-		a.SetCurrentInjuredPlayer(nil)
+		a.SetCurrentInjuredPlayer(nil, nil)
 	}
 
 	log.Println("estasmos en GetResume con day type", day.DayType)
