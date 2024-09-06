@@ -21,7 +21,7 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 	day := calendary[a.callCounter-1]
 
 	if day.DayType != "sale" {
-		a.SetCurrentSalePlayer(nil)
+		a.SetCurrentSalePlayer(nil, nil)
 	}
 
 	if day.DayType != "purchase" {

@@ -20,16 +20,17 @@ func (h Handler) GetResume(ctx *gin.Context) {
 		return
 	}
 
-	playerOnSale, err := h.app.GetCurrentSalePlayer()
+	playerOnSale, transferFeeReceived, err := h.app.GetCurrentSalePlayer()
 	if err != nil {
 		ctx.JSON(nethttp.StatusInternalServerError, gin.H{"error": "Error fetching current sale player"})
 		return
 	}
 	if playerOnSale != nil {
 		ctx.JSON(nethttp.StatusOK, gin.H{
-			"message":            "Player on sale",
-			"player":             playerOnSale,
-			"type calendary day": calendary,
+			"message":               "Player on sale",
+			"player":                playerOnSale,
+			"type calendary day":    calendary,
+			"Transfer fee received": transferFeeReceived,
 		})
 		return
 	}

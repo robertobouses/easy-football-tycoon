@@ -50,7 +50,12 @@ type AnalyticsRepository interface {
 	PostAnalytics(req Analytics) error
 }
 
-func NewApp(lineupRepository LineupRepository, teamRepository TeamRepository, rivalRepository RivalRepository, prospectRepository ProspectRepository, calendaryRepository CalendaryRepository, analyticsRepository AnalyticsRepository) AppService {
+type BankRepository interface {
+	PostTransactions(amount int, balance int, prospect string, transactionType string) error
+	GetBalance() (int, error)
+}
+
+func NewApp(lineupRepository LineupRepository, teamRepository TeamRepository, rivalRepository RivalRepository, prospectRepository ProspectRepository, calendaryRepository CalendaryRepository, analyticsRepository AnalyticsRepository, bankRepository BankRepository) AppService {
 	return AppService{
 		lineupRepo:    lineupRepository,
 		teamRepo:      teamRepository,
@@ -58,6 +63,7 @@ func NewApp(lineupRepository LineupRepository, teamRepository TeamRepository, ri
 		prospectRepo:  prospectRepository,
 		calendaryRepo: calendaryRepository,
 		analyticsRepo: analyticsRepository,
+		bankRepo:      bankRepository,
 	}
 }
 
@@ -68,9 +74,11 @@ type AppService struct {
 	prospectRepo         ProspectRepository
 	calendaryRepo        CalendaryRepository
 	analyticsRepo        AnalyticsRepository
+	bankRepo             BankRepository
 	currentSalePlayer    *Team
 	currentProspect      *Prospect
 	currentInjuredPlayer *Team
 	injuryDays           *int
+	transferFeeReceived  *int
 	callCounter          int
 }
