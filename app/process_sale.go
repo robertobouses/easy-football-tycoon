@@ -37,10 +37,21 @@ func (a *AppService) SetCurrentSalePlayer(player *Team, transferFeeReceived *int
 
 func (a *AppService) AcceptSale(player Team) error {
 	if a.transferFeeReceived == nil {
-		return errors.New("transfer fee is not set")
+		return ErrTransferNotFound
 	}
 
-	err := a.bankRepo.PostTransactions(*a.transferFeeReceived, 0, player.PlayerName, "sale")
+	balance, err := a.bankRepo.GetBalance()
+	if err != nil {
+		return ErrBalanceNotFound
+	}
+
+	amount := *a.transferFeeReceived
+	newBalance := balance + amount
+	log.Println("amount en APP", amount)
+	log.Println("balance inicial en APP", balance)
+	log.Println("new balance en APP", newBalance)
+
+	err = a.bankRepo.PostTransactions(amount, newBalance, player.PlayerName, "sale")
 	if err != nil {
 		return err
 	}

@@ -52,6 +52,7 @@ type AnalyticsRepository interface {
 
 type BankRepository interface {
 	PostTransactions(amount int, balance int, prospect string, transactionType string) error
+	GetBalance() (int, error)
 }
 
 func NewApp(lineupRepository LineupRepository, teamRepository TeamRepository, rivalRepository RivalRepository, prospectRepository ProspectRepository, calendaryRepository CalendaryRepository, analyticsRepository AnalyticsRepository, bankRepository BankRepository) AppService {
