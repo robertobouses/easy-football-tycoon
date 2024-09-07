@@ -12,10 +12,10 @@ type App interface {
 	ProcessMatch()
 	GetCurrentSalePlayer() (*app.Team, *int, error)
 	SetCurrentSalePlayer(*app.Team, *int)
-	GetCurrentProspect() (*app.Prospect, error)
-	SetCurrentProspect(prospect *app.Prospect)
-	AcceptPurchase(prospect *app.Prospect) error
-	RejectPurchase(prospect *app.Prospect)
+	GetCurrentSignings() (*app.Signings, error)
+	SetCurrentSignings(signings *app.Signings)
+	AcceptPurchase(signings *app.Signings) error
+	RejectPurchase(signings *app.Signings)
 	ProcessInjury() (app.Team, error)
 	GetCurrentInjuredPlayer() (*app.Team, *int, error)
 	SetCurrentInjuredPlayer(*app.Team, *int)

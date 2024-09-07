@@ -18,28 +18,28 @@ func (h Handler) PostPurchaseDecision(ctx *gin.Context) {
 		return
 	}
 
-	prospect, err := h.app.GetCurrentProspect()
-	log.Println("prospect en PostPurchaseDecision HTTP", prospect)
+	signings, err := h.app.GetCurrentSignings()
+	log.Println("signings en PostPurchaseDecision HTTP", signings)
 	if err != nil {
 		ctx.JSON(nethttp.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if prospect == nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "No prospect available"})
+	if signings == nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "No signings available"})
 		return
 	}
 
 	if decision.Accept {
-		err := h.app.AcceptPurchase(prospect)
+		err := h.app.AcceptPurchase(signings)
 		if err != nil {
 			ctx.JSON(nethttp.StatusInternalServerError, gin.H{"error": "Could not complete purchase"})
 			return
 		}
-		ctx.JSON(nethttp.StatusOK, gin.H{"message": "Prospect purchased successfully"})
+		ctx.JSON(nethttp.StatusOK, gin.H{"message": "Signings purchased successfully"})
 	} else {
-		h.app.RejectPurchase(prospect)
-		ctx.JSON(nethttp.StatusOK, gin.H{"message": "Prospect purchase rejected"})
+		h.app.RejectPurchase(signings)
+		ctx.JSON(nethttp.StatusOK, gin.H{"message": "Signings purchase rejected"})
 	}
 
-	h.app.SetCurrentProspect(nil)
+	h.app.SetCurrentSignings(nil)
 }

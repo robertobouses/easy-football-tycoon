@@ -1,12 +1,12 @@
-package prospect
+package signings
 
 import (
 	"github.com/robertobouses/easy-football-tycoon/app"
 )
 
 type App interface {
-	GetProspect() ([]app.Prospect, error)
-	PostProspect(app.Prospect) error
+	GetSignings() ([]app.Signings, error)
+	PostSignings(app.Signings) error
 }
 
 func NewHandler(app app.AppService) Handler {

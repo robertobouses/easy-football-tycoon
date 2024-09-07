@@ -25,7 +25,7 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 	}
 
 	if day.DayType != "purchase" {
-		a.SetCurrentProspect(nil)
+		a.SetCurrentSignings(nil)
 	}
 
 	if day.DayType != "injury" {
@@ -36,12 +36,12 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 
 	switch day.DayType {
 	case "purchase":
-		prospect, err := a.ProcessPurchase()
+		signings, err := a.ProcessPurchase()
 		if err != nil {
 			log.Println("Error en la compra:", err)
 			return []Calendary{}, err
 		}
-		log.Println("current prospect is en GetResume de APP:", prospect)
+		log.Println("current signings is en GetResume de APP:", signings)
 	case "sale":
 		err := a.ProcessSale()
 		if err != nil {

@@ -8,54 +8,54 @@ import (
 	"github.com/google/uuid"
 )
 
-func (a *AppService) ProcessPurchase() (Prospect, error) {
+func (a *AppService) ProcessPurchase() (Signings, error) {
 	analytics, err := a.analyticsRepo.GetAnalytics()
 	if err != nil {
 		log.Println("Error al extraer GetAnalytics", err)
-		return Prospect{}, err
+		return Signings{}, err
 	}
 
-	prospect, err := a.prospectRepo.GetProspectRandomByAnalytics(analytics.Scouting)
-	log.Println("Prospecto asignado en ProcessPurchase 1:", prospect)
+	signings, err := a.signingsRepo.GetSigningsRandomByAnalytics(analytics.Scouting)
+	log.Println("Signingso asignado en ProcessPurchase 1:", signings)
 	if err != nil {
-		log.Println("Error al extraer GetProspectRandomByAnalytics", err)
-		return Prospect{}, err
+		log.Println("Error al extraer GetSigningsRandomByAnalytics", err)
+		return Signings{}, err
 	}
 
-	if prospect.ProspectId == uuid.Nil {
-		log.Println("No se encontró un prospecto válido")
-		return Prospect{}, nil
+	if signings.SigningsId == uuid.Nil {
+		log.Println("No se encontró un signingso válido")
+		return Signings{}, nil
 	}
 
-	a.SetCurrentProspect(&prospect)
-	log.Println("Prospecto asignado en ProcessPurchase 2:", prospect)
+	a.SetCurrentSignings(&signings)
+	log.Println("Signingso asignado en ProcessPurchase 2:", signings)
 
-	return prospect, nil
+	return signings, nil
 }
 
-func (a *AppService) SetCurrentProspect(prospect *Prospect) {
-	if prospect == nil || prospect.ProspectId == uuid.Nil {
-		log.Println("Prospecto no válido, no se asignará. Prospecto:", prospect)
-		a.currentProspect = nil
+func (a *AppService) SetCurrentSignings(signings *Signings) {
+	if signings == nil || signings.SigningsId == uuid.Nil {
+		log.Println("Signingso no válido, no se asignará. Signingso:", signings)
+		a.currentSignings = nil
 	} else {
-		log.Println("Prospecto asignado en SetCurrentProspect:", *prospect)
-		a.currentProspect = prospect
+		log.Println("Signingso asignado en SetCurrentSignings:", *signings)
+		a.currentSignings = signings
 	}
 }
 
-func (a *AppService) GetCurrentProspect() (*Prospect, error) {
-	log.Println("a.currentProspect en GetCurrentProspect 1:", a.currentProspect)
-	if a.currentProspect == nil {
-		log.Println("a.currentProspect es nil en GetCurrentProspect 2")
+func (a *AppService) GetCurrentSignings() (*Signings, error) {
+	log.Println("a.currentSignings en GetCurrentSignings 1:", a.currentSignings)
+	if a.currentSignings == nil {
+		log.Println("a.currentSignings es nil en GetCurrentSignings 2")
 		return nil, nil
 	}
-	log.Println("Prospecto actual en GetCurrentProspect 3:", *a.currentProspect)
-	return a.currentProspect, nil
+	log.Println("Signingso actual en GetCurrentSignings 3:", *a.currentSignings)
+	return a.currentSignings, nil
 }
 
-func (a *AppService) AcceptPurchase(prospect *Prospect) error {
+func (a *AppService) AcceptPurchase(signings *Signings) error {
 
-	initialFee := prospect.Fee
+	initialFee := signings.Fee
 
 	paid, err := a.ProcessTransferFeePaid(initialFee)
 	if err != nil {
@@ -69,29 +69,29 @@ func (a *AppService) AcceptPurchase(prospect *Prospect) error {
 
 	newBalance := initalBalance - paid
 
-	a.bankRepo.PostTransactions(paid, newBalance, prospect.ProspectName, "purchase")
+	a.bankRepo.PostTransactions(paid, newBalance, signings.SigningsName, "purchase")
 
-	team := ConvertProspectToTeam(prospect)
+	team := ConvertSigningsToTeam(signings)
 	a.teamRepo.PostTeam(team)
 	return nil
 }
 
-func (a *AppService) RejectPurchase(prospect *Prospect) {
-	a.SetCurrentProspect(nil)
+func (a *AppService) RejectPurchase(signings *Signings) {
+	a.SetCurrentSignings(nil)
 }
 
-func ConvertProspectToTeam(prospect *Prospect) Team {
+func ConvertSigningsToTeam(signings *Signings) Team {
 	return Team{
-		PlayerId:   prospect.ProspectId,
-		PlayerName: prospect.ProspectName,
-		Position:   prospect.Position,
-		Age:        prospect.Age,
-		Fee:        prospect.Fee,
-		Salary:     prospect.Salary,
-		Technique:  prospect.Technique,
-		Mental:     prospect.Mental,
-		Physique:   prospect.Physique,
-		InjuryDays: prospect.InjuryDays,
+		PlayerId:   signings.SigningsId,
+		PlayerName: signings.SigningsName,
+		Position:   signings.Position,
+		Age:        signings.Age,
+		Fee:        signings.Fee,
+		Salary:     signings.Salary,
+		Technique:  signings.Technique,
+		Mental:     signings.Mental,
+		Physique:   signings.Physique,
+		InjuryDays: signings.InjuryDays,
 		Lined:      false,
 	}
 }

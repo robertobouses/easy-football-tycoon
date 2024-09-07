@@ -1,6 +1,6 @@
 SELECT
-			prospectid,
-			prospectname,
+			signingsid,
+			signingsname,
 			position,
 			age,
 			fee,
@@ -9,10 +9,9 @@ SELECT
 			mental,
 			physique,
 			injurydays,
-			job,
 			rarity
 		FROM
-			eft.prospect
+			eft.signings
 		WHERE
 			$1 > rarity
 		ORDER BY

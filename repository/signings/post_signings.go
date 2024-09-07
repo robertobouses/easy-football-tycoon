@@ -1,4 +1,4 @@
-package prospect
+package signings
 
 import (
 	"log"
@@ -6,9 +6,9 @@ import (
 	"github.com/robertobouses/easy-football-tycoon/app"
 )
 
-func (r *repository) PostProspect(req app.Prospect) error {
-	_, err := r.postProspect.Exec(
-		req.ProspectName,
+func (r *repository) PostSignings(req app.Signings) error {
+	_, err := r.postSignings.Exec(
+		req.SigningsName,
 		req.Position,
 		req.Age,
 		req.Fee,
@@ -17,12 +17,11 @@ func (r *repository) PostProspect(req app.Prospect) error {
 		req.Mental,
 		req.Physique,
 		req.InjuryDays,
-		req.Job,
 		req.Rarity,
 	)
 
 	if err != nil {
-		log.Print("Error en PostProspect repo", err)
+		log.Print("Error en PostSignings repo", err)
 		return err
 	}
 	log.Println("Después de ejecutar la consulta preparada")

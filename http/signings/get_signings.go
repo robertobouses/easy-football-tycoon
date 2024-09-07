@@ -1,4 +1,4 @@
-package prospect
+package signings
 
 import (
 	nethttp "net/http"
@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h Handler) GetProspect(ctx *gin.Context) {
-	player, err := h.app.GetProspect()
+func (h Handler) GetSignings(ctx *gin.Context) {
+	player, err := h.app.GetSignings()
 	if err != nil {
 		ctx.JSON(nethttp.StatusBadRequest, gin.H{"error": err.Error()})
 	}

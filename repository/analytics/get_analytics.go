@@ -13,12 +13,19 @@ func (r *repository) GetAnalytics() (app.Analytics, error) {
 	var analytics app.Analytics
 	if err := row.Scan(
 		&analytics.AnalyticsId,
+		&analytics.Training,
 		&analytics.Finances,
 		&analytics.Scouting,
 		&analytics.Physiotherapy,
+		&analytics.TotalSalaries,
+		&analytics.TotalTraining,
 		&analytics.TotalFinances,
 		&analytics.TotalScouting,
 		&analytics.TotalPhysiotherapy,
+		&analytics.TrainingStaffCount,
+		&analytics.FinanceStaffCount,
+		&analytics.ScoutingStaffCount,
+		&analytics.PhysiotherapyStaffCount,
 	); err != nil {
 		if err == sql.ErrNoRows {
 			log.Printf("No se encontraron datos GetAnalytics")

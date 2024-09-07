@@ -10,9 +10,9 @@ import (
 	analyticsServer "github.com/robertobouses/easy-football-tycoon/http/analytics"
 	calendaryServer "github.com/robertobouses/easy-football-tycoon/http/calendary"
 	"github.com/robertobouses/easy-football-tycoon/http/lineup"
-	prospectServer "github.com/robertobouses/easy-football-tycoon/http/prospect"
 	resumeServer "github.com/robertobouses/easy-football-tycoon/http/resume"
 	rivalServer "github.com/robertobouses/easy-football-tycoon/http/rival"
+	signingsServer "github.com/robertobouses/easy-football-tycoon/http/signings"
 	staffServer "github.com/robertobouses/easy-football-tycoon/http/staff"
 	"github.com/robertobouses/easy-football-tycoon/http/team"
 	"github.com/robertobouses/easy-football-tycoon/internal"
@@ -20,8 +20,8 @@ import (
 	bankRepository "github.com/robertobouses/easy-football-tycoon/repository/bank"
 	calendaryRepository "github.com/robertobouses/easy-football-tycoon/repository/calendary"
 	lineupRepository "github.com/robertobouses/easy-football-tycoon/repository/lineup"
-	prospectRepository "github.com/robertobouses/easy-football-tycoon/repository/prospect"
 	rivalRepository "github.com/robertobouses/easy-football-tycoon/repository/rival"
+	signingsRepository "github.com/robertobouses/easy-football-tycoon/repository/signings"
 	staffRepository "github.com/robertobouses/easy-football-tycoon/repository/staff"
 	teamRepository "github.com/robertobouses/easy-football-tycoon/repository/team"
 )
@@ -65,7 +65,7 @@ func main() {
 		panic(err)
 	}
 
-	prospectRepo, err := prospectRepository.NewRepository(db)
+	signingsRepo, err := signingsRepository.NewRepository(db)
 	if err != nil {
 		panic(err)
 	}
@@ -89,7 +89,7 @@ func main() {
 		panic(err)
 	}
 
-	app := app.NewApp(lineupRepo, teamRepo, rivalRepo, prospectRepo, staffRepo, calendaryRepo, analyticsRepo, bankRepo)
+	app := app.NewApp(lineupRepo, teamRepo, rivalRepo, signingsRepo, staffRepo, calendaryRepo, analyticsRepo, bankRepo)
 
 	lineupHandler := lineup.NewHandler(app)
 
@@ -97,7 +97,7 @@ func main() {
 
 	rivalHandler := rivalServer.NewHandler(app)
 
-	prospectHandler := prospectServer.NewHandler(app)
+	signingsHandler := signingsServer.NewHandler(app)
 
 	staffHandler := staffServer.NewHandler(app)
 
@@ -107,6 +107,6 @@ func main() {
 
 	resumeHandler := resumeServer.NewHandler(&app)
 
-	s := http.NewServer(lineupHandler, teamHandler, rivalHandler, prospectHandler, staffHandler, calendaryHandler, analyticsHandler, resumeHandler)
+	s := http.NewServer(lineupHandler, teamHandler, rivalHandler, signingsHandler, staffHandler, calendaryHandler, analyticsHandler, resumeHandler)
 	s.Run("8080")
 }

@@ -68,7 +68,7 @@ func (a *AppService) RejectSale(player Team) {
 	a.SetCurrentSalePlayer(nil, nil)
 }
 
-// TODO ROBERTO CREO QUE ESTE MÉTODO DE TRAER Y LUEGO HACER ALEATORIO ES MÁS ÓPTIMO QUE EL QUE LO HACE TODO EN REPO GetProspectRandomByAnalytics
+// TODO ROBERTO CREO QUE ESTE MÉTODO DE TRAER Y LUEGO HACER ALEATORIO ES MÁS ÓPTIMO QUE EL QUE LO HACE TODO EN REPO GetSigningsRandomByAnalytics
 func (a *AppService) GetRandomPlayer() (Team, error) {
 	players, err := a.teamRepo.GetTeam()
 	if err != nil {

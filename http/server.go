@@ -11,9 +11,9 @@ import (
 	"github.com/robertobouses/easy-football-tycoon/http/analytics"
 	"github.com/robertobouses/easy-football-tycoon/http/calendary"
 	"github.com/robertobouses/easy-football-tycoon/http/lineup"
-	prospectServer "github.com/robertobouses/easy-football-tycoon/http/prospect"
 	"github.com/robertobouses/easy-football-tycoon/http/resume"
 	rivalServer "github.com/robertobouses/easy-football-tycoon/http/rival"
+	signingsServer "github.com/robertobouses/easy-football-tycoon/http/signings"
 	"github.com/robertobouses/easy-football-tycoon/http/staff"
 	"github.com/robertobouses/easy-football-tycoon/http/team"
 )
@@ -22,7 +22,7 @@ type Server struct {
 	lineup    lineup.Handler
 	team      team.Handler
 	rival     rivalServer.Handler
-	prospect  prospectServer.Handler
+	signings  signingsServer.Handler
 	staff     staff.Handler
 	calendary calendary.Handler
 	analytics analytics.Handler
@@ -34,7 +34,7 @@ func NewServer(
 	lineup lineup.Handler,
 	team team.Handler,
 	rival rivalServer.Handler,
-	prospect prospectServer.Handler,
+	signings signingsServer.Handler,
 	staff staff.Handler,
 	calendary calendary.Handler,
 	analytics analytics.Handler,
@@ -45,7 +45,7 @@ func NewServer(
 		lineup:    lineup,
 		team:      team,
 		rival:     rival,
-		prospect:  prospect,
+		signings:  signings,
 		staff:     staff,
 		calendary: calendary,
 		analytics: analytics,
@@ -80,9 +80,9 @@ func (s *Server) Run(port string) error {
 	rival.GET("", s.rival.GetRival)
 	rival.POST("/team", s.rival.PostRival)
 
-	prospect := s.engine.Group("/prospect")
-	prospect.GET("", s.prospect.GetProspect)
-	prospect.POST("/person", s.prospect.PostProspect)
+	signings := s.engine.Group("/signings")
+	signings.GET("", s.signings.GetSignings)
+	signings.POST("/person", s.signings.PostSignings)
 
 	staff := s.engine.Group("/staff")
 	staff.POST("/create", s.staff.PostStaff)

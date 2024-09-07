@@ -2,9 +2,9 @@ package app
 
 import "github.com/google/uuid"
 
-type Prospect struct {
-	ProspectId   uuid.UUID
-	ProspectName string
+type Signings struct {
+	SigningsId   uuid.UUID
+	SigningsName string
 	Position     string
 	Age          int
 	Fee          int
@@ -13,8 +13,5 @@ type Prospect struct {
 	Mental       int
 	Physique     int
 	InjuryDays   int
-	Job          string
 	Rarity       int
 }
-
-//TODO ROBERTO JOB PUEDE SER REDUNDANTE CON POSITION
