@@ -40,6 +40,11 @@ type ProspectRepository interface {
 	GetProspectRandomByAnalytics(scouting int) (Prospect, error)
 }
 
+type StaffRepository interface {
+	PostStaff(req Staff) error
+	//GetProspectRandomByAnalytics(scouting int) (Prospect, error)
+}
+
 type CalendaryRepository interface {
 	GetCalendary() ([]Calendary, error)
 	PostCalendary(calendary []string) error
@@ -55,12 +60,13 @@ type BankRepository interface {
 	GetBalance() (int, error)
 }
 
-func NewApp(lineupRepository LineupRepository, teamRepository TeamRepository, rivalRepository RivalRepository, prospectRepository ProspectRepository, calendaryRepository CalendaryRepository, analyticsRepository AnalyticsRepository, bankRepository BankRepository) AppService {
+func NewApp(lineupRepository LineupRepository, teamRepository TeamRepository, rivalRepository RivalRepository, prospectRepository ProspectRepository, staffRepository StaffRepository, calendaryRepository CalendaryRepository, analyticsRepository AnalyticsRepository, bankRepository BankRepository) AppService {
 	return AppService{
 		lineupRepo:    lineupRepository,
 		teamRepo:      teamRepository,
 		rivalRepo:     rivalRepository,
 		prospectRepo:  prospectRepository,
+		staffRepo:     staffRepository,
 		calendaryRepo: calendaryRepository,
 		analyticsRepo: analyticsRepository,
 		bankRepo:      bankRepository,
@@ -72,6 +78,7 @@ type AppService struct {
 	teamRepo             TeamRepository
 	rivalRepo            RivalRepository
 	prospectRepo         ProspectRepository
+	staffRepo            StaffRepository
 	calendaryRepo        CalendaryRepository
 	analyticsRepo        AnalyticsRepository
 	bankRepo             BankRepository

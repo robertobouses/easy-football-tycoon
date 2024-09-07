@@ -14,6 +14,7 @@ import (
 	prospectServer "github.com/robertobouses/easy-football-tycoon/http/prospect"
 	"github.com/robertobouses/easy-football-tycoon/http/resume"
 	rivalServer "github.com/robertobouses/easy-football-tycoon/http/rival"
+	"github.com/robertobouses/easy-football-tycoon/http/staff"
 	"github.com/robertobouses/easy-football-tycoon/http/team"
 )
 
@@ -22,6 +23,7 @@ type Server struct {
 	team      team.Handler
 	rival     rivalServer.Handler
 	prospect  prospectServer.Handler
+	staff     staff.Handler
 	calendary calendary.Handler
 	analytics analytics.Handler
 	resume    resume.Handler
@@ -33,6 +35,7 @@ func NewServer(
 	team team.Handler,
 	rival rivalServer.Handler,
 	prospect prospectServer.Handler,
+	staff staff.Handler,
 	calendary calendary.Handler,
 	analytics analytics.Handler,
 	resume resume.Handler,
@@ -43,6 +46,7 @@ func NewServer(
 		team:      team,
 		rival:     rival,
 		prospect:  prospect,
+		staff:     staff,
 		calendary: calendary,
 		analytics: analytics,
 		resume:    resume,
@@ -79,6 +83,9 @@ func (s *Server) Run(port string) error {
 	prospect := s.engine.Group("/prospect")
 	prospect.GET("", s.prospect.GetProspect)
 	prospect.POST("/person", s.prospect.PostProspect)
+
+	staff := s.engine.Group("/staff")
+	staff.POST("/create", s.staff.PostStaff)
 
 	calendary := s.engine.Group("/calendary")
 	calendary.GET("", s.calendary.GetCalendary)
