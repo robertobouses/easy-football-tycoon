@@ -39,7 +39,7 @@ func (h Handler) PostSaleDecision(ctx *gin.Context) {
 	}
 	log.Printf("Jugador en venta: %+v, Decisión: %v", player, decision.Accept)
 	if decision.Accept {
-		err := h.app.AcceptSale(*player)
+		err := h.app.AcceptPlayerSale(*player)
 		if err != nil {
 			log.Printf("Error al aceptar la venta del jugador: %v", err)
 			ctx.JSON(nethttp.StatusInternalServerError, gin.H{"error": "Sale could not be completed"})
@@ -51,7 +51,7 @@ func (h Handler) PostSaleDecision(ctx *gin.Context) {
 			"sold by": transferFeeReceived,
 			"message": "Player sold successfully"})
 	} else {
-		h.app.RejectSale(*player)
+		h.app.RejectPlayerSale(*player)
 		log.Printf("Venta rechazada, jugador no vendido")
 		ctx.JSON(nethttp.StatusOK, gin.H{"message": "Player sale rejected"})
 	}

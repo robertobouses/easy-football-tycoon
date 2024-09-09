@@ -16,18 +16,20 @@ import (
 	signingsServer "github.com/robertobouses/easy-football-tycoon/http/signings"
 	"github.com/robertobouses/easy-football-tycoon/http/staff"
 	"github.com/robertobouses/easy-football-tycoon/http/team"
+	"github.com/robertobouses/easy-football-tycoon/http/team_staff"
 )
 
 type Server struct {
-	lineup    lineup.Handler
-	team      team.Handler
-	rival     rivalServer.Handler
-	signings  signingsServer.Handler
-	staff     staff.Handler
-	calendary calendary.Handler
-	analytics analytics.Handler
-	resume    resume.Handler
-	engine    *gin.Engine
+	lineup     lineup.Handler
+	team       team.Handler
+	rival      rivalServer.Handler
+	signings   signingsServer.Handler
+	staff      staff.Handler
+	team_staff team_staff.Handler
+	calendary  calendary.Handler
+	analytics  analytics.Handler
+	resume     resume.Handler
+	engine     *gin.Engine
 }
 
 func NewServer(
@@ -36,21 +38,23 @@ func NewServer(
 	rival rivalServer.Handler,
 	signings signingsServer.Handler,
 	staff staff.Handler,
+	team_staff team_staff.Handler,
 	calendary calendary.Handler,
 	analytics analytics.Handler,
 	resume resume.Handler,
 
 ) Server {
 	return Server{
-		lineup:    lineup,
-		team:      team,
-		rival:     rival,
-		signings:  signings,
-		staff:     staff,
-		calendary: calendary,
-		analytics: analytics,
-		resume:    resume,
-		engine:    gin.Default(),
+		lineup:     lineup,
+		team:       team,
+		rival:      rival,
+		signings:   signings,
+		staff:      staff,
+		team_staff: team_staff,
+		calendary:  calendary,
+		analytics:  analytics,
+		resume:     resume,
+		engine:     gin.Default(),
 	}
 }
 
@@ -86,6 +90,10 @@ func (s *Server) Run(port string) error {
 
 	staff := s.engine.Group("/staff")
 	staff.POST("/create", s.staff.PostStaff)
+
+	team_staff := s.engine.Group("/team_staff")
+	team_staff.POST("/create", s.team_staff.PostTeamStaff)
+	team_staff.GET("/", s.team_staff.GetTeamStaff)
 
 	calendary := s.engine.Group("/calendary")
 	calendary.GET("", s.calendary.GetCalendary)

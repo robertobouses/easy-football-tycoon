@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func (a *AppService) ProcessSale() error {
+func (a *AppService) ProcessPlayerSale() error {
 	player, err := a.GetRandomPlayer()
 	if err != nil {
 		return err
@@ -27,15 +27,15 @@ func (a *AppService) ProcessSale() error {
 }
 
 func (a *AppService) GetCurrentSalePlayer() (*Team, *int, error) {
-	return a.currentSalePlayer, a.transferFeeReceived, nil
+	return a.currentPlayerOnSale, a.transferFeeReceived, nil
 }
 
 func (a *AppService) SetCurrentSalePlayer(player *Team, transferFeeReceived *int) {
-	a.currentSalePlayer = player
+	a.currentPlayerOnSale = player
 	a.transferFeeReceived = transferFeeReceived
 }
 
-func (a *AppService) AcceptSale(player Team) error {
+func (a *AppService) AcceptPlayerSale(player Team) error {
 	if a.transferFeeReceived == nil {
 		return ErrTransferNotFound
 	}
@@ -64,7 +64,7 @@ func (a *AppService) AcceptSale(player Team) error {
 	return nil
 }
 
-func (a *AppService) RejectSale(player Team) {
+func (a *AppService) RejectPlayerSale(player Team) {
 	a.SetCurrentSalePlayer(nil, nil)
 }
 

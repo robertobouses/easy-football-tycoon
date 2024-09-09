@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (a *AppService) ProcessPurchase() (Signings, error) {
+func (a *AppService) ProcessPlayerSigning() (Signings, error) {
 	analytics, err := a.analyticsRepo.GetAnalytics()
 	if err != nil {
 		log.Println("Error al extraer GetAnalytics", err)
@@ -16,7 +16,7 @@ func (a *AppService) ProcessPurchase() (Signings, error) {
 	}
 
 	signings, err := a.signingsRepo.GetSigningsRandomByAnalytics(analytics.Scouting)
-	log.Println("Signingso asignado en ProcessPurchase 1:", signings)
+	log.Println("Signingso asignado en ProcessPlayerSigning 1:", signings)
 	if err != nil {
 		log.Println("Error al extraer GetSigningsRandomByAnalytics", err)
 		return Signings{}, err
@@ -27,33 +27,33 @@ func (a *AppService) ProcessPurchase() (Signings, error) {
 		return Signings{}, nil
 	}
 
-	a.SetCurrentSignings(&signings)
-	log.Println("Signingso asignado en ProcessPurchase 2:", signings)
+	a.SetCurrentSigningPlayer(&signings)
+	log.Println("Signingso asignado en ProcessPlayerSigning 2:", signings)
 
 	return signings, nil
 }
 
-func (a *AppService) SetCurrentSignings(signings *Signings) {
+func (a *AppService) SetCurrentSigningPlayer(signings *Signings) {
 	if signings == nil || signings.SigningsId == uuid.Nil {
 		log.Println("Signingso no válido, no se asignará. Signingso:", signings)
-		a.currentSignings = nil
+		a.currentPlayerSigning = nil
 	} else {
-		log.Println("Signingso asignado en SetCurrentSignings:", *signings)
-		a.currentSignings = signings
+		log.Println("Signingso asignado en SetCurrentSigningPlayer:", *signings)
+		a.currentPlayerSigning = signings
 	}
 }
 
-func (a *AppService) GetCurrentSignings() (*Signings, error) {
-	log.Println("a.currentSignings en GetCurrentSignings 1:", a.currentSignings)
-	if a.currentSignings == nil {
-		log.Println("a.currentSignings es nil en GetCurrentSignings 2")
+func (a *AppService) GetCurrentPlayerSigning() (*Signings, error) {
+	log.Println("a.currentPlayerSigning en GetCurrentPlayerSigning 1:", a.currentPlayerSigning)
+	if a.currentPlayerSigning == nil {
+		log.Println("a.currentPlayerSigning es nil en GetCurrentPlayerSigning 2")
 		return nil, nil
 	}
-	log.Println("Signingso actual en GetCurrentSignings 3:", *a.currentSignings)
-	return a.currentSignings, nil
+	log.Println("Signingso actual en GetCurrentPlayerSigning 3:", *a.currentPlayerSigning)
+	return a.currentPlayerSigning, nil
 }
 
-func (a *AppService) AcceptPurchase(signings *Signings) error {
+func (a *AppService) AcceptPlayerSigning(signings *Signings) error {
 
 	initialFee := signings.Fee
 
@@ -69,15 +69,15 @@ func (a *AppService) AcceptPurchase(signings *Signings) error {
 
 	newBalance := initalBalance - paid
 
-	a.bankRepo.PostTransactions(paid, newBalance, signings.SigningsName, "purchase")
+	a.bankRepo.PostTransactions(paid, newBalance, signings.SigningsName, "Player Signing")
 
 	team := ConvertSigningsToTeam(signings)
 	a.teamRepo.PostTeam(team)
 	return nil
 }
 
-func (a *AppService) RejectPurchase(signings *Signings) {
-	a.SetCurrentSignings(nil)
+func (a *AppService) RejectPlayerSigning(signings *Signings) {
+	a.SetCurrentSigningPlayer(nil)
 }
 
 func ConvertSigningsToTeam(signings *Signings) Team {

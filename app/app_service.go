@@ -42,7 +42,14 @@ type SigningsRepository interface {
 
 type StaffRepository interface {
 	PostStaff(req Staff) error
-	//GetSigningsRandomByAnalytics(scouting int) (Signings, error)
+	GetStaff() ([]Staff, error)
+	GetStaffRandomByAnalytics(scouting int) (Staff, error)
+}
+
+type TeamStaffRepository interface {
+	PostTeamStaff(req Staff) error
+	GetTeamStaff() ([]Staff, error)
+	DeleteTeamStaff(staff Staff) error
 }
 
 type CalendaryRepository interface {
@@ -60,13 +67,14 @@ type BankRepository interface {
 	GetBalance() (int, error)
 }
 
-func NewApp(lineupRepository LineupRepository, teamRepository TeamRepository, rivalRepository RivalRepository, signingsRepository SigningsRepository, staffRepository StaffRepository, calendaryRepository CalendaryRepository, analyticsRepository AnalyticsRepository, bankRepository BankRepository) AppService {
+func NewApp(lineupRepository LineupRepository, teamRepository TeamRepository, rivalRepository RivalRepository, signingsRepository SigningsRepository, staffRepository StaffRepository, teamStaffRepository TeamStaffRepository, calendaryRepository CalendaryRepository, analyticsRepository AnalyticsRepository, bankRepository BankRepository) AppService {
 	return AppService{
 		lineupRepo:    lineupRepository,
 		teamRepo:      teamRepository,
 		rivalRepo:     rivalRepository,
 		signingsRepo:  signingsRepository,
 		staffRepo:     staffRepository,
+		teamStaffRepo: teamStaffRepository,
 		calendaryRepo: calendaryRepository,
 		analyticsRepo: analyticsRepository,
 		bankRepo:      bankRepository,
@@ -79,12 +87,15 @@ type AppService struct {
 	rivalRepo            RivalRepository
 	signingsRepo         SigningsRepository
 	staffRepo            StaffRepository
+	teamStaffRepo        TeamStaffRepository
 	calendaryRepo        CalendaryRepository
 	analyticsRepo        AnalyticsRepository
 	bankRepo             BankRepository
-	currentSalePlayer    *Team
-	currentSignings      *Signings
+	currentPlayerOnSale  *Team
+	currentPlayerSigning *Signings
 	currentInjuredPlayer *Team
+	currentStaffSigning  *Staff
+	currentStaffOnSale   *Staff
 	injuryDays           *int
 	transferFeeReceived  *int
 	callCounter          int

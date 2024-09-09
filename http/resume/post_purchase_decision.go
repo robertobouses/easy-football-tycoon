@@ -18,7 +18,7 @@ func (h Handler) PostPurchaseDecision(ctx *gin.Context) {
 		return
 	}
 
-	signings, err := h.app.GetCurrentSignings()
+	signings, err := h.app.GetCurrentPlayerSigning()
 	log.Println("signings en PostPurchaseDecision HTTP", signings)
 	if err != nil {
 		ctx.JSON(nethttp.StatusBadRequest, gin.H{"error": err.Error()})
@@ -30,16 +30,16 @@ func (h Handler) PostPurchaseDecision(ctx *gin.Context) {
 	}
 
 	if decision.Accept {
-		err := h.app.AcceptPurchase(signings)
+		err := h.app.AcceptPlayerSigning(signings)
 		if err != nil {
 			ctx.JSON(nethttp.StatusInternalServerError, gin.H{"error": "Could not complete purchase"})
 			return
 		}
 		ctx.JSON(nethttp.StatusOK, gin.H{"message": "Signings purchased successfully"})
 	} else {
-		h.app.RejectPurchase(signings)
+		h.app.RejectPlayerSigning(signings)
 		ctx.JSON(nethttp.StatusOK, gin.H{"message": "Signings purchase rejected"})
 	}
 
-	h.app.SetCurrentSignings(nil)
+	h.app.SetCurrentSigningPlayer(nil)
 }

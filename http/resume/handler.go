@@ -6,19 +6,30 @@ import (
 
 type App interface {
 	GetResume() ([]app.Calendary, error)
-	ProcessSale() error
-	AcceptSale(player app.Team) error
-	RejectSale(player app.Team)
+	ProcessPlayerSale() error
+	AcceptPlayerSale(player app.Team) error
+	RejectPlayerSale(player app.Team)
+
 	ProcessMatch()
+
 	GetCurrentSalePlayer() (*app.Team, *int, error)
 	SetCurrentSalePlayer(*app.Team, *int)
-	GetCurrentSignings() (*app.Signings, error)
-	SetCurrentSignings(signings *app.Signings)
-	AcceptPurchase(signings *app.Signings) error
-	RejectPurchase(signings *app.Signings)
+	GetCurrentPlayerSigning() (*app.Signings, error)
+	SetCurrentSigningPlayer(signings *app.Signings)
+
+	AcceptPlayerSigning(signings *app.Signings) error
+	RejectPlayerSigning(signings *app.Signings)
+
 	ProcessInjury() (app.Team, error)
+
 	GetCurrentInjuredPlayer() (*app.Team, *int, error)
 	SetCurrentInjuredPlayer(*app.Team, *int)
+
+	SetCurrentStaffSigning(staffSigning *app.Staff)
+	GetCurrentStaffSigning() (*app.Staff, error)
+	AcceptStaffSigning(staff *app.Staff) error
+	RejectStaffSinging(staff *app.Staff)
+	GetCurrentStaffSale() (*app.Staff, *int, error)
 }
 
 func NewHandler(app App) Handler {

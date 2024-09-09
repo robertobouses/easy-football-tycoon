@@ -1,0 +1,14 @@
+SELECT  
+    	staffid,
+		staffname,
+		job,
+		age,
+		fee,
+		salary,
+		training,
+		finances,
+		scouting,
+		physiotherapy,
+		rarity
+FROM
+    eft.staff

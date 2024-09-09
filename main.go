@@ -15,6 +15,7 @@ import (
 	signingsServer "github.com/robertobouses/easy-football-tycoon/http/signings"
 	staffServer "github.com/robertobouses/easy-football-tycoon/http/staff"
 	"github.com/robertobouses/easy-football-tycoon/http/team"
+	teamStaffServer "github.com/robertobouses/easy-football-tycoon/http/team_staff"
 	"github.com/robertobouses/easy-football-tycoon/internal"
 	analyticsRepository "github.com/robertobouses/easy-football-tycoon/repository/analytics"
 	bankRepository "github.com/robertobouses/easy-football-tycoon/repository/bank"
@@ -24,6 +25,7 @@ import (
 	signingsRepository "github.com/robertobouses/easy-football-tycoon/repository/signings"
 	staffRepository "github.com/robertobouses/easy-football-tycoon/repository/staff"
 	teamRepository "github.com/robertobouses/easy-football-tycoon/repository/team"
+	teamStaffRepository "github.com/robertobouses/easy-football-tycoon/repository/team_staff"
 )
 
 func main() {
@@ -74,6 +76,11 @@ func main() {
 		panic(err)
 	}
 
+	teamStaffRepo, err := teamStaffRepository.NewRepository(db)
+	if err != nil {
+		panic(err)
+	}
+
 	calendaryRepo, err := calendaryRepository.NewRepository(db)
 	if err != nil {
 		panic(err)
@@ -89,7 +96,7 @@ func main() {
 		panic(err)
 	}
 
-	app := app.NewApp(lineupRepo, teamRepo, rivalRepo, signingsRepo, staffRepo, calendaryRepo, analyticsRepo, bankRepo)
+	app := app.NewApp(lineupRepo, teamRepo, rivalRepo, signingsRepo, staffRepo, teamStaffRepo, calendaryRepo, analyticsRepo, bankRepo)
 
 	lineupHandler := lineup.NewHandler(app)
 
@@ -101,12 +108,14 @@ func main() {
 
 	staffHandler := staffServer.NewHandler(app)
 
+	teamStaffHandler := teamStaffServer.NewHandler(app)
+
 	calendaryHandler := calendaryServer.NewHandler(app)
 
 	analyticsHandler := analyticsServer.NewHandler(app)
 
 	resumeHandler := resumeServer.NewHandler(&app)
 
-	s := http.NewServer(lineupHandler, teamHandler, rivalHandler, signingsHandler, staffHandler, calendaryHandler, analyticsHandler, resumeHandler)
+	s := http.NewServer(lineupHandler, teamHandler, rivalHandler, signingsHandler, staffHandler, teamStaffHandler, calendaryHandler, analyticsHandler, resumeHandler)
 	s.Run("8080")
 }
