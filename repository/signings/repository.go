@@ -15,6 +15,9 @@ var postSigningsQuery string
 //go:embed sql/get_signings_random_by_analytics.sql
 var getSigningsRandomByAnalyticsQuery string
 
+//go:embed sql/delete_signing.sql
+var deleteSigningQuery string
+
 func NewRepository(db *sql.DB) (*repository, error) {
 	getSigningsStmt, err := db.Prepare(getSigningsQuery)
 	if err != nil {
@@ -28,12 +31,17 @@ func NewRepository(db *sql.DB) (*repository, error) {
 	if err != nil {
 		return nil, err
 	}
+	deleteSigningStmt, err := db.Prepare(deleteSigningQuery)
+	if err != nil {
+		return nil, err
+	}
 
 	return &repository{
 		db:                           db,
 		getSignings:                  getSigningsStmt,
 		postSignings:                 postSigningsStmt,
 		getSigningsRandomByAnalytics: getSigningsRandomByAnalyticsStmt,
+		deleteSigning:                deleteSigningStmt,
 	}, nil
 }
 
@@ -42,4 +50,5 @@ type repository struct {
 	getSignings                  *sql.Stmt
 	postSignings                 *sql.Stmt
 	getSigningsRandomByAnalytics *sql.Stmt
+	deleteSigning                *sql.Stmt
 }

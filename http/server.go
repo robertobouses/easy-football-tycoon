@@ -101,8 +101,10 @@ func (s *Server) Run(port string) error {
 
 	resume := s.engine.Group("/resume")
 	resume.GET("", s.resume.GetResume)
-	resume.POST("/purchase-decision", s.resume.PostPurchaseDecision)
-	resume.POST("/sale-decision", s.resume.PostSaleDecision)
+	resume.POST("/player-signing-decision", s.resume.PostPlayerSigningDecision)
+	resume.POST("/player-sale-decision", s.resume.PostPlayerSaleDecision)
+	resume.POST("/staff-signing-decision", s.resume.PostStaffSigningDecision)
+	resume.POST("/staff-sale-decision", s.resume.PostStaffSaleDecision)
 
 	analytics := s.engine.Group("/analytics")
 	analytics.GET("", s.analytics.GetAnalytics)

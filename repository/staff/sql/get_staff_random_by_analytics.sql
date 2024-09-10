@@ -1,5 +1,5 @@
 SELECT
-			staff,
+			staffid,
 			staffname,
 			job,
 			age,

@@ -14,10 +14,15 @@ func (a *AppService) ProcessStaffSigning() (Staff, error) {
 	}
 
 	staffSigning, err := a.staffRepo.GetStaffRandomByAnalytics(analytics.Scouting)
-	log.Println("Signingso asignado en ProcessStaffSigning 1:", staffSigning)
+	log.Println("Signings asignado en ProcessStaffSigning 1:", staffSigning)
 	if err != nil {
-		log.Println("Error al extraer GetSigningsRandomByAnalytics", err)
+		log.Println("Error al extraer GetStaffRandomByAnalytics", err)
 		return Staff{}, err
+	}
+
+	if len(staffSigning.StaffId.String()) != 36 {
+		log.Println("UUID inválido:", staffSigning.StaffId)
+		return Staff{}, ErrInvalidUUID
 	}
 
 	if staffSigning.StaffId == uuid.Nil {
@@ -26,17 +31,17 @@ func (a *AppService) ProcessStaffSigning() (Staff, error) {
 	}
 
 	a.SetCurrentStaffSigning(&staffSigning)
-	log.Println("Signingso asignado en ProcessStaffSigning 2:", staffSigning)
+	log.Println("Signings asignado en ProcessStaffSigning 2:", staffSigning)
 
 	return staffSigning, nil
 }
 
 func (a *AppService) SetCurrentStaffSigning(staffSigning *Staff) {
 	if staffSigning == nil || staffSigning.StaffId == uuid.Nil {
-		log.Println("Signingso no válido, no se asignará. Signingso:", staffSigning)
+		log.Println("Staff Signings no válido, no se asignará. Signings:", staffSigning)
 		a.currentStaffSigning = nil
 	} else {
-		log.Println("Signingso asignado en SetcurrentStaffSigningtaff:", *staffSigning)
+		log.Println("Staff Signings asignado en SetCurrentStaffSigning:", *staffSigning)
 		a.currentStaffSigning = staffSigning
 	}
 }
@@ -70,9 +75,15 @@ func (a *AppService) AcceptStaffSigning(signings *Staff) error {
 	a.bankRepo.PostTransactions(paid, newBalance, signings.StaffName, "Staff Signing")
 
 	a.teamStaffRepo.PostTeamStaff(*signings)
+
+	err = a.staffRepo.DeleteStaffSigning(*signings)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func (a *AppService) RejectStaffSinging(signings *Staff) {
+func (a *AppService) RejectStaffSigning(signings *Staff) {
 	a.SetCurrentStaffSigning(nil)
 }

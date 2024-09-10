@@ -20,7 +20,7 @@ func (h Handler) GetResume(ctx *gin.Context) {
 		return
 	}
 
-	playerOnSale, transferFeeReceived, err := h.app.GetCurrentSalePlayer()
+	playerOnSale, transferFeeReceived, err := h.app.GetCurrentPlayerSale()
 	if err != nil {
 		ctx.JSON(nethttp.StatusInternalServerError, gin.H{"error": "Error fetching current sale player"})
 		return
@@ -44,7 +44,7 @@ func (h Handler) GetResume(ctx *gin.Context) {
 
 	if playerSigning != nil && playerSigning.SigningsId != uuid.Nil {
 		ctx.JSON(nethttp.StatusOK, gin.H{
-			"message":            "Signings on purchase",
+			"message":            "Player on Signing",
 			"signings":           playerSigning,
 			"type calendary day": calendary,
 		})
@@ -60,7 +60,7 @@ func (h Handler) GetResume(ctx *gin.Context) {
 
 	if staffSigning != nil && staffSigning.StaffId != uuid.Nil {
 		ctx.JSON(nethttp.StatusOK, gin.H{
-			"message":            "Signings on purchase",
+			"message":            "Staff on Signing",
 			"signings":           staffSigning,
 			"type calendary day": calendary,
 		})
@@ -72,7 +72,7 @@ func (h Handler) GetResume(ctx *gin.Context) {
 		ctx.JSON(nethttp.StatusInternalServerError, gin.H{"error": "Error fetching current sale player"})
 		return
 	}
-	if playerOnSale != nil {
+	if staffOnSale != nil {
 		ctx.JSON(nethttp.StatusOK, gin.H{
 			"message":               "Staff on sale",
 			"player":                staffOnSale,

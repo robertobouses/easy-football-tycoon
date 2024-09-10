@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func (a *AppService) ProcessStaffSale() error {
+func (a *AppService) ProcessTeamStaffSale() error {
 	staff, err := a.GetRandomStaff()
 	if err != nil {
 		return err
@@ -21,7 +21,7 @@ func (a *AppService) ProcessStaffSale() error {
 		return err
 	}
 
-	a.SetCurrentSaleStaff(&staff, &transferFeeReceived)
+	a.SetCurrentStaffSale(&staff, &transferFeeReceived)
 
 	return nil
 }
@@ -30,7 +30,7 @@ func (a *AppService) GetCurrentStaffSale() (*Staff, *int, error) {
 	return a.currentStaffOnSale, a.transferFeeReceived, nil
 }
 
-func (a *AppService) SetCurrentSaleStaff(staff *Staff, transferFeeReceived *int) {
+func (a *AppService) SetCurrentStaffSale(staff *Staff, transferFeeReceived *int) {
 	a.currentStaffOnSale = staff
 	a.transferFeeReceived = transferFeeReceived
 }
@@ -65,12 +65,12 @@ func (a *AppService) AcceptStaffSale(staff Staff) error {
 }
 
 func (a *AppService) RejectStaffSale(staff Staff) {
-	a.SetCurrentSaleStaff(nil, nil)
+	a.SetCurrentStaffSale(nil, nil)
 }
 
 // TODO ROBERTO CREO QUE ESTE MÉTODO DE TRAER Y LUEGO HACER ALEATORIO ES MÁS ÓPTIMO QUE EL QUE LO HACE TODO EN REPO GetSigningsRandomByAnalytics
 func (a *AppService) GetRandomStaff() (Staff, error) {
-	staffs, err := a.staffRepo.GetStaff()
+	staffs, err := a.teamStaffRepo.GetTeamStaff()
 	if err != nil {
 		log.Println("Error al extraer GetStaff:", err)
 		return Staff{}, err
@@ -87,7 +87,7 @@ func (a *AppService) GetRandomStaff() (Staff, error) {
 	randomIndex := rand.Intn(len(staffs))
 	staff := staffs[randomIndex]
 
-	log.Printf("Jugador seleccionado aleatoriamente para la venta: %+v", staff)
+	log.Printf("Empleado seleccionado aleatoriamente para la venta: %+v", staff)
 
 	return staff, nil
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h Handler) PostPurchaseDecision(ctx *gin.Context) {
+func (h Handler) PostPlayerSigningDecision(ctx *gin.Context) {
 	var decision struct {
 		Accept bool `json:"accept"`
 	}
@@ -41,5 +41,5 @@ func (h Handler) PostPurchaseDecision(ctx *gin.Context) {
 		ctx.JSON(nethttp.StatusOK, gin.H{"message": "Signings purchase rejected"})
 	}
 
-	h.app.SetCurrentSigningPlayer(nil)
+	h.app.SetCurrentPlayerSigning(nil)
 }

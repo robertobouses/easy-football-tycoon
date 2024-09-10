@@ -21,11 +21,11 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 	day := calendary[a.callCounter-1]
 
 	if day.DayType != "playerOnSale" {
-		a.SetCurrentSalePlayer(nil, nil)
+		a.SetCurrentPlayerSale(nil, nil)
 	}
 
 	if day.DayType != "playerSigning" {
-		a.SetCurrentSigningPlayer(nil)
+		a.SetCurrentPlayerSigning(nil)
 	}
 
 	if day.DayType != "injury" {
@@ -39,14 +39,14 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 	log.Println("estasmos en GetResume con day type", day.DayType)
 
 	switch day.DayType {
-	case "playersign":
+	case "playerSigning":
 		signings, err := a.ProcessPlayerSigning()
 		if err != nil {
 			log.Println("Error en la compra:", err)
 			return []Calendary{}, err
 		}
 		log.Println("current signings is en GetResume de APP:", signings)
-	case "playersale":
+	case "playerOnSale":
 		err := a.ProcessPlayerSale()
 		if err != nil {
 			log.Println("Error en la venta:", err)
@@ -63,13 +63,13 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 	case "staffSigning":
 		staffSigning, err := a.ProcessStaffSigning()
 		if err != nil {
-			log.Println("Error APP get_resume, ProcessInjury", err)
+			log.Println("Error APP get_resume, ProcessStaffSigning", err)
 			return []Calendary{}, err
 		}
 		log.Println("current signings is en GetResume de APP:", staffSigning)
 
 	case "staffSale":
-		err := a.ProcessStaffSale()
+		err := a.ProcessTeamStaffSale()
 		if err != nil {
 			log.Println("Error en la venta:", err)
 			return []Calendary{}, err

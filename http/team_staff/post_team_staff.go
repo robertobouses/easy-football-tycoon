@@ -6,20 +6,23 @@ import (
 	nethttp "net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/robertobouses/easy-football-tycoon/app"
 )
 
+// TODO PODRÍA EVITAR DUCPLICAR ESTA FUNCIÓN Y LA DEL package staff PostStaff?
 type PostTeamStaffRequest struct {
-	StaffName     string `json:"staffname"`
-	Job           string `json:"job"`
-	Age           int    `json:"age"`
-	Fee           int    `json:"fee"`
-	Salary        int    `json:"salary"`
-	Training      int    `json:"training"`
-	Finances      int    `json:"finances"`
-	Scouting      int    `json:"scouting"`
-	Physiotherapy int    `json:"physiotherapy"`
-	Rarity        int    `json:"rarity"`
+	StaffId       uuid.UUID `json:"staffid"`
+	StaffName     string    `json:"staffname"`
+	Job           string    `json:"job"`
+	Age           int       `json:"age"`
+	Fee           int       `json:"fee"`
+	Salary        int       `json:"salary"`
+	Training      int       `json:"training"`
+	Finances      int       `json:"finances"`
+	Scouting      int       `json:"scouting"`
+	Physiotherapy int       `json:"physiotherapy"`
+	Rarity        int       `json:"rarity"`
 }
 
 func (h Handler) PostTeamStaff(c *gin.Context) {
@@ -30,6 +33,7 @@ func (h Handler) PostTeamStaff(c *gin.Context) {
 		return
 	}
 	staff := app.Staff{
+		StaffId:       req.StaffId,
 		StaffName:     req.StaffName,
 		Job:           req.Job,
 		Age:           req.Age,

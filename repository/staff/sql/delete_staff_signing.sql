@@ -1,0 +1,1 @@
+DELETE FROM eft.staff WHERE staffid = $1;

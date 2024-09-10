@@ -23,22 +23,22 @@ func (a *AppService) ProcessPlayerSigning() (Signings, error) {
 	}
 
 	if signings.SigningsId == uuid.Nil {
-		log.Println("No se encontró un signingso válido")
+		log.Println("No se encontró un signings válido")
 		return Signings{}, nil
 	}
 
-	a.SetCurrentSigningPlayer(&signings)
+	a.SetCurrentPlayerSigning(&signings)
 	log.Println("Signingso asignado en ProcessPlayerSigning 2:", signings)
 
 	return signings, nil
 }
 
-func (a *AppService) SetCurrentSigningPlayer(signings *Signings) {
+func (a *AppService) SetCurrentPlayerSigning(signings *Signings) {
 	if signings == nil || signings.SigningsId == uuid.Nil {
-		log.Println("Signingso no válido, no se asignará. Signingso:", signings)
+		log.Println("Signings no válido, no se asignará. Signings:", signings)
 		a.currentPlayerSigning = nil
 	} else {
-		log.Println("Signingso asignado en SetCurrentSigningPlayer:", *signings)
+		log.Println("Signingso asignado en SetCurrentPlayerSigning:", *signings)
 		a.currentPlayerSigning = signings
 	}
 }
@@ -73,11 +73,17 @@ func (a *AppService) AcceptPlayerSigning(signings *Signings) error {
 
 	team := ConvertSigningsToTeam(signings)
 	a.teamRepo.PostTeam(team)
+
+	err = a.signingsRepo.DeleteSigning(*signings)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (a *AppService) RejectPlayerSigning(signings *Signings) {
-	a.SetCurrentSigningPlayer(nil)
+	a.SetCurrentPlayerSigning(nil)
 }
 
 func ConvertSigningsToTeam(signings *Signings) Team {

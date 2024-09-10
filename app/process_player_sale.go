@@ -21,16 +21,16 @@ func (a *AppService) ProcessPlayerSale() error {
 		return err
 	}
 
-	a.SetCurrentSalePlayer(&player, &transferFeeReceived)
+	a.SetCurrentPlayerSale(&player, &transferFeeReceived)
 
 	return nil
 }
 
-func (a *AppService) GetCurrentSalePlayer() (*Team, *int, error) {
+func (a *AppService) GetCurrentPlayerSale() (*Team, *int, error) {
 	return a.currentPlayerOnSale, a.transferFeeReceived, nil
 }
 
-func (a *AppService) SetCurrentSalePlayer(player *Team, transferFeeReceived *int) {
+func (a *AppService) SetCurrentPlayerSale(player *Team, transferFeeReceived *int) {
 	a.currentPlayerOnSale = player
 	a.transferFeeReceived = transferFeeReceived
 }
@@ -65,7 +65,7 @@ func (a *AppService) AcceptPlayerSale(player Team) error {
 }
 
 func (a *AppService) RejectPlayerSale(player Team) {
-	a.SetCurrentSalePlayer(nil, nil)
+	a.SetCurrentPlayerSale(nil, nil)
 }
 
 // TODO ROBERTO CREO QUE ESTE MÉTODO DE TRAER Y LUEGO HACER ALEATORIO ES MÁS ÓPTIMO QUE EL QUE LO HACE TODO EN REPO GetSigningsRandomByAnalytics

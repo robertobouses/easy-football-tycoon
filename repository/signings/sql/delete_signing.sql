@@ -1,0 +1,1 @@
+DELETE FROM eft.signings WHERE signingsid = $1;

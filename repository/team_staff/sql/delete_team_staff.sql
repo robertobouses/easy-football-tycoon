@@ -1,1 +1,1 @@
-DELETE FROM eft.staff WHERE staffid = $1;
+DELETE FROM eft.team_staff WHERE staffid = $1;

@@ -38,12 +38,14 @@ type SigningsRepository interface {
 	GetSignings() ([]Signings, error)
 	PostSignings(req Signings) error
 	GetSigningsRandomByAnalytics(scouting int) (Signings, error)
+	DeleteSigning(signing Signings) error
 }
 
 type StaffRepository interface {
 	PostStaff(req Staff) error
 	GetStaff() ([]Staff, error)
 	GetStaffRandomByAnalytics(scouting int) (Staff, error)
+	DeleteStaffSigning(staff Staff) error
 }
 
 type TeamStaffRepository interface {
@@ -96,7 +98,9 @@ type AppService struct {
 	currentInjuredPlayer *Team
 	currentStaffSigning  *Staff
 	currentStaffOnSale   *Staff
-	injuryDays           *int
-	transferFeeReceived  *int
-	callCounter          int
+	// currentTeamStaffSigning *Staff
+	// currentTeamStaffOnSale  *Staff
+	injuryDays          *int
+	transferFeeReceived *int
+	callCounter         int
 }

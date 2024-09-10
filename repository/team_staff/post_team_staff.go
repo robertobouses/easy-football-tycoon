@@ -21,9 +21,9 @@ func (r *repository) PostTeamStaff(req app.Staff) error {
 	)
 
 	if err != nil {
-		log.Print("Error en PostTeam repo", err)
+		log.Print("Error en PostTeamStaff repo", err)
 		return err
 	}
-	log.Println("Después de ejecutar la consulta preparada PostTeam")
+	log.Println("Después de ejecutar la consulta preparada PostTeamStaff")
 	return nil
 }

@@ -34,10 +34,10 @@ func (r *repository) GetTeamStaff() ([]app.Staff, error) {
 			log.Printf("Error al escanear las filas: %v", err)
 			return nil, err
 		}
-		log.Printf("Jugador recuperado de la base de datos: %+v", staff)
+		log.Printf("Empleado del staff del equipo recuperado de la base de datos: %+v", staff)
 
 		staffs = append(staffs, staff)
 	}
-	log.Printf("Jugadores obtenido con éxito: %+v", staffs)
+	log.Printf("Empleados del staff del equipo obtenido con éxito: %+v", staffs)
 	return staffs, nil
 }
