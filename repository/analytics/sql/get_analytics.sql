@@ -1,10 +1,17 @@
 SELECT
     t.analyticsid,
+    t.training,
     t.finances,
     t.scouting,
     t.physiotherapy,
-    SUM(t.finances) OVER () AS total_finances,
-    SUM(t.scouting) OVER () AS total_scouting,
-    SUM(t.physiotherapy) OVER () AS total_physiotherapy
+    t.totalfinances,
+    t.totalscouting,
+    t.totalphysiotherapy,
+    t.totaltraining,
+    t.totalsalaries,
+    COUNT(t.training) OVER () AS trainingstaffcount,
+    COUNT(t.finances) OVER () AS financestaffcount,
+    COUNT(t.scouting) OVER () AS scoutingstaffcount,
+    COUNT(t.physiotherapy) OVER () AS physiotherapystaffcount
 FROM
     eft.analytics t;

@@ -1,0 +1,14 @@
+SELECT
+    signingsid,
+    signingsname,
+    position,
+    age,
+    fee,
+    salary,
+    technique,
+    mental,
+    physique,
+    injurydays,
+    rarity
+FROM
+    eft.signings

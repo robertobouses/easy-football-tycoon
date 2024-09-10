@@ -10,7 +10,7 @@ import (
 )
 
 type PostAnalyticsRequest struct {
-	// AnalyticsId   uuid.UUID `json:"analyticsid"`
+	Training      int `json:"training"`
 	Finances      int `json:"finances"`
 	Scouting      int `json:"scouting"`
 	Physiotherapy int `json:"physiotherapy"`
@@ -25,12 +25,15 @@ func (h Handler) PostAnalytics(c *gin.Context) {
 	}
 
 	analytics := app.Analytics{
+		Training:      req.Training,
 		Finances:      req.Finances,
 		Scouting:      req.Scouting,
 		Physiotherapy: req.Physiotherapy,
 	}
 
-	err := h.app.PostAnalytics(analytics)
+	job := "movimientos iniciales"
+
+	err := h.app.PostAnalytics(analytics, job)
 	if err != nil {
 		c.JSON(nethttp.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

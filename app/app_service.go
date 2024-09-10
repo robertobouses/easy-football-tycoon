@@ -34,10 +34,24 @@ type RivalRepository interface {
 	PostRival(req Rival) error
 }
 
-type ProspectRepository interface {
-	GetProspect() ([]Prospect, error)
-	PostProspect(req Prospect) error
-	GetProspectRandomByAnalytics(scouting int) (Prospect, error)
+type SigningsRepository interface {
+	GetSignings() ([]Signings, error)
+	PostSignings(req Signings) error
+	GetSigningsRandomByAnalytics(scouting int) (Signings, error)
+	DeleteSigning(signing Signings) error
+}
+
+type StaffRepository interface {
+	PostStaff(req Staff) error
+	GetStaff() ([]Staff, error)
+	GetStaffRandomByAnalytics(scouting int) (Staff, error)
+	DeleteStaffSigning(staff Staff) error
+}
+
+type TeamStaffRepository interface {
+	PostTeamStaff(req Staff) error
+	GetTeamStaff() ([]Staff, error)
+	DeleteTeamStaff(staff Staff) error
 }
 
 type CalendaryRepository interface {
@@ -47,20 +61,22 @@ type CalendaryRepository interface {
 
 type AnalyticsRepository interface {
 	GetAnalytics() (Analytics, error)
-	PostAnalytics(req Analytics) error
+	PostAnalytics(req Analytics, job string) error
 }
 
 type BankRepository interface {
-	PostTransactions(amount int, balance int, prospect string, transactionType string) error
+	PostTransactions(amount int, balance int, signings string, transactionType string) error
 	GetBalance() (int, error)
 }
 
-func NewApp(lineupRepository LineupRepository, teamRepository TeamRepository, rivalRepository RivalRepository, prospectRepository ProspectRepository, calendaryRepository CalendaryRepository, analyticsRepository AnalyticsRepository, bankRepository BankRepository) AppService {
+func NewApp(lineupRepository LineupRepository, teamRepository TeamRepository, rivalRepository RivalRepository, signingsRepository SigningsRepository, staffRepository StaffRepository, teamStaffRepository TeamStaffRepository, calendaryRepository CalendaryRepository, analyticsRepository AnalyticsRepository, bankRepository BankRepository) AppService {
 	return AppService{
 		lineupRepo:    lineupRepository,
 		teamRepo:      teamRepository,
 		rivalRepo:     rivalRepository,
-		prospectRepo:  prospectRepository,
+		signingsRepo:  signingsRepository,
+		staffRepo:     staffRepository,
+		teamStaffRepo: teamStaffRepository,
 		calendaryRepo: calendaryRepository,
 		analyticsRepo: analyticsRepository,
 		bankRepo:      bankRepository,
@@ -71,14 +87,20 @@ type AppService struct {
 	lineupRepo           LineupRepository
 	teamRepo             TeamRepository
 	rivalRepo            RivalRepository
-	prospectRepo         ProspectRepository
+	signingsRepo         SigningsRepository
+	staffRepo            StaffRepository
+	teamStaffRepo        TeamStaffRepository
 	calendaryRepo        CalendaryRepository
 	analyticsRepo        AnalyticsRepository
 	bankRepo             BankRepository
-	currentSalePlayer    *Team
-	currentProspect      *Prospect
+	currentPlayerOnSale  *Team
+	currentPlayerSigning *Signings
 	currentInjuredPlayer *Team
-	injuryDays           *int
-	transferFeeReceived  *int
-	callCounter          int
+	currentStaffSigning  *Staff
+	currentStaffOnSale   *Staff
+	// currentTeamStaffSigning *Staff
+	// currentTeamStaffOnSale  *Staff
+	injuryDays          *int
+	transferFeeReceived *int
+	callCounter         int
 }

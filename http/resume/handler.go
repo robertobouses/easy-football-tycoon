@@ -6,16 +6,33 @@ import (
 
 type App interface {
 	GetResume() ([]app.Calendary, error)
-	ProcessSale() error
-	AcceptSale(player app.Team) error
-	RejectSale(player app.Team)
+
+	ProcessPlayerSale() error
+	SetCurrentPlayerSale(*app.Team, *int)
+	GetCurrentPlayerSale() (*app.Team, *int, error)
+	AcceptPlayerSale(player app.Team) error
+	RejectPlayerSale(player app.Team)
+
+	ProcessPlayerSigning() (app.Signings, error)
+	SetCurrentPlayerSigning(signings *app.Signings)
+	GetCurrentPlayerSigning() (*app.Signings, error)
+	AcceptPlayerSigning(signings *app.Signings) error
+	RejectPlayerSigning(signings *app.Signings)
+
+	ProcessStaffSigning() (app.Staff, error)
+	SetCurrentStaffSigning(staffSigning *app.Staff)
+	GetCurrentStaffSigning() (*app.Staff, error)
+	AcceptStaffSigning(staff *app.Staff) error
+	RejectStaffSigning(staff *app.Staff)
+
+	ProcessTeamStaffSale() error
+	SetCurrentStaffSale(*app.Staff, *int)
+	GetCurrentStaffSale() (*app.Staff, *int, error)
+	AcceptStaffSale(staff app.Staff) error
+	RejectStaffSale(staff app.Staff)
+
 	ProcessMatch()
-	GetCurrentSalePlayer() (*app.Team, *int, error)
-	SetCurrentSalePlayer(*app.Team, *int)
-	GetCurrentProspect() (*app.Prospect, error)
-	SetCurrentProspect(prospect *app.Prospect)
-	AcceptPurchase(prospect *app.Prospect) error
-	RejectPurchase(prospect *app.Prospect)
+
 	ProcessInjury() (app.Team, error)
 	GetCurrentInjuredPlayer() (*app.Team, *int, error)
 	SetCurrentInjuredPlayer(*app.Team, *int)

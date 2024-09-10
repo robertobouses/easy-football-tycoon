@@ -6,7 +6,7 @@ import (
 
 type App interface {
 	GetAnalytics() (app.Analytics, error)
-	PostAnalytics(app.Analytics) error
+	PostAnalytics(app.Analytics, string) error
 }
 
 func NewHandler(app app.AppService) Handler {

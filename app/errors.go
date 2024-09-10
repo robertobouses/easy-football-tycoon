@@ -10,3 +10,4 @@ var ErrCalendaryDatesNoAvaliable = errors.New("no hay más fechas disponibles en
 var ErrTransferNotFound = errors.New("transfer fee is not set")
 var ErrBalanceNotFound = errors.New("Error al obtener el balance anterior")
 var ErrPaidNotFound = errors.New("Error al obtener el pago")
+var ErrInvalidUUID = errors.New("UUID inválido")

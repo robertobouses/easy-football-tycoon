@@ -11,42 +11,50 @@ import (
 	"github.com/robertobouses/easy-football-tycoon/http/analytics"
 	"github.com/robertobouses/easy-football-tycoon/http/calendary"
 	"github.com/robertobouses/easy-football-tycoon/http/lineup"
-	prospectServer "github.com/robertobouses/easy-football-tycoon/http/prospect"
 	"github.com/robertobouses/easy-football-tycoon/http/resume"
 	rivalServer "github.com/robertobouses/easy-football-tycoon/http/rival"
+	signingsServer "github.com/robertobouses/easy-football-tycoon/http/signings"
+	"github.com/robertobouses/easy-football-tycoon/http/staff"
 	"github.com/robertobouses/easy-football-tycoon/http/team"
+	"github.com/robertobouses/easy-football-tycoon/http/team_staff"
 )
 
 type Server struct {
-	lineup    lineup.Handler
-	team      team.Handler
-	rival     rivalServer.Handler
-	prospect  prospectServer.Handler
-	calendary calendary.Handler
-	analytics analytics.Handler
-	resume    resume.Handler
-	engine    *gin.Engine
+	lineup     lineup.Handler
+	team       team.Handler
+	rival      rivalServer.Handler
+	signings   signingsServer.Handler
+	staff      staff.Handler
+	team_staff team_staff.Handler
+	calendary  calendary.Handler
+	analytics  analytics.Handler
+	resume     resume.Handler
+	engine     *gin.Engine
 }
 
 func NewServer(
 	lineup lineup.Handler,
 	team team.Handler,
 	rival rivalServer.Handler,
-	prospect prospectServer.Handler,
+	signings signingsServer.Handler,
+	staff staff.Handler,
+	team_staff team_staff.Handler,
 	calendary calendary.Handler,
 	analytics analytics.Handler,
 	resume resume.Handler,
 
 ) Server {
 	return Server{
-		lineup:    lineup,
-		team:      team,
-		rival:     rival,
-		prospect:  prospect,
-		calendary: calendary,
-		analytics: analytics,
-		resume:    resume,
-		engine:    gin.Default(),
+		lineup:     lineup,
+		team:       team,
+		rival:      rival,
+		signings:   signings,
+		staff:      staff,
+		team_staff: team_staff,
+		calendary:  calendary,
+		analytics:  analytics,
+		resume:     resume,
+		engine:     gin.Default(),
 	}
 }
 
@@ -76,9 +84,16 @@ func (s *Server) Run(port string) error {
 	rival.GET("", s.rival.GetRival)
 	rival.POST("/team", s.rival.PostRival)
 
-	prospect := s.engine.Group("/prospect")
-	prospect.GET("", s.prospect.GetProspect)
-	prospect.POST("/person", s.prospect.PostProspect)
+	signings := s.engine.Group("/signings")
+	signings.GET("", s.signings.GetSignings)
+	signings.POST("/person", s.signings.PostSignings)
+
+	staff := s.engine.Group("/staff")
+	staff.POST("/create", s.staff.PostStaff)
+
+	team_staff := s.engine.Group("/team_staff")
+	team_staff.POST("/create", s.team_staff.PostTeamStaff)
+	team_staff.GET("/", s.team_staff.GetTeamStaff)
 
 	calendary := s.engine.Group("/calendary")
 	calendary.GET("", s.calendary.GetCalendary)
@@ -86,8 +101,10 @@ func (s *Server) Run(port string) error {
 
 	resume := s.engine.Group("/resume")
 	resume.GET("", s.resume.GetResume)
-	resume.POST("/purchase-decision", s.resume.PostPurchaseDecision)
-	resume.POST("/sale-decision", s.resume.PostSaleDecision)
+	resume.POST("/player-signing-decision", s.resume.PostPlayerSigningDecision)
+	resume.POST("/player-sale-decision", s.resume.PostPlayerSaleDecision)
+	resume.POST("/staff-signing-decision", s.resume.PostStaffSigningDecision)
+	resume.POST("/staff-sale-decision", s.resume.PostStaffSaleDecision)
 
 	analytics := s.engine.Group("/analytics")
 	analytics.GET("", s.analytics.GetAnalytics)

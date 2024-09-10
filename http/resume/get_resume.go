@@ -20,7 +20,7 @@ func (h Handler) GetResume(ctx *gin.Context) {
 		return
 	}
 
-	playerOnSale, transferFeeReceived, err := h.app.GetCurrentSalePlayer()
+	playerOnSale, transferFeeReceived, err := h.app.GetCurrentPlayerSale()
 	if err != nil {
 		ctx.JSON(nethttp.StatusInternalServerError, gin.H{"error": "Error fetching current sale player"})
 		return
@@ -35,25 +35,56 @@ func (h Handler) GetResume(ctx *gin.Context) {
 		return
 	}
 
-	prospect, err := h.app.GetCurrentProspect()
+	playerSigning, err := h.app.GetCurrentPlayerSigning()
 	if err != nil {
-		ctx.JSON(nethttp.StatusInternalServerError, gin.H{"error": "Error fetching current prospect"})
+		ctx.JSON(nethttp.StatusInternalServerError, gin.H{"error": "Error fetching current signings"})
 		return
 	}
-	log.Println("el prospect en GetResume HHTP, es", prospect)
+	log.Println("el signings en GetResume HHTP, es", playerSigning)
 
-	if prospect != nil && prospect.ProspectId != uuid.Nil {
+	if playerSigning != nil && playerSigning.SigningsId != uuid.Nil {
 		ctx.JSON(nethttp.StatusOK, gin.H{
-			"message":            "Prospect on purchase",
-			"prospect":           prospect,
+			"message":            "Player on Signing",
+			"signings":           playerSigning,
 			"type calendary day": calendary,
+		})
+		return
+	}
+
+	staffSigning, err := h.app.GetCurrentStaffSigning()
+	if err != nil {
+		ctx.JSON(nethttp.StatusInternalServerError, gin.H{"error": "Error fetching current signings"})
+		return
+	}
+	log.Println("el signings en GetResume HHTP, es", staffSigning)
+
+	if staffSigning != nil && staffSigning.StaffId != uuid.Nil {
+		ctx.JSON(nethttp.StatusOK, gin.H{
+			"message":            "Staff on Signing",
+			"signings":           staffSigning,
+			"type calendary day": calendary,
+		})
+		return
+	}
+
+	staffOnSale, transferFeeReceived, err := h.app.GetCurrentStaffSale()
+	if err != nil {
+		ctx.JSON(nethttp.StatusInternalServerError, gin.H{"error": "Error fetching current sale player"})
+		return
+	}
+	if staffOnSale != nil {
+		ctx.JSON(nethttp.StatusOK, gin.H{
+			"message":               "Staff on sale",
+			"player":                staffOnSale,
+			"type calendary day":    calendary,
+			"Transfer fee received": transferFeeReceived,
 		})
 		return
 	}
 
 	injuredPlayer, injuryDays, err := h.app.GetCurrentInjuredPlayer()
 	if err != nil {
-		ctx.JSON(nethttp.StatusInternalServerError, gin.H{"error": "Error fetching current prospect"})
+		ctx.JSON(nethttp.StatusInternalServerError, gin.H{"error": "Error fetching current signings"})
 		return
 	}
 	log.Println("The injured player in GetCurrentInjuredPlayer HTTP is", injuredPlayer)

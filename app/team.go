@@ -15,13 +15,3 @@ type Team struct {
 	InjuryDays int
 	Lined      bool
 }
-
-type Analytics struct {
-	AnalyticsId        uuid.UUID
-	Finances           int
-	Scouting           int
-	Physiotherapy      int
-	TotalFinances      int
-	TotalScouting      int
-	TotalPhysiotherapy int
-}
