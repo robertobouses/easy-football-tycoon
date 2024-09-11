@@ -75,7 +75,12 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 			return []Calendary{}, err
 		}
 	case "match":
-		a.ProcessMatch()
+		match, err := a.ProcessMatch(Rival{})
+		if err != nil {
+			log.Println("Error en la venta:", err)
+			return []Calendary{}, err
+		}
+		log.Println("partido actual", match)
 	default:
 		log.Println("Tipo de día desconocido:", day.DayType)
 	}
