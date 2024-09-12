@@ -76,30 +76,31 @@ func CalculateTotalQuality(lineupTotalTechnique, lineupTotalMental, lineupTotalP
 }
 
 func CalculateBallPossession(lineupTotalTechnique, rivalTotalTechnique, lineupTotalQuality, rivalTotalQuality, allQuality int) (int, int, error) {
-
 	percentageLineupQuality := (float64(lineupTotalQuality) / float64(allQuality)) * 100
 
-	if float64(lineupTotalTechnique) >= float64(rivalTotalTechnique)*1.5 {
+	switch {
+	case float64(lineupTotalTechnique) >= float64(rivalTotalTechnique)*1.5:
 		percentageLineupQuality *= 1.25
-	} else if float64(lineupTotalTechnique) >= float64(rivalTotalTechnique)*1.4 {
+	case float64(lineupTotalTechnique) >= float64(rivalTotalTechnique)*1.4:
 		percentageLineupQuality *= 1.2
-	} else if float64(lineupTotalTechnique) >= float64(rivalTotalTechnique)*1.3 {
+	case float64(lineupTotalTechnique) >= float64(rivalTotalTechnique)*1.3:
 		percentageLineupQuality *= 1.15
-	} else if float64(lineupTotalTechnique) >= float64(rivalTotalTechnique)*1.2 {
+	case float64(lineupTotalTechnique) >= float64(rivalTotalTechnique)*1.2:
 		percentageLineupQuality *= 1.1
-	} else if float64(lineupTotalTechnique) >= float64(rivalTotalTechnique)*1.1 {
+	case float64(lineupTotalTechnique) >= float64(rivalTotalTechnique)*1.1:
 		percentageLineupQuality *= 1.05
 	}
 
-	if float64(lineupTotalTechnique) <= float64(rivalTotalTechnique)*1.5 {
+	switch {
+	case float64(lineupTotalTechnique) <= float64(rivalTotalTechnique)*1.5:
 		percentageLineupQuality /= 1.25
-	} else if float64(lineupTotalTechnique) <= float64(rivalTotalTechnique)*1.4 {
+	case float64(lineupTotalTechnique) <= float64(rivalTotalTechnique)*1.4:
 		percentageLineupQuality /= 1.2
-	} else if float64(lineupTotalTechnique) <= float64(rivalTotalTechnique)*1.3 {
+	case float64(lineupTotalTechnique) <= float64(rivalTotalTechnique)*1.3:
 		percentageLineupQuality /= 1.15
-	} else if float64(lineupTotalTechnique) <= float64(rivalTotalTechnique)*1.2 {
+	case float64(lineupTotalTechnique) <= float64(rivalTotalTechnique)*1.2:
 		percentageLineupQuality /= 1.1
-	} else if float64(lineupTotalTechnique) <= float64(rivalTotalTechnique)*1.1 {
+	case float64(lineupTotalTechnique) <= float64(rivalTotalTechnique)*1.1:
 		percentageLineupQuality /= 1.05
 	}
 
@@ -108,7 +109,6 @@ func CalculateBallPossession(lineupTotalTechnique, rivalTotalTechnique, lineupTo
 	log.Println("el randomFactor es", randomFactor)
 
 	percentageLineupQualityWithRandomFactor := percentageLineupQuality * randomFactor
-
 	percentageRivalQuality := 100 - percentageLineupQualityWithRandomFactor
 
 	return int(percentageLineupQualityWithRandomFactor), int(percentageRivalQuality), nil
@@ -117,73 +117,76 @@ func CalculateBallPossession(lineupTotalTechnique, rivalTotalTechnique, lineupTo
 func CalculateScoringChances(lineupTotalQuality, rivalTotalQuality, lineupTotalMental, rivalTotalMental int) (int, int, error) {
 	lineupScoringChances := 0
 	rivalScoringChances := 0
-
-	if lineupTotalQuality >= 3000 {
+	switch {
+	case lineupTotalQuality >= 3000:
 		lineupScoringChances = 8
-	} else if lineupTotalQuality >= 2750 {
+	case lineupTotalQuality >= 2750:
 		lineupScoringChances = 7
-	} else if lineupTotalQuality >= 2600 {
+	case lineupTotalQuality >= 2600:
 		lineupScoringChances = 6
-	} else if lineupTotalQuality >= 2400 {
+	case lineupTotalQuality >= 2400:
 		lineupScoringChances = 5
-	} else if lineupTotalQuality >= 2300 {
+	case lineupTotalQuality >= 2300:
 		lineupScoringChances = 4
-	} else if lineupTotalQuality >= 2200 {
+	case lineupTotalQuality >= 2200:
 		lineupScoringChances = 3
-	} else if lineupTotalQuality >= 2100 {
+	case lineupTotalQuality >= 2100:
 		lineupScoringChances = 2
-	} else if lineupTotalQuality >= 1900 {
+	case lineupTotalQuality >= 1900:
 		lineupScoringChances = 1
 	}
 
-	if rivalTotalQuality >= 3000 {
+	switch {
+	case rivalTotalQuality >= 3000:
 		rivalScoringChances = 8
-	} else if rivalTotalQuality >= 2750 {
+	case rivalTotalQuality >= 2750:
 		rivalScoringChances = 7
-	} else if rivalTotalQuality >= 2600 {
+	case rivalTotalQuality >= 2600:
 		rivalScoringChances = 6
-	} else if rivalTotalQuality >= 2400 {
+	case rivalTotalQuality >= 2400:
 		rivalScoringChances = 5
-	} else if rivalTotalQuality >= 2300 {
+	case rivalTotalQuality >= 2300:
 		rivalScoringChances = 4
-	} else if rivalTotalQuality >= 2200 {
+	case rivalTotalQuality >= 2200:
 		rivalScoringChances = 3
-	} else if rivalTotalQuality >= 2100 {
+	case rivalTotalQuality >= 2100:
 		rivalScoringChances = 2
-	} else if rivalTotalQuality >= 1900 {
+	case rivalTotalQuality >= 1900:
 		rivalScoringChances = 1
 	}
 
-	if float64(lineupTotalMental) >= float64(rivalTotalMental)*1.5 {
+	switch {
+	case float64(lineupTotalMental) >= float64(rivalTotalMental)*1.5:
 		lineupScoringChances = int(float64(lineupScoringChances) * 1.25)
 		rivalScoringChances = int(float64(rivalScoringChances) * 0.3)
-	} else if float64(lineupTotalMental) >= float64(rivalTotalMental)*1.4 {
+	case float64(lineupTotalMental) >= float64(rivalTotalMental)*1.4:
 		lineupScoringChances = int(float64(lineupScoringChances) * 1.1)
 		rivalScoringChances = int(float64(rivalScoringChances) * 0.4)
-	} else if float64(lineupTotalMental) >= float64(rivalTotalMental)*1.3 {
+	case float64(lineupTotalMental) >= float64(rivalTotalMental)*1.3:
 		lineupScoringChances = int(float64(lineupScoringChances) * 1.05)
 		rivalScoringChances = int(float64(rivalScoringChances) * 0.5)
-	} else if float64(lineupTotalMental) >= float64(rivalTotalMental)*1.2 {
+	case float64(lineupTotalMental) >= float64(rivalTotalMental)*1.2:
 		lineupScoringChances = int(float64(lineupScoringChances) * 1.04)
 		rivalScoringChances = int(float64(rivalScoringChances) * 0.6)
-	} else if float64(lineupTotalMental) >= float64(rivalTotalMental)*1.1 {
+	case float64(lineupTotalMental) >= float64(rivalTotalMental)*1.1:
 		lineupScoringChances = int(float64(lineupScoringChances) * 1.02)
 		rivalScoringChances = int(float64(rivalScoringChances) * 0.7)
 	}
 
-	if float64(lineupTotalMental) <= float64(rivalTotalMental)*1.5 {
+	switch {
+	case float64(lineupTotalMental) <= float64(rivalTotalMental)*1.5:
 		rivalScoringChances = int(float64(rivalScoringChances) * 1.25)
 		lineupScoringChances = int(float64(lineupScoringChances) * 0.3)
-	} else if float64(lineupTotalMental) <= float64(rivalTotalMental)*1.4 {
+	case float64(lineupTotalMental) <= float64(rivalTotalMental)*1.4:
 		rivalScoringChances = int(float64(rivalScoringChances) * 1.1)
 		lineupScoringChances = int(float64(lineupScoringChances) * 0.4)
-	} else if float64(lineupTotalMental) <= float64(rivalTotalMental)*1.3 {
+	case float64(lineupTotalMental) <= float64(rivalTotalMental)*1.3:
 		rivalScoringChances = int(float64(rivalScoringChances) * 1.05)
 		lineupScoringChances = int(float64(lineupScoringChances) * 0.5)
-	} else if float64(lineupTotalMental) <= float64(rivalTotalMental)*1.2 {
+	case float64(lineupTotalMental) <= float64(rivalTotalMental)*1.2:
 		rivalScoringChances = int(float64(rivalScoringChances) * 1.04)
 		lineupScoringChances = int(float64(lineupScoringChances) * 0.8)
-	} else if float64(lineupTotalMental) <= float64(rivalTotalMental)*1.1 {
+	case float64(lineupTotalMental) <= float64(rivalTotalMental)*1.1:
 		rivalScoringChances = int(float64(rivalScoringChances) * 1.02)
 		lineupScoringChances = int(float64(lineupScoringChances) * 0.7)
 	}
