@@ -31,7 +31,7 @@ type App interface {
 	AcceptStaffSale(staff app.Staff) error
 	RejectStaffSale(staff app.Staff)
 
-	ProcessMatch()
+	ProcessMatch(app.Rival) (app.Match, error)
 
 	ProcessInjury() (app.Team, error)
 	GetCurrentInjuredPlayer() (*app.Team, *int, error)
