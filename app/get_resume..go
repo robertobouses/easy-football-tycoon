@@ -75,7 +75,7 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 			return []Calendary{}, err
 		}
 	case "match":
-		match, err := a.ProcessMatch(Rival{})
+		match, err := a.ProcessMatch()
 		if err != nil {
 			log.Println("Error en la venta:", err)
 			return []Calendary{}, err

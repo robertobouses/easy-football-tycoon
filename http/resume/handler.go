@@ -31,11 +31,13 @@ type App interface {
 	AcceptStaffSale(staff app.Staff) error
 	RejectStaffSale(staff app.Staff)
 
-	ProcessMatch(app.Rival) (app.Match, error)
+	ProcessMatch() (app.Match, error)
 
 	ProcessInjury() (app.Team, error)
 	GetCurrentInjuredPlayer() (*app.Team, *int, error)
 	SetCurrentInjuredPlayer(*app.Team, *int)
+
+	GetCurrentRival() (app.Rival, string, error)
 }
 
 func NewHandler(app App) Handler {

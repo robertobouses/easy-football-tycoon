@@ -103,4 +103,7 @@ type AppService struct {
 	injuryDays          *int
 	transferFeeReceived *int
 	callCounter         int
+	callCounterRival    int
+	currentRivals       []Rival
+	isHome              bool
 }
