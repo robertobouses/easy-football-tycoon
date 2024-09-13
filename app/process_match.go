@@ -9,10 +9,24 @@ import (
 	"github.com/google/uuid"
 )
 
-func (a *AppService) ProcessMatch() (Match, error) {
-	rival, homeOrAway, err := a.GetCurrentRival()
+func (a *AppService) ProcessMatch(calendaryId int) (Match, error) {
+	if a.currentRivals == nil || len(*a.currentRivals) == 0 {
+		return Match{}, errors.New("currentRivals no está inicializado o está vacío")
+	}
+
+	rival, homeOrAwayString, err := a.GetCurrentRival()
 	if err != nil {
 		return Match{}, err
+	}
+
+	var homeOrAway HomeOrAway
+	switch homeOrAwayString {
+	case "home": ///TODO NO FUNCIONA CORRECTAMENTE, LO QUE NECESITO ES QUE HAGA UNA SUCESIÓN HOME-AWAY-HOME-AWAY... O INCLUSO ALEATORIA
+		homeOrAway = Home
+	case "away":
+		homeOrAway = Away
+	default:
+		return Match{}, errors.New("valor inválido para homeOrAway")
 	}
 
 	lineup, err := a.GetLineup()
@@ -33,12 +47,12 @@ func (a *AppService) ProcessMatch() (Match, error) {
 		return Match{}, err
 	}
 
-	lineupPercentagePossession, rivalPercentagePossession, err := CalculateBallPossession(totalTechnique, rival.Technique, lineupTotalQuality, rivalTotalQuality, allQuality, homeOrAway)
+	lineupPercentagePossession, rivalPercentagePossession, err := CalculateBallPossession(totalTechnique, rival.Technique, lineupTotalQuality, rivalTotalQuality, allQuality, homeOrAwayString)
 	if err != nil {
 		return Match{}, err
 	}
 
-	lineupScoreChances, rivalScoreChances, err := CalculateScoringChances(lineupTotalQuality, rivalTotalQuality, totalMental, rival.Mental, homeOrAway)
+	lineupScoreChances, rivalScoreChances, err := CalculateScoringChances(lineupTotalQuality, rivalTotalQuality, totalMental, rival.Mental, homeOrAwayString)
 	if err != nil {
 		return Match{}, err
 	}
@@ -49,7 +63,8 @@ func (a *AppService) ProcessMatch() (Match, error) {
 	}
 	match := Match{
 		MatchId:     uuid.New(),
-		CalendaryId: 1, // TODO Asignar el CalendaryId según sea necesario
+		CalendaryId: calendaryId,
+		HomeOrAway:  homeOrAway,
 		RivalName:   rival.RivalName,
 		Team: TeamStats{
 			BallPossession: lineupPercentagePossession,
@@ -62,6 +77,8 @@ func (a *AppService) ProcessMatch() (Match, error) {
 			Goals:          rivalGoals,
 		},
 	}
+
+	a.SetCurrentMatch(&match)
 
 	return match, nil
 }
@@ -134,10 +151,10 @@ func CalculateBallPossession(lineupTotalTechnique, rivalTotalTechnique, lineupTo
 		}
 	}
 
-	if percentageLineupQualityWithRandomFactor > 89 {
-		percentageLineupQualityWithRandomFactor = 89
-	} else if percentageLineupQualityWithRandomFactor < 11 {
-		percentageLineupQualityWithRandomFactor = 11
+	if percentageLineupQualityWithRandomFactor > 83 {
+		percentageLineupQualityWithRandomFactor = 83
+	} else if percentageLineupQualityWithRandomFactor < 17 {
+		percentageLineupQualityWithRandomFactor = 17
 	}
 
 	percentageLineup := int(percentageLineupQualityWithRandomFactor)
@@ -151,40 +168,52 @@ func CalculateScoringChances(lineupTotalQuality, rivalTotalQuality, lineupTotalM
 	rivalScoringChances := 0
 	switch {
 	case lineupTotalQuality >= 3000:
-		lineupScoringChances = 8
+		lineupScoringChances = 11
 	case lineupTotalQuality >= 2750:
-		lineupScoringChances = 7
+		lineupScoringChances = 10
 	case lineupTotalQuality >= 2600:
-		lineupScoringChances = 6
+		lineupScoringChances = 9
 	case lineupTotalQuality >= 2400:
-		lineupScoringChances = 5
+		lineupScoringChances = 8
 	case lineupTotalQuality >= 2300:
-		lineupScoringChances = 4
+		lineupScoringChances = 7
 	case lineupTotalQuality >= 2200:
-		lineupScoringChances = 3
+		lineupScoringChances = 6
 	case lineupTotalQuality >= 2100:
-		lineupScoringChances = 2
+		lineupScoringChances = 5
 	case lineupTotalQuality >= 1900:
+		lineupScoringChances = 4
+	case lineupTotalQuality >= 1700:
+		lineupScoringChances = 3
+	case lineupTotalQuality >= 1400:
+		lineupScoringChances = 2
+	case lineupTotalQuality >= 0:
 		lineupScoringChances = 1
 	}
 
 	switch {
 	case rivalTotalQuality >= 3000:
-		rivalScoringChances = 8
+		rivalScoringChances = 11
 	case rivalTotalQuality >= 2750:
-		rivalScoringChances = 7
+		rivalScoringChances = 10
 	case rivalTotalQuality >= 2600:
-		rivalScoringChances = 6
+		rivalScoringChances = 9
 	case rivalTotalQuality >= 2400:
-		rivalScoringChances = 5
+		rivalScoringChances = 8
 	case rivalTotalQuality >= 2300:
-		rivalScoringChances = 4
+		rivalScoringChances = 7
 	case rivalTotalQuality >= 2200:
-		rivalScoringChances = 3
+		rivalScoringChances = 6
 	case rivalTotalQuality >= 2100:
-		rivalScoringChances = 2
+		rivalScoringChances = 5
 	case rivalTotalQuality >= 1900:
-		rivalScoringChances = 1
+		rivalScoringChances = 4
+	case lineupTotalQuality >= 1700:
+		lineupScoringChances = 3
+	case lineupTotalQuality >= 1400:
+		lineupScoringChances = 2
+	case lineupTotalQuality >= 0:
+		lineupScoringChances = 1
 	}
 
 	switch {
@@ -237,14 +266,16 @@ func CalculateScoringChances(lineupTotalQuality, rivalTotalQuality, lineupTotalM
 	}
 
 	if lineupScoringChancesWithRandomFactor <= 2 {
-		randomFactor = 1.1 + rand.Float64()*(3.8-1.1)
+		randomFactor = 1.1 + rand.Float64()*(3-0)
 		log.Println("El segundo randomFactor es", randomFactor)
+		lineupScoringChancesWithRandomFactor := 1
 		lineupScoringChancesWithRandomFactor = int(float64(lineupScoringChancesWithRandomFactor) * randomFactor)
 	}
 
 	if rivalScoringChancesWithRandomFactor <= 2 {
-		randomFactor = 1.1 + rand.Float64()*(3.8-1.1)
+		randomFactor = 1.1 + rand.Float64()*(3-0)
 		log.Println("El segundo randomFactor es", randomFactor)
+		rivalScoringChancesWithRandomFactor := 1
 		rivalScoringChancesWithRandomFactor = int(float64(rivalScoringChancesWithRandomFactor) * randomFactor)
 	}
 
@@ -255,7 +286,7 @@ func CalculateScoringChances(lineupTotalQuality, rivalTotalQuality, lineupTotalM
 func CalculateGoals(lineupTotalPhysique, rivalTotalPhysique, lineupPossession, rivalPossession, lineupScoringChances, rivalScoringChances int) (int, int, error) {
 
 	if lineupScoringChances == 0 && rivalScoringChances == 0 {
-		return 0, 0, errors.New("ninguno de los equipos tiene oportunidades de gol")
+		return 0, 0, nil
 	}
 
 	rand.Seed(time.Now().UnixNano())
@@ -283,27 +314,41 @@ func CalculateGoals(lineupTotalPhysique, rivalTotalPhysique, lineupPossession, r
 }
 
 func (a *AppService) GetCurrentRival() (Rival, string, error) {
-	rivals, err := a.rivalRepo.GetRival()
-	if err != nil {
-		return Rival{}, "", err
+	if a.currentRivals == nil {
+		return Rival{}, "", errors.New("currentRivals es nil")
+	}
+
+	if len(*a.currentRivals) == 0 {
+		return Rival{}, "", errors.New("no hay rivales disponibles")
+	}
+
+	if a.callCounterRival <= 0 || a.callCounterRival > len(*a.currentRivals) {
+		return Rival{}, "", errors.New("índice de rival fuera de rango")
 	}
 
 	if a.callCounterRival == 1 {
+		rivals, err := a.rivalRepo.GetRival()
+		if err != nil {
+			return Rival{}, "", err
+		}
+
+		if len(rivals) == 0 {
+			return Rival{}, "", errors.New("no se pudieron obtener rivales")
+		}
+
 		rand.Seed(time.Now().UnixNano())
 		rand.Shuffle(len(rivals), func(i, j int) {
 			rivals[i], rivals[j] = rivals[j], rivals[i]
 		})
-		a.currentRivals = rivals
-	}
-
-	if a.callCounterRival > len(a.currentRivals) {
+		a.currentRivals = &rivals
+	} else {
 		a.callCounterRival = 1
-		rivalsAway := make([]Rival, len(a.currentRivals))
-		copy(rivalsAway, a.currentRivals)
+		rivalsAway := make([]Rival, len(*a.currentRivals))
+		copy(rivalsAway, *a.currentRivals)
 		for i, j := 0, len(rivalsAway)-1; i < j; i, j = i+1, j-1 {
 			rivalsAway[i], rivalsAway[j] = rivalsAway[j], rivalsAway[i]
 		}
-		a.currentRivals = rivalsAway
+		a.currentRivals = &rivalsAway
 		a.isHome = false
 	}
 
@@ -313,8 +358,16 @@ func (a *AppService) GetCurrentRival() (Rival, string, error) {
 	}
 	a.isHome = !a.isHome
 
-	currentRival := a.currentRivals[a.callCounterRival-1]
+	currentRival := (*a.currentRivals)[a.callCounterRival-1]
 	a.callCounterRival++
 
 	return currentRival, homeOrAway, nil
+}
+
+func (a *AppService) SetCurrentMatch(match *Match) {
+	a.currentMatch = match
+}
+
+func (a *AppService) GetCurrentMatch() (*Match, error) {
+	return a.currentMatch, nil
 }
