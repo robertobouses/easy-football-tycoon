@@ -69,7 +69,12 @@ type BankRepository interface {
 	GetBalance() (int, error)
 }
 
-func NewApp(lineupRepository LineupRepository, teamRepository TeamRepository, rivalRepository RivalRepository, signingsRepository SigningsRepository, staffRepository StaffRepository, teamStaffRepository TeamStaffRepository, calendaryRepository CalendaryRepository, analyticsRepository AnalyticsRepository, bankRepository BankRepository) AppService {
+type MatchRepository interface {
+	PostMatch(match Match) error
+	GetMatches() ([]Match, error)
+}
+
+func NewApp(lineupRepository LineupRepository, teamRepository TeamRepository, rivalRepository RivalRepository, signingsRepository SigningsRepository, staffRepository StaffRepository, teamStaffRepository TeamStaffRepository, calendaryRepository CalendaryRepository, analyticsRepository AnalyticsRepository, bankRepository BankRepository, matchRepository MatchRepository) AppService {
 	return AppService{
 		lineupRepo:           lineupRepository,
 		teamRepo:             teamRepository,
@@ -80,6 +85,7 @@ func NewApp(lineupRepository LineupRepository, teamRepository TeamRepository, ri
 		calendaryRepo:        calendaryRepository,
 		analyticsRepo:        analyticsRepository,
 		bankRepo:             bankRepository,
+		matchRepo:            matchRepository,
 		currentPlayerOnSale:  nil,
 		currentPlayerSigning: nil,
 		currentInjuredPlayer: nil,
@@ -105,6 +111,7 @@ type AppService struct {
 	calendaryRepo        CalendaryRepository
 	analyticsRepo        AnalyticsRepository
 	bankRepo             BankRepository
+	matchRepo            MatchRepository
 	currentPlayerOnSale  *Team
 	currentPlayerSigning *Signings
 	currentInjuredPlayer *Team

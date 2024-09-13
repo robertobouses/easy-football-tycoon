@@ -21,6 +21,7 @@ import (
 	bankRepository "github.com/robertobouses/easy-football-tycoon/repository/bank"
 	calendaryRepository "github.com/robertobouses/easy-football-tycoon/repository/calendary"
 	lineupRepository "github.com/robertobouses/easy-football-tycoon/repository/lineup"
+	matchRepository "github.com/robertobouses/easy-football-tycoon/repository/match"
 	rivalRepository "github.com/robertobouses/easy-football-tycoon/repository/rival"
 	signingsRepository "github.com/robertobouses/easy-football-tycoon/repository/signings"
 	staffRepository "github.com/robertobouses/easy-football-tycoon/repository/staff"
@@ -96,7 +97,12 @@ func main() {
 		panic(err)
 	}
 
-	app := app.NewApp(lineupRepo, teamRepo, rivalRepo, signingsRepo, staffRepo, teamStaffRepo, calendaryRepo, analyticsRepo, bankRepo)
+	matchRepo, err := matchRepository.NewRepository(db)
+	if err != nil {
+		panic(err)
+	}
+
+	app := app.NewApp(lineupRepo, teamRepo, rivalRepo, signingsRepo, staffRepo, teamStaffRepo, calendaryRepo, analyticsRepo, bankRepo, matchRepo)
 
 	lineupHandler := lineup.NewHandler(app)
 
