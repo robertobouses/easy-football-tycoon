@@ -71,15 +71,27 @@ type BankRepository interface {
 
 func NewApp(lineupRepository LineupRepository, teamRepository TeamRepository, rivalRepository RivalRepository, signingsRepository SigningsRepository, staffRepository StaffRepository, teamStaffRepository TeamStaffRepository, calendaryRepository CalendaryRepository, analyticsRepository AnalyticsRepository, bankRepository BankRepository) AppService {
 	return AppService{
-		lineupRepo:    lineupRepository,
-		teamRepo:      teamRepository,
-		rivalRepo:     rivalRepository,
-		signingsRepo:  signingsRepository,
-		staffRepo:     staffRepository,
-		teamStaffRepo: teamStaffRepository,
-		calendaryRepo: calendaryRepository,
-		analyticsRepo: analyticsRepository,
-		bankRepo:      bankRepository,
+		lineupRepo:           lineupRepository,
+		teamRepo:             teamRepository,
+		rivalRepo:            rivalRepository,
+		signingsRepo:         signingsRepository,
+		staffRepo:            staffRepository,
+		teamStaffRepo:        teamStaffRepository,
+		calendaryRepo:        calendaryRepository,
+		analyticsRepo:        analyticsRepository,
+		bankRepo:             bankRepository,
+		currentPlayerOnSale:  nil,
+		currentPlayerSigning: nil,
+		currentInjuredPlayer: nil,
+		currentStaffSigning:  nil,
+		currentStaffOnSale:   nil,
+		injuryDays:           nil,
+		transferFeeReceived:  nil,
+		callCounter:          1,
+		callCounterRival:     1,
+		currentRivals:        nil,
+		isHome:               true,
+		currentMatch:         nil,
 	}
 }
 
@@ -103,4 +115,8 @@ type AppService struct {
 	injuryDays          *int
 	transferFeeReceived *int
 	callCounter         int
+	callCounterRival    int
+	currentRivals       *[]Rival
+	isHome              bool
+	currentMatch        *Match
 }

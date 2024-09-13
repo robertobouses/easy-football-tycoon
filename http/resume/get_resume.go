@@ -2,6 +2,7 @@ package resume
 
 import (
 	"log"
+	"net/http"
 	nethttp "net/http"
 
 	"github.com/gin-gonic/gin"
@@ -99,8 +100,38 @@ func (h Handler) GetResume(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(nethttp.StatusOK, gin.H{
-		"message":            "Day completed",
-		"type calendary day": calendary,
+	match, err := h.app.GetCurrentMatch()
+	if err != nil {
+		ctx.JSON(nethttp.StatusInternalServerError, gin.H{"error": "Error fetching current match"})
+		return
+	}
+	log.Println("The match in GetCurrentMatch HTTP is", match)
+
+	if match != nil {
+		ctx.JSON(http.StatusOK, gin.H{
+			"message":        "Match day!",
+			"matchDayNumber": match.MatchDayNumber,
+			"venue":          match.HomeOrAway,
+			"match": gin.H{
+				"your_team": gin.H{
+					"ball_possession": match.Team.BallPossession,
+					"scoring_chances": match.Team.ScoringChances,
+					"goals":           match.Team.Goals,
+				},
+				"rival": gin.H{
+					"name":            match.RivalName,
+					"ball_possession": match.Rival.BallPossession,
+					"scoring_chances": match.Rival.ScoringChances,
+					"goals":           match.Rival.Goals,
+				},
+			},
+			"calendary": calendary,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message":   "Day completed",
+		"calendary": calendary,
 	})
 }

@@ -20,23 +20,18 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 
 	day := calendary[a.callCounter-1]
 
-	if day.DayType != "playerOnSale" {
+	switch day.DayType {
+	case "playerOnSale":
 		a.SetCurrentPlayerSale(nil, nil)
-	}
-
-	if day.DayType != "playerSigning" {
+	case "playerSigning":
 		a.SetCurrentPlayerSigning(nil)
-	}
-
-	if day.DayType != "injury" {
+	case "injury":
 		a.SetCurrentInjuredPlayer(nil, nil)
-	}
-
-	if day.DayType != "staffSigning" {
+	case "staffSigning":
 		a.SetCurrentStaffSigning(nil)
-	}
 
-	log.Println("estasmos en GetResume con day type", day.DayType)
+	}
+	log.Println("estamos en GetResume con day type", day.DayType)
 
 	switch day.DayType {
 	case "playerSigning":
@@ -49,7 +44,7 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 	case "playerOnSale":
 		err := a.ProcessPlayerSale()
 		if err != nil {
-			log.Println("Error en la venta:", err)
+			log.Println("Error en la venta del jugador:", err)
 			return []Calendary{}, err
 		}
 	case "injury":
@@ -71,13 +66,26 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 	case "staffSale":
 		err := a.ProcessTeamStaffSale()
 		if err != nil {
-			log.Println("Error en la venta:", err)
+			log.Println("Error en la venta del Staff:", err)
 			return []Calendary{}, err
 		}
 	case "match":
-		match, err := a.ProcessMatch(Rival{})
+		if a.currentRivals == nil || len(*a.currentRivals) == 0 {
+			rivals, err := a.rivalRepo.GetRival()
+			if err != nil {
+				log.Println("Error al obtener rivales:", err)
+				return []Calendary{}, err
+			}
+			a.currentRivals = &rivals
+		}
+		if a.currentRivals == nil || len(*a.currentRivals) == 0 {
+			log.Println("Error en el procesamiento del partido: currentRivals no está inicializado o está vacío")
+			return []Calendary{}, ErrNoRivalsAvailable
+		}
+
+		match, err := a.ProcessMatch(day.CalendaryId)
 		if err != nil {
-			log.Println("Error en la venta:", err)
+			log.Println("Error en el procesamiento del partido:", err)
 			return []Calendary{}, err
 		}
 		log.Println("partido actual", match)
