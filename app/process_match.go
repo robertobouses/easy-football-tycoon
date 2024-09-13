@@ -14,14 +14,15 @@ func (a *AppService) ProcessMatch(calendaryId int) (Match, error) {
 		return Match{}, errors.New("currentRivals no está inicializado o está vacío")
 	}
 
-	rival, homeOrAwayString, err := a.GetCurrentRival()
+	rival, homeOrAwayString, matchDayNumber, err := a.GetCurrentRival()
 	if err != nil {
 		return Match{}, err
 	}
+	log.Println(matchDayNumber)
 
 	var homeOrAway HomeOrAway
 	switch homeOrAwayString {
-	case "home": ///TODO NO FUNCIONA CORRECTAMENTE, LO QUE NECESITO ES QUE HAGA UNA SUCESIÓN HOME-AWAY-HOME-AWAY... O INCLUSO ALEATORIA
+	case "home":
 		homeOrAway = Home
 	case "away":
 		homeOrAway = Away
@@ -62,10 +63,11 @@ func (a *AppService) ProcessMatch(calendaryId int) (Match, error) {
 		return Match{}, err
 	}
 	match := Match{
-		MatchId:     uuid.New(),
-		CalendaryId: calendaryId,
-		HomeOrAway:  homeOrAway,
-		RivalName:   rival.RivalName,
+		MatchId:        uuid.New(),
+		CalendaryId:    calendaryId,
+		MatchDayNumber: matchDayNumber,
+		HomeOrAway:     homeOrAway,
+		RivalName:      rival.RivalName,
 		Team: TeamStats{
 			BallPossession: lineupPercentagePossession,
 			ScoringChances: lineupScoreChances,
@@ -215,7 +217,7 @@ func CalculateScoringChances(lineupTotalQuality, rivalTotalQuality, lineupTotalM
 	case lineupTotalQuality >= 0:
 		lineupScoringChances = 1
 	}
-
+	//añadir aquí las modificaciones por ordenes, estrategia, formación
 	switch {
 	case float64(lineupTotalMental) >= float64(rivalTotalMental)*1.5:
 		lineupScoringChances = int(float64(lineupScoringChances) * 1.25)
@@ -266,14 +268,14 @@ func CalculateScoringChances(lineupTotalQuality, rivalTotalQuality, lineupTotalM
 	}
 
 	if lineupScoringChancesWithRandomFactor <= 2 {
-		randomFactor = 1.1 + rand.Float64()*(3-0)
+		randomFactor = 0 + rand.Float64()*(3-0)
 		log.Println("El segundo randomFactor es", randomFactor)
 		lineupScoringChancesWithRandomFactor := 1
 		lineupScoringChancesWithRandomFactor = int(float64(lineupScoringChancesWithRandomFactor) * randomFactor)
 	}
 
 	if rivalScoringChancesWithRandomFactor <= 2 {
-		randomFactor = 1.1 + rand.Float64()*(3-0)
+		randomFactor = 0 + rand.Float64()*(3-0)
 		log.Println("El segundo randomFactor es", randomFactor)
 		rivalScoringChancesWithRandomFactor := 1
 		rivalScoringChancesWithRandomFactor = int(float64(rivalScoringChancesWithRandomFactor) * randomFactor)
@@ -313,55 +315,62 @@ func CalculateGoals(lineupTotalPhysique, rivalTotalPhysique, lineupPossession, r
 	return goalsLineup, goalsRival, nil
 }
 
-func (a *AppService) GetCurrentRival() (Rival, string, error) {
+func (a *AppService) GetCurrentRival() (Rival, string, int, error) {
 	if a.currentRivals == nil {
-		return Rival{}, "", errors.New("currentRivals es nil")
+		return Rival{}, "", 0, errors.New("currentRivals es nil")
 	}
 
 	if len(*a.currentRivals) == 0 {
-		return Rival{}, "", errors.New("no hay rivales disponibles")
+		return Rival{}, "", 0, errors.New("no hay rivales disponibles")
 	}
 
-	if a.callCounterRival <= 0 || a.callCounterRival > len(*a.currentRivals) {
-		return Rival{}, "", errors.New("índice de rival fuera de rango")
+	if a.callCounterRival <= 0 || a.callCounterRival > 2*len(*a.currentRivals) {
+		return Rival{}, "", 0, errors.New("índice de rival fuera de rango")
 	}
 
 	if a.callCounterRival == 1 {
 		rivals, err := a.rivalRepo.GetRival()
 		if err != nil {
-			return Rival{}, "", err
+			return Rival{}, "", 0, err
 		}
 
 		if len(rivals) == 0 {
-			return Rival{}, "", errors.New("no se pudieron obtener rivales")
+			return Rival{}, "", 0, errors.New("no se pudieron obtener rivales")
 		}
 
 		rand.Seed(time.Now().UnixNano())
 		rand.Shuffle(len(rivals), func(i, j int) {
 			rivals[i], rivals[j] = rivals[j], rivals[i]
 		})
+
 		a.currentRivals = &rivals
-	} else {
 		a.callCounterRival = 1
-		rivalsAway := make([]Rival, len(*a.currentRivals))
-		copy(rivalsAway, *a.currentRivals)
-		for i, j := 0, len(rivalsAway)-1; i < j; i, j = i+1, j-1 {
-			rivalsAway[i], rivalsAway[j] = rivalsAway[j], rivalsAway[i]
-		}
-		a.currentRivals = &rivalsAway
-		a.isHome = false
 	}
+
+	totalRivals := len(*a.currentRivals)
+	roundMatches := totalRivals
+	isSecondRound := a.callCounterRival > roundMatches
+
+	index := (a.callCounterRival - 1) % roundMatches
 
 	homeOrAway := "home"
-	if !a.isHome {
+	if isSecondRound {
 		homeOrAway = "away"
 	}
-	a.isHome = !a.isHome
+	if !isSecondRound {
+		if rand.Intn(2) == 0 {
+			homeOrAway = "away"
+		}
+	}
 
-	currentRival := (*a.currentRivals)[a.callCounterRival-1]
+	currentRival := (*a.currentRivals)[index]
 	a.callCounterRival++
 
-	return currentRival, homeOrAway, nil
+	if a.callCounterRival > 2*roundMatches {
+		a.callCounterRival = 1
+	}
+
+	return currentRival, homeOrAway, a.callCounterRival - 1, nil
 }
 
 func (a *AppService) SetCurrentMatch(match *Match) {

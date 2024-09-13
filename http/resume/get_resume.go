@@ -109,8 +109,9 @@ func (h Handler) GetResume(ctx *gin.Context) {
 
 	if match != nil {
 		ctx.JSON(http.StatusOK, gin.H{
-			"message": "Match day!",
-			"venue":   match.HomeOrAway,
+			"message":        "Match day!",
+			"matchDayNumber": match.MatchDayNumber,
+			"venue":          match.HomeOrAway,
 			"match": gin.H{
 				"your_team": gin.H{
 					"ball_possession": match.Team.BallPossession,

@@ -37,7 +37,7 @@ type App interface {
 	GetCurrentInjuredPlayer() (*app.Team, *int, error)
 	SetCurrentInjuredPlayer(*app.Team, *int)
 
-	GetCurrentRival() (app.Rival, string, error)
+	GetCurrentRival() (app.Rival, string, int, error)
 	SetCurrentMatch(match *app.Match)
 	GetCurrentMatch() (*app.Match, error)
 }

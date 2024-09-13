@@ -31,9 +31,9 @@ func generateCalendary() []string {
 	primerSegmento := []string{"playerSigning", "playerSigning", "playerSigning", "playerSigning", "playerSigning", "staffSigning", "staffSigning", "staffSigning",
 		"playerOnSale", "playerOnSale", "playerOnSale", "playerOnSale", "playerOnSale", "staffSale",
 		"injury", "injury"}
-	segundoSegmento := []string{"match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match",
+	segundoSegmento := []string{"match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match",
 		"injury", "injury", "injury"}
-	tercerSegmento := []string{"match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match",
+	tercerSegmento := []string{"match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match", "match",
 		"injury", "injury", "injury"}
 	cuartoSegmento := []string{"playerSigning", "playerSigning", "playerSigning", "playerSigning", "playerSigning", "playerSigning", "staffSigning", "staffSigning",
 		"staffSigning", "playerOnSale", "playerOnSale", "playerOnSale", "staffSale", "staffSale",
