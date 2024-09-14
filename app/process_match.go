@@ -82,6 +82,11 @@ func (a *AppService) ProcessMatch(calendaryId int) (Match, error) {
 
 	a.SetCurrentMatch(&match)
 
+	err = a.matchRepo.PostMatch(match)
+	if err != nil {
+		log.Println(ErrProcessingMatch)
+	}
+
 	return match, nil
 }
 
