@@ -74,18 +74,27 @@ type MatchRepository interface {
 	GetMatches() ([]Match, error)
 }
 
-func NewApp(lineupRepository LineupRepository, teamRepository TeamRepository, rivalRepository RivalRepository, signingsRepository SigningsRepository, staffRepository StaffRepository, teamStaffRepository TeamStaffRepository, calendaryRepository CalendaryRepository, analyticsRepository AnalyticsRepository, bankRepository BankRepository, matchRepository MatchRepository) AppService {
+type StrategyRepository interface {
+	PostStrategy(Strategy) error
+	GetStrategy() (Strategy, error)
+}
+
+func NewApp(lineupRepository LineupRepository, teamRepository TeamRepository, rivalRepository RivalRepository, signingsRepository SigningsRepository,
+	staffRepository StaffRepository, teamStaffRepository TeamStaffRepository, calendaryRepository CalendaryRepository, analyticsRepository AnalyticsRepository,
+	bankRepository BankRepository, matchRepository MatchRepository, strategyRepository StrategyRepository) AppService {
 	return AppService{
-		lineupRepo:           lineupRepository,
-		teamRepo:             teamRepository,
-		rivalRepo:            rivalRepository,
-		signingsRepo:         signingsRepository,
-		staffRepo:            staffRepository,
-		teamStaffRepo:        teamStaffRepository,
-		calendaryRepo:        calendaryRepository,
-		analyticsRepo:        analyticsRepository,
-		bankRepo:             bankRepository,
-		matchRepo:            matchRepository,
+		lineupRepo:    lineupRepository,
+		teamRepo:      teamRepository,
+		rivalRepo:     rivalRepository,
+		signingsRepo:  signingsRepository,
+		staffRepo:     staffRepository,
+		teamStaffRepo: teamStaffRepository,
+		calendaryRepo: calendaryRepository,
+		analyticsRepo: analyticsRepository,
+		bankRepo:      bankRepository,
+		matchRepo:     matchRepository,
+		strategyRepo:  strategyRepository,
+
 		currentPlayerOnSale:  nil,
 		currentPlayerSigning: nil,
 		currentInjuredPlayer: nil,
@@ -102,28 +111,28 @@ func NewApp(lineupRepository LineupRepository, teamRepository TeamRepository, ri
 }
 
 type AppService struct {
-	lineupRepo           LineupRepository
-	teamRepo             TeamRepository
-	rivalRepo            RivalRepository
-	signingsRepo         SigningsRepository
-	staffRepo            StaffRepository
-	teamStaffRepo        TeamStaffRepository
-	calendaryRepo        CalendaryRepository
-	analyticsRepo        AnalyticsRepository
-	bankRepo             BankRepository
-	matchRepo            MatchRepository
+	lineupRepo    LineupRepository
+	teamRepo      TeamRepository
+	rivalRepo     RivalRepository
+	signingsRepo  SigningsRepository
+	staffRepo     StaffRepository
+	teamStaffRepo TeamStaffRepository
+	calendaryRepo CalendaryRepository
+	analyticsRepo AnalyticsRepository
+	bankRepo      BankRepository
+	matchRepo     MatchRepository
+	strategyRepo  StrategyRepository
+
 	currentPlayerOnSale  *Team
 	currentPlayerSigning *Signings
 	currentInjuredPlayer *Team
 	currentStaffSigning  *Staff
 	currentStaffOnSale   *Staff
-	// currentTeamStaffSigning *Staff
-	// currentTeamStaffOnSale  *Staff
-	injuryDays          *int
-	transferFeeReceived *int
-	callCounter         int
-	callCounterRival    int
-	currentRivals       *[]Rival
-	isHome              bool
-	currentMatch        *Match
+	injuryDays           *int
+	transferFeeReceived  *int
+	callCounter          int
+	callCounterRival     int
+	currentRivals        *[]Rival
+	isHome               bool
+	currentMatch         *Match
 }
