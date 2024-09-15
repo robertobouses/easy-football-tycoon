@@ -14,6 +14,7 @@ import (
 	rivalServer "github.com/robertobouses/easy-football-tycoon/http/rival"
 	signingsServer "github.com/robertobouses/easy-football-tycoon/http/signings"
 	staffServer "github.com/robertobouses/easy-football-tycoon/http/staff"
+	strategyServer "github.com/robertobouses/easy-football-tycoon/http/strategy"
 	"github.com/robertobouses/easy-football-tycoon/http/team"
 	teamStaffServer "github.com/robertobouses/easy-football-tycoon/http/team_staff"
 	"github.com/robertobouses/easy-football-tycoon/internal"
@@ -25,6 +26,7 @@ import (
 	rivalRepository "github.com/robertobouses/easy-football-tycoon/repository/rival"
 	signingsRepository "github.com/robertobouses/easy-football-tycoon/repository/signings"
 	staffRepository "github.com/robertobouses/easy-football-tycoon/repository/staff"
+	strategyRepository "github.com/robertobouses/easy-football-tycoon/repository/strategy"
 	teamRepository "github.com/robertobouses/easy-football-tycoon/repository/team"
 	teamStaffRepository "github.com/robertobouses/easy-football-tycoon/repository/team_staff"
 )
@@ -102,7 +104,12 @@ func main() {
 		panic(err)
 	}
 
-	app := app.NewApp(lineupRepo, teamRepo, rivalRepo, signingsRepo, staffRepo, teamStaffRepo, calendaryRepo, analyticsRepo, bankRepo, matchRepo)
+	strategyRepo, err := strategyRepository.NewRepository(db)
+	if err != nil {
+		panic(err)
+	}
+
+	app := app.NewApp(lineupRepo, teamRepo, rivalRepo, signingsRepo, staffRepo, teamStaffRepo, calendaryRepo, analyticsRepo, bankRepo, matchRepo, strategyRepo)
 
 	lineupHandler := lineup.NewHandler(app)
 
@@ -122,6 +129,8 @@ func main() {
 
 	resumeHandler := resumeServer.NewHandler(&app)
 
-	s := http.NewServer(lineupHandler, teamHandler, rivalHandler, signingsHandler, staffHandler, teamStaffHandler, calendaryHandler, analyticsHandler, resumeHandler)
+	strategyHandler := strategyServer.NewHandler(app)
+
+	s := http.NewServer(lineupHandler, teamHandler, rivalHandler, signingsHandler, staffHandler, teamStaffHandler, calendaryHandler, analyticsHandler, resumeHandler, strategyHandler)
 	s.Run("8080")
 }
