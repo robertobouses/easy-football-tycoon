@@ -10,6 +10,18 @@ import (
 )
 
 func (a *AppService) ProcessMatch(calendaryId int) (Match, error) {
+	lineup, err := a.GetLineup()
+	if err != nil {
+		return Match{}, err
+	}
+
+	if len(lineup) == 0 {
+		return Match{}, errors.New("no se encontraron jugadores en la alineación")
+	}
+	if len(lineup) < 11 {
+		return Match{}, ErrLineupIncompleted
+	}
+
 	if a.currentRivals == nil || len(*a.currentRivals) == 0 {
 		return Match{}, errors.New("currentRivals no está inicializado o está vacío")
 	}
@@ -28,15 +40,6 @@ func (a *AppService) ProcessMatch(calendaryId int) (Match, error) {
 		homeOrAway = Away
 	default:
 		return Match{}, errors.New("valor inválido para homeOrAway")
-	}
-
-	lineup, err := a.GetLineup()
-	if err != nil {
-		return Match{}, err
-	}
-
-	if len(lineup) == 0 {
-		return Match{}, errors.New("no se encontraron jugadores en la alineación")
 	}
 
 	totalTechnique := lineup[0].TotalTechnique
