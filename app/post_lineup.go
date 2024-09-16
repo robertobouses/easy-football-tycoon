@@ -27,6 +27,15 @@ func (a AppService) PostLineup(playerid uuid.UUID) error {
 		return ErrPlayerAlreadyInLineup
 	}
 
+	lineup, err := a.lineupRepo.GetLineup()
+	if err != nil {
+		log.Println("Error obteniendo la alineación:", err)
+		return err
+	}
+	if len(lineup) >= 11 {
+		return ErrLineupCompleted
+	}
+
 	err = a.lineupRepo.PostLineup(*player)
 	if err != nil {
 		log.Println("Error en PostLineup:", err)

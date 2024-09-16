@@ -5,7 +5,17 @@ import (
 )
 
 func (a *AppService) GetResume() ([]Calendary, error) {
+	lineup, err := a.lineupRepo.GetLineup()
+	{
+		if err != nil {
+			return []Calendary{}, err
+		}
 
+		if len(lineup) != 11 {
+			log.Println("La alineación debe tener 11 jugadores. Deteniendo la ejecución.")
+			return []Calendary{}, ErrLineupIncompleted
+		}
+	}
 	a.callCounter++
 	calendary, err := a.calendaryRepo.GetCalendary()
 	if err != nil {
