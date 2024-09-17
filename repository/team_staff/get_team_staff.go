@@ -31,7 +31,7 @@ func (r *repository) GetTeamStaff() ([]app.Staff, error) {
 			&staff.Physiotherapy,
 			&staff.Rarity,
 		); err != nil {
-			log.Printf("Error al escanear las filas: %v", err)
+			log.Printf("Error al escanear las filas GetTeamStaff: %v", err)
 			return nil, err
 		}
 		log.Printf("Empleado del staff del equipo recuperado de la base de datos: %+v", staff)
