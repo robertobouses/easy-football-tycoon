@@ -31,7 +31,7 @@ func (r *repository) GetTeam() ([]app.Team, error) {
 			&team.InjuryDays,
 			&team.Lined,
 		); err != nil {
-			log.Printf("Error al escanear las filas: %v", err)
+			log.Printf("Error al escanear las filas GetTeam: %v", err)
 			return nil, err
 		}
 		log.Printf("Jugador recuperado de la base de datos: %+v", team)

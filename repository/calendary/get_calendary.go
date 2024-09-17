@@ -22,7 +22,7 @@ func (r *repository) GetCalendary() ([]app.Calendary, error) {
 			&calendary.CalendaryId,
 			&calendary.DayType,
 		); err != nil {
-			log.Printf("Error al escanear las filas: %v", err)
+			log.Printf("Error al escanear las filas GetCalendary: %v", err)
 			return nil, err
 		}
 		completeCalendary = append(completeCalendary, calendary)

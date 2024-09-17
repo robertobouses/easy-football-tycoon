@@ -1,4 +1,4 @@
-CREATE TABLE strategy (
+CREATE TABLE eft.strategy (
     strategy_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     formation VARCHAR(50) NOT NULL,
     playing_style VARCHAR(50) NOT NULL,

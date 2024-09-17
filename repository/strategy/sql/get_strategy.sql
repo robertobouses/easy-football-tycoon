@@ -7,6 +7,5 @@ SELECT
     defensive_positioning, 
     build_up_play, 
     attack_focus, 
-    key_player_usage, 
-    created_at 
+    key_player_usage
 FROM eft.strategy;

@@ -31,7 +31,7 @@ func (r *repository) GetSignings() ([]app.Signings, error) {
 			&signings.InjuryDays,
 			&signings.Rarity,
 		); err != nil {
-			log.Printf("Error al escanear las filas: %v", err)
+			log.Printf("Error al escanear las filas GetSignings: %v", err)
 			return nil, err
 		}
 		signingss = append(signingss, signings)

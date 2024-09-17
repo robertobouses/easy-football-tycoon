@@ -27,7 +27,7 @@ func (r *repository) GetLineup() ([]app.Lineup, error) {
 			&lineup.TotalMental,
 			&lineup.TotalPhysique,
 		); err != nil {
-			log.Printf("Error al escanear las filas: %v", err)
+			log.Printf("Error al escanear las filas GetLineup: %v", err)
 			return nil, err
 		}
 		lineups = append(lineups, lineup)

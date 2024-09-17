@@ -9,14 +9,9 @@ import (
 
 func (r *repository) GetStrategy() (app.Strategy, error) {
 
-	rows, err := r.getStrategy.Query()
-	if err != nil {
-		return app.Strategy{}, err
-	}
-	defer rows.Close()
-
+	row := r.getStrategy.QueryRow()
 	var strategy app.Strategy
-	if err := rows.Scan(
+	if err := row.Scan(
 		&strategy.StrategyId,
 		&strategy.Formation,
 		&strategy.PlayingStyle,
@@ -27,7 +22,7 @@ func (r *repository) GetStrategy() (app.Strategy, error) {
 		&strategy.AttackFocus,
 		&strategy.KeyPlayerUsage,
 	); err != nil {
-		log.Printf("Error al escanear las filas: %v", err)
+		log.Printf("Error al escanear las filas GetStrategy: %v", err)
 		return app.Strategy{}, err
 	}
 

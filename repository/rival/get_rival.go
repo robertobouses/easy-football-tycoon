@@ -25,7 +25,7 @@ func (r *repository) GetRival() ([]app.Rival, error) {
 			&rival.Mental,
 			&rival.Physique,
 		); err != nil {
-			log.Printf("Error al escanear las filas: %v", err)
+			log.Printf("Error al escanear las filas GetRival: %v", err)
 			return nil, err
 		}
 		rivals = append(rivals, rival)
