@@ -31,6 +31,10 @@ func (r *repository) GetLineup() ([]app.Lineup, error) {
 			return nil, err
 		}
 		lineups = append(lineups, lineup)
+
+		if len(lineups) >= 11 {
+			break
+		}
 	}
 
 	return lineups, nil
