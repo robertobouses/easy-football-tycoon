@@ -2,6 +2,7 @@ package app
 
 import (
 	"log"
+	"math"
 	"math/rand"
 	"time"
 
@@ -16,11 +17,14 @@ func (a *AppService) ProcessPlayerSigning() (Signings, error) {
 	}
 
 	signings, err := a.signingsRepo.GetSigningsRandomByAnalytics(analytics.Scouting)
-	log.Println("Signingso asignado en ProcessPlayerSigning 1:", signings)
+	log.Println("Signings asignado en ProcessPlayerSigning 1:", signings)
 	if err != nil {
 		log.Println("Error al extraer GetSigningsRandomByAnalytics", err)
 		return Signings{}, err
 	}
+
+	//TODO ESTABLECER UN FACTOR PARA QUE SEA RAMDON EL PRECIO DEL FICHAJES, RELACIONADO CON FINANCES
+	//transferFeeIssued utilizar función ProcessTransferFeeReceived
 
 	if signings.SigningsId == uuid.Nil {
 		log.Println("No se encontró un signings válido")
@@ -28,7 +32,7 @@ func (a *AppService) ProcessPlayerSigning() (Signings, error) {
 	}
 
 	a.SetCurrentPlayerSigning(&signings)
-	log.Println("Signingso asignado en ProcessPlayerSigning 2:", signings)
+	log.Println("Signings asignado en ProcessPlayerSigning 2:", signings)
 
 	return signings, nil
 }
@@ -38,7 +42,7 @@ func (a *AppService) SetCurrentPlayerSigning(signings *Signings) {
 		log.Println("Signings no válido, no se asignará. Signings:", signings)
 		a.currentPlayerSigning = nil
 	} else {
-		log.Println("Signingso asignado en SetCurrentPlayerSigning:", *signings)
+		log.Println("Signings asignado en SetCurrentPlayerSigning:", *signings)
 		a.currentPlayerSigning = signings
 	}
 }
@@ -49,7 +53,7 @@ func (a *AppService) GetCurrentPlayerSigning() (*Signings, error) {
 		log.Println("a.currentPlayerSigning es nil en GetCurrentPlayerSigning 2")
 		return nil, nil
 	}
-	log.Println("Signingso actual en GetCurrentPlayerSigning 3:", *a.currentPlayerSigning)
+	log.Println("Signings actual en GetCurrentPlayerSigning 3:", *a.currentPlayerSigning)
 	return a.currentPlayerSigning, nil
 }
 
@@ -87,18 +91,28 @@ func (a *AppService) RejectPlayerSigning(signings *Signings) {
 }
 
 func ConvertSigningsToTeam(signings *Signings) Team {
+	randomFactor := 0.8 + rand.Float64()*1.5
+	happiness := int(70 * randomFactor)
+	happiness = int(math.Min(float64(happiness), 100))
+
+	randomFactor2 := 1 + rand.Float64()*17
+	familiarity := int(randomFactor2)
+
 	return Team{
-		PlayerId:   signings.SigningsId,
-		PlayerName: signings.SigningsName,
-		Position:   signings.Position,
-		Age:        signings.Age,
-		Fee:        signings.Fee,
-		Salary:     signings.Salary,
-		Technique:  signings.Technique,
-		Mental:     signings.Mental,
-		Physique:   signings.Physique,
-		InjuryDays: signings.InjuryDays,
-		Lined:      false,
+		PlayerId:    signings.SigningsId,
+		PlayerName:  signings.SigningsName,
+		Position:    signings.Position,
+		Age:         signings.Age,
+		Fee:         signings.Fee,
+		Salary:      signings.Salary,
+		Technique:   signings.Technique,
+		Mental:      signings.Mental,
+		Physique:    signings.Physique,
+		InjuryDays:  signings.InjuryDays,
+		Lined:       false,
+		Familiarity: familiarity,
+		Fitness:     signings.Fitness,
+		Happiness:   happiness,
 	}
 }
 

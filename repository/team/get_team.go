@@ -30,6 +30,9 @@ func (r *repository) GetTeam() ([]app.Team, error) {
 			&team.Physique,
 			&team.InjuryDays,
 			&team.Lined,
+			&team.Familiarity,
+			&team.Fitness,
+			&team.Happiness,
 		); err != nil {
 			log.Printf("Error al escanear las filas GetTeam: %v", err)
 			return nil, err

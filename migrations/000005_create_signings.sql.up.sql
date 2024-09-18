@@ -11,7 +11,8 @@ technique INT,
 mental INT,
 physique INT,
 injurydays INT DEFAULT 0,
-rarity INT
+rarity INT,
+fitness INT
 );
 
 COMMIT;

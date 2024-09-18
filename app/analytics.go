@@ -17,4 +17,5 @@ type Analytics struct {
 	FinanceStaffCount       int
 	ScoutingStaffCount      int
 	PhysiotherapyStaffCount int
+	Trust                   int
 }

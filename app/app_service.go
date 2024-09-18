@@ -26,6 +26,9 @@ type TeamRepository interface {
 		physique *int,
 		injuryDays *int,
 		lined *bool,
+		familiarity *int,
+		fitness *int,
+		happiness *int,
 	) error
 }
 
@@ -102,6 +105,7 @@ func NewApp(lineupRepository LineupRepository, teamRepository TeamRepository, ri
 		currentStaffOnSale:   nil,
 		injuryDays:           nil,
 		transferFeeReceived:  nil,
+		transferFeeIssued:    nil,
 		callCounter:          1,
 		callCounterRival:     1,
 		currentRivals:        nil,
@@ -130,9 +134,11 @@ type AppService struct {
 	currentStaffOnSale   *Staff
 	injuryDays           *int
 	transferFeeReceived  *int
-	callCounter          int
-	callCounterRival     int
-	currentRivals        *[]Rival
-	isHome               bool
-	currentMatch         *Match
+	transferFeeIssued    *int
+
+	callCounter      int
+	callCounterRival int
+	currentRivals    *[]Rival
+	isHome           bool
+	currentMatch     *Match
 }

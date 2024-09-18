@@ -18,9 +18,12 @@ func (r *repository) UpdatePlayerData(
 	physique *int,
 	injuryDays *int,
 	lined *bool,
+	familiarity *int,
+	fitness *int,
+	happiness *int,
 ) error {
-	log.Printf("Updating player data: %v, %v, %v, %v, %v, %v, %v, %v, %v, %v, %v",
-		playerID, playerName, position, age, fee, salary, technique, mental, physique, injuryDays, lined)
+	log.Printf("Updating player data: %v, %v, %v, %v, %v, %v, %v, %v, %v, %v, %v, %v, %v, %v",
+		playerID, playerName, position, age, fee, salary, technique, mental, physique, injuryDays, lined, familiarity, fitness, happiness)
 
 	_, err := r.updatePlayerData.Exec(
 		playerName,
@@ -33,6 +36,9 @@ func (r *repository) UpdatePlayerData(
 		physique,
 		injuryDays,
 		lined,
+		familiarity,
+		fitness,
+		happiness,
 		playerID,
 	)
 	if err != nil {

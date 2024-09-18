@@ -9,6 +9,9 @@ SELECT
 		mental,
 		physique,
 		injurydays,
-		lined
+		lined, 
+		familiarity,
+		fitness,
+		happiness
 FROM
     eft.team

@@ -8,6 +8,9 @@ INSERT  into EFT.team
 		mental,
 		physique,
 		injurydays,
-		lined)
+		lined,
+		familiarity,
+		fitness,
+		happiness)
 VALUES
-   ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
+   ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);
