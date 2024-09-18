@@ -9,5 +9,12 @@ UPDATE eft.team
 			mental = COALESCE($7, mental),
 			physique = COALESCE($8, physique),
 		    injurydays = COALESCE($9, 0) + COALESCE(injurydays, 0),
-			lined = COALESCE($10, lined)
-		WHERE playerid = $11;
+			lined = COALESCE($10, lined),
+			familiarity = GREATEST(COALESCE(familiarity, 0) - COALESCE($11, 0), 0),
+			fitness = LEAST(GREATEST(COALESCE($12, fitness), 0), COALESCE(fitness, 0) - COALESCE($12, 0)),
+			happiness = GREATEST(COALESCE(happiness, 0) - COALESCE($13, 0), 0)
+
+		WHERE playerid = $14;
+
+
+		

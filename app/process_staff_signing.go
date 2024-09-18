@@ -26,7 +26,7 @@ func (a *AppService) ProcessStaffSigning() (Staff, error) {
 	}
 
 	if staffSigning.StaffId == uuid.Nil {
-		log.Println("No se encontró un signingso válido")
+		log.Println("No se encontró un Signings válido")
 		return Staff{}, nil
 	}
 
@@ -52,7 +52,7 @@ func (a *AppService) GetCurrentStaffSigning() (*Staff, error) {
 		log.Println("a.currentStaffSigning es nil en GetCurrentStaffSigning 2")
 		return nil, nil
 	}
-	log.Println("Signingso actual en GetCurrentStaffSigning 3:", *a.currentStaffSigning)
+	log.Println("Signings actual en GetCurrentStaffSigning 3:", *a.currentStaffSigning)
 	return a.currentStaffSigning, nil
 }
 

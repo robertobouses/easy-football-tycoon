@@ -18,6 +18,9 @@ func (r *repository) PostTeam(req app.Team) error {
 		req.Physique,
 		req.InjuryDays,
 		req.Lined,
+		req.Familiarity,
+		req.Fitness,
+		req.Happiness,
 	)
 
 	if err != nil {

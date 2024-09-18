@@ -11,7 +11,10 @@ CREATE TABLE eft.team (
     mental INT,
     physique INT,
     injurydays INT DEFAULT 0,
-    lined BOOLEAN DEFAULT false
+    lined BOOLEAN DEFAULT false,
+    familiarity INT,
+    fitness INT,
+    happiness INT
 );
 
 COMMIT;

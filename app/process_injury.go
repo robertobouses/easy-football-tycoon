@@ -21,8 +21,21 @@ func (a *AppService) ProcessInjury() (Team, error) {
 	log.Println("injury Days son en ProcessInjury", injuryDays)
 	a.SetCurrentInjuredPlayer(&player, &injuryDays)
 
+	familiarity := -1 * injuryDays
+	fitness := -42 - 2*injuryDays
+	happiness := -10
 	lined := false
-	a.teamRepo.UpdatePlayerData(player.PlayerId, nil, nil, nil, nil, nil, nil, nil, nil, &injuryDays, &lined)
+
+	err = a.teamRepo.UpdatePlayerData(
+		player.PlayerId,
+		nil, nil, nil, nil, nil, nil, nil, nil,
+		&injuryDays, &lined,
+		&familiarity, &fitness, &happiness,
+	)
+	if err != nil {
+		log.Println("Error al actualizar los datos del jugador", err)
+		return Team{}, err
+	}
 
 	return player, nil
 }

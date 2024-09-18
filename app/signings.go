@@ -14,4 +14,5 @@ type Signings struct {
 	Physique     int
 	InjuryDays   int
 	Rarity       int
+	Fitness      int
 }
