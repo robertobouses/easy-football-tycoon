@@ -3,21 +3,69 @@ package app
 import "errors"
 
 func (a *AppService) CalculatePossessionChancesByFormation(formation string) (teamPossession, teamChances, rivalChances float64, err error) {
+	lineup, err := a.lineupRepo.GetLineup()
+	if err != nil {
+		return 0, 0, 0, errors.New("Error al obtener la alineación")
+	}
+
+	totalDefendersQuality, err := getTwoBestPlayers(lineup, "defense")
+	totalMidfieldersQuality, err := getTwoBestPlayers(lineup, "midfield")
+	totalForwardersQuality, err := getTwoBestPlayers(lineup, "forwarder")
+
 	switch formation {
 	case "4-4-2":
-		return 0.9, 1, 1, nil
+		if totalForwardersQuality >= 550 {
+			return 0.9, 1.2, 1, nil
+		} else if totalForwardersQuality >= 360 {
+			return 0.9, 1, 1, nil
+		} else {
+			return 0.8, 1, 1, nil
+		}
+
 	case "4-3-3":
-		return 0.8, 1.2, 1.1, nil
+		if totalMidfieldersQuality >= 510 {
+			return 0.9, 1.2, 1.1, nil
+		} else {
+			return 0.8, 1.2, 1.1, nil
+		}
+
 	case "4-5-1":
-		return 1.3, 0.7, 0.8, nil
+		if totalMidfieldersQuality >= 540 {
+			return 1.4, 0.7, 0.7, nil
+		} else if totalMidfieldersQuality >= 380 {
+			return 1.3, 0.7, 0.8, nil
+		} else {
+			return 1.1, 0.6, 0.8, nil
+		}
+
 	case "5-4-1":
-		return 0.9, 0.5, 0.6, nil
+		if totalDefendersQuality >= 500 {
+			return 1, 0.5, 0.5, nil
+		} else {
+			return 0.9, 0.5, 0.6, nil
+		}
+
 	case "5-3-2":
-		return 0.7, 1, 0.9, nil
+		if totalForwardersQuality >= 510 {
+			return 0.7, 1.1, 0.8, nil
+		} else {
+			return 0.7, 1, 0.9, nil
+		}
+
 	case "3-4-3":
-		return 1, 1.3, 1.3, nil
+		if totalDefendersQuality >= 526 {
+			return 1.2, 1.3, 1.3, nil
+		} else {
+			return 1, 1.3, 1.3, nil
+		}
+
 	case "3-5-2":
-		return 1.1, 1.1, 1.1, nil
+		if totalMidfieldersQuality >= 521 {
+			return 1.2, 1.1, 1.1, nil
+		} else {
+			return 0.9, 1.1, 1.1, nil
+		}
+
 	default:
 		return 0, 0, 0, errors.New("formación desconocida")
 	}
@@ -84,28 +132,29 @@ func (a *AppService) CalculateRivalChancesByDefensivePositioning(defensivePositi
 
 	switch defensivePositioning {
 	case "zonal_marking":
-		if totalMentalityOfDefenses >= 200 {
-			return 1, 2, nil
+		if totalMentalityOfDefenses >= 370 {
+			return 0.7, 65, nil
 		}
 		if totalMentalityOfDefenses >= 290 {
 			return 0.9, 40, nil
 		}
-		if totalMentalityOfDefenses >= 370 {
-			return 0.7, 65, nil
+		if totalMentalityOfDefenses >= 200 {
+			return 1, 2, nil
 		}
 
 		return 1.45, -20, nil
 
 	case "man_marking":
-		if totalPhysiqueOfDefenses >= 190 {
-			return 1, -40, nil
+		if totalMentalityOfDefenses >= 340 {
+			return 0.8, 15, nil
 		}
 		if totalMentalityOfDefenses >= 250 {
 			return 0.9, 1, nil
 		}
-		if totalMentalityOfDefenses >= 340 {
-			return 0.8, 15, nil
+		if totalPhysiqueOfDefenses >= 190 {
+			return 1, -40, nil
 		}
+
 		return 1.3, -120, nil
 
 	default:
@@ -143,29 +192,30 @@ func (a *AppService) CalculatePossessionByBuildUpPlay(buildUpPlay string) (posse
 
 	switch buildUpPlay {
 	case "play_from_back":
-		if totalTechniqueOfGoalkeeper >= 66 || totalMentalityOfGoalkeeper >= 66 {
-			return 1.07, nil
-		}
-		if totalQualityOfGoalkeeper >= 139 || averageTotalQualityOfDefenses >= 72 {
-			return 1.10, nil
+		if totalTechniqueOfGoalkeeper >= 84 && totalMentalityOfGoalkeeper >= 84 && averageTotalQualityOfDefenses >= 79 {
+			return 1.3, nil
 		}
 		if totalTechniqueOfGoalkeeper >= 82 && totalMentalityOfGoalkeeper >= 82 || averageTotalQualityOfDefenses >= 70 && totalQualityOfGoalkeeper >= 150 {
 			return 1.23, nil
 		}
-		if totalTechniqueOfGoalkeeper >= 84 && totalMentalityOfGoalkeeper >= 84 && averageTotalQualityOfDefenses >= 79 {
-			return 1.3, nil
+		if totalQualityOfGoalkeeper >= 139 || averageTotalQualityOfDefenses >= 72 {
+			return 1.10, nil
 		}
+		if totalTechniqueOfGoalkeeper >= 66 || totalMentalityOfGoalkeeper >= 66 {
+			return 1.07, nil
+		}
+
 		return 0.63, nil
 
 	case "long_clearance":
 
+		if averageTotalQualityOfDefenses >= 86 {
+			return 1.1, nil
+		}
 		if averageTotalQualityOfDefenses >= 74 {
 			return 1.02, nil
 		}
 
-		if averageTotalQualityOfDefenses >= 86 {
-			return 1.1, nil
-		}
 		return 0.9, nil
 
 	default:
@@ -202,32 +252,32 @@ func (a *AppService) CalculateRivalChancesByAttackFocus(attackFocus string) (cha
 
 	switch attackFocus {
 	case "wide_play":
-		if totalQualityOfMidfield >= 215 {
-			return 1.06, nil
-		}
-		if totalQualityOfMidfield >= 245 || forwardCount >= 2 {
-			return 1.09, nil
+		if averageTotalQualityOfMidfield >= 84 && forwardCount >= 2 {
+			return 1.28, nil
 		}
 		if averageTotalQualityOfMidfield >= 82 {
 			return 1.22, nil
 		}
-		if averageTotalQualityOfMidfield >= 84 && forwardCount >= 2 {
-			return 1.28, nil
+		if totalQualityOfMidfield >= 245 || forwardCount >= 2 {
+			return 1.09, nil
 		}
+		if totalQualityOfMidfield >= 215 {
+			return 1.06, nil
+		}
+
 		return 0.83, nil
 
 	case "central_play":
-
+		if averageTotalQualityOfMidfield >= 79 && midfieldCount >= 4 {
+			return 1.21, nil
+		}
+		if averageTotalQualityOfMidfield >= 76 {
+			return 1.14, nil
+		}
 		if midfieldCount >= 4 {
 			return 1.09, nil
 		}
 
-		if averageTotalQualityOfMidfield >= 76 {
-			return 1.14, nil
-		}
-		if averageTotalQualityOfMidfield >= 79 && midfieldCount >= 4 {
-			return 1.21, nil
-		}
 		return 0.91, nil
 
 	default:
@@ -253,22 +303,22 @@ func (a *AppService) CalculateRivalChancesByKeyPlayerUsage(keyPlayerUsage string
 
 	switch keyPlayerUsage {
 	case "reference_player":
-		if totalQualityOfKeyPlayer >= 204 {
-			return 0.98, 1.1, nil
-		}
-		if totalQualityOfKeyPlayer >= 216 {
-			return 1, 1.26, nil
-		}
-
-		if totalQualityOfKeyPlayer >= 254 {
-			return 1, 1.52, nil
+		if totalQualityOfKeyPlayer >= 278 {
+			return 0.98, 1.9, nil
 		}
 		if totalQualityOfKeyPlayer >= 271 {
 			return 0.94, 1.64, nil
 		}
-		if totalQualityOfKeyPlayer >= 278 {
-			return 0.98, 1.9, nil
+		if totalQualityOfKeyPlayer >= 254 {
+			return 1, 1.52, nil
 		}
+		if totalQualityOfKeyPlayer >= 216 {
+			return 1, 1.26, nil
+		}
+		if totalQualityOfKeyPlayer >= 204 {
+			return 0.98, 1.1, nil
+		}
+
 		return 1.1, 0.67, nil
 
 	case "free_role_player":
@@ -278,4 +328,32 @@ func (a *AppService) CalculateRivalChancesByKeyPlayerUsage(keyPlayerUsage string
 	default:
 		return 0, 0, errors.New("Estilo de KeyPlayerUsage desconocido")
 	}
+}
+
+func getTwoBestPlayers(players []Lineup, position string) (int, error) {
+	var foundPlayers int
+	bestPlayers := make([]Lineup, 2)
+
+	for _, player := range players {
+		if player.Position == position {
+			if foundPlayers < 2 {
+				foundPlayers++
+				if foundPlayers == 1 || player.Technique+player.Mental+player.Physique > bestPlayers[0].Technique+bestPlayers[0].Mental+bestPlayers[0].Physique {
+					bestPlayers[1] = bestPlayers[0]
+					bestPlayers[0] = player
+				} else if foundPlayers == 2 || player.Technique+player.Mental+player.Physique > bestPlayers[1].Technique+bestPlayers[1].Mental+bestPlayers[1].Physique {
+					bestPlayers[1] = player
+				}
+			}
+		}
+	}
+
+	if foundPlayers < 2 {
+		return 0, errors.New("no hay suficientes jugadores en la alineación")
+	}
+
+	totalPlayersQuality := bestPlayers[0].Technique + bestPlayers[0].Mental + bestPlayers[0].Physique +
+		bestPlayers[1].Technique + bestPlayers[1].Mental + bestPlayers[1].Physique
+
+	return totalPlayersQuality, nil
 }
