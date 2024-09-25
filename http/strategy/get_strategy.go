@@ -7,11 +7,11 @@ import (
 )
 
 func (h Handler) GetStrategy(ctx *gin.Context) {
-	player, err := h.app.GetStrategy()
+	strategy, err := h.app.GetStrategy()
 	if err != nil {
 		ctx.JSON(nethttp.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	ctx.JSON(nethttp.StatusOK, player)
+	ctx.JSON(nethttp.StatusOK, strategy)
 
 }

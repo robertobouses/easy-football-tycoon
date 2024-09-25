@@ -1,12 +1,69 @@
 package app
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
-func (a *AppService) CalculatePossessionChancesByFormation(formation string) (teamPossession, teamChances, rivalChances float64, err error) {
-	lineup, err := a.lineupRepo.GetLineup()
+func (a *AppService) ResultOfStrategy(lineup []Lineup, formation, playingStyle, gameTempo, passingStyle, defensivePositioning, buildUpPlay, attackFocus, keyPlayerUsage string) (result map[string]float64, err error) {
+
+	result = make(map[string]float64)
+
+	teamPossessionFormation, teamChancesFormation, rivalChancesFormation, err := a.CalculatePossessionChancesByFormation(lineup, formation)
 	if err != nil {
-		return 0, 0, 0, errors.New("Error al obtener la alineación")
+		return nil, fmt.Errorf("Error en la formación: %v", err)
 	}
+
+	teamPossessionStyle, teamChancesStyle, rivalChancesStyle, physiqueStyle, err := a.CalculatePossessionChancesByPlayingStyle(lineup, playingStyle)
+	if err != nil {
+		return nil, fmt.Errorf("Error en el estilo de juego: %v", err)
+	}
+
+	teamPossessionTempo, teamChancesTempo, rivalChancesTempo, physiqueTempo, err := a.CalculatePossessionChancesByGameTempo(gameTempo)
+	if err != nil {
+		return nil, fmt.Errorf("Error en el tempo del juego: %v", err)
+	}
+
+	teamPossessionPassing, rivalChancesPassing, err := a.CalculatePossessionChancesByPassingStyle(passingStyle)
+	if err != nil {
+		return nil, fmt.Errorf("Error en el estilo de pase: %v", err)
+	}
+
+	rivalChancesDefensivePositioning, physiqueDefensive, err := a.CalculateRivalChancesByDefensivePositioning(lineup, defensivePositioning)
+	if err != nil {
+		return nil, fmt.Errorf("Error en el posicionamiento defensivo: %v", err)
+	}
+
+	teamPossessionBuildUpPlay, err := a.CalculatePossessionByBuildUpPlay(buildUpPlay)
+	if err != nil {
+		return nil, fmt.Errorf("Error en el estilo de build-up play: %v", err)
+	}
+
+	rivalChancesAttackFocus, err := a.CalculateRivalChancesByAttackFocus(lineup, attackFocus)
+	if err != nil {
+		return nil, fmt.Errorf("Error en el enfoque de ataque: %v", err)
+	}
+
+	teamPossessionKeyPlayer, teamChancesKeyPlayer, err := a.CalculateRivalChancesByKeyPlayerUsage(lineup, keyPlayerUsage)
+	if err != nil {
+		return nil, fmt.Errorf("Error en el uso del jugador clave: %v", err)
+	}
+
+	totalTeamPossession := (teamPossessionFormation + teamPossessionStyle + teamPossessionTempo + teamPossessionPassing + teamPossessionBuildUpPlay + teamPossessionKeyPlayer) / 6
+	totalTeamChances := (teamChancesFormation + teamChancesStyle + teamChancesTempo + teamChancesKeyPlayer) / 4
+	totalRivalChances := (rivalChancesFormation + rivalChancesStyle + rivalChancesTempo + rivalChancesPassing + rivalChancesDefensivePositioning + rivalChancesAttackFocus) / 6
+
+	totalPhysique := physiqueStyle + physiqueTempo + physiqueDefensive
+
+	result["teamPossession"] = totalTeamPossession
+	result["teamChances"] = totalTeamChances
+	result["rivalChances"] = totalRivalChances
+	result["teamPhysique"] = float64(totalPhysique)
+
+	return result, nil
+}
+
+func (a *AppService) CalculatePossessionChancesByFormation(lineup []Lineup, formation string) (teamPossession, teamChances, rivalChances float64, err error) {
 
 	totalDefendersQuality, err := getTwoBestPlayers(lineup, "defense")
 	totalMidfieldersQuality, err := getTwoBestPlayers(lineup, "midfield")
@@ -71,17 +128,37 @@ func (a *AppService) CalculatePossessionChancesByFormation(formation string) (te
 	}
 }
 
-func (a *AppService) CalculatePossessionChancesByPlayingStyle(playingStyle string) (teamPossession, teamChances, rivalChances float64, physique int, err error) {
+func (a *AppService) CalculatePossessionChancesByPlayingStyle(lineup []Lineup, playingStyle string) (teamPossession, teamChances, rivalChances float64, physique int, err error) {
+	totalDefendersQuality, err := getTwoBestPlayers(lineup, "defense")
+	totalMidfieldersQuality, err := getTwoBestPlayers(lineup, "midfield")
+	totalForwardersQuality, err := getTwoBestPlayers(lineup, "forwarder")
+
 	switch playingStyle {
+
 	case "possession":
+		if totalMidfieldersQuality >= 550 {
+			return 1.6, 0.7, 0.8, 55, nil
+		}
 		return 1.4, 0.7, 0.8, 50, nil
 	case "counter_attack":
+		if totalForwardersQuality >= 470 {
+			return 0.7, 1.3, 0.9, -15, nil
+		}
 		return 0.7, 1.2, 0.9, -20, nil
 	case "direct_play":
+		if totalForwardersQuality >= 400 {
+			return 0.5, 1.1, 0.8, 20, nil
+		}
 		return 0.5, 1, 0.8, 10, nil
 	case "high_press":
+		if totalMidfieldersQuality >= 440 {
+			return 1.1, 1.4, 1.12, -190, nil
+		}
 		return 1.1, 1.35, 1.12, -220, nil
 	case "low_block":
+		if totalDefendersQuality >= 410 {
+			return 0.8, 0.4, 0.5, 130, nil
+		}
 		return 0.8, 0.3, 0.5, 110, nil
 	default:
 		return 0, 0, 0, 0, errors.New("playingStyle desconocido")
@@ -114,12 +191,7 @@ func (a *AppService) CalculatePossessionChancesByPassingStyle(passingStyle strin
 	}
 }
 
-func (a *AppService) CalculateRivalChancesByDefensivePositioning(defensivePositioning string) (rivalChances float64, physique int, err error) {
-
-	lineup, err := a.lineupRepo.GetLineup()
-	if err != nil {
-		return 0, 0, errors.New("Error al obtener la alineación")
-	}
+func (a *AppService) CalculateRivalChancesByDefensivePositioning(lineup []Lineup, defensivePositioning string) (rivalChances float64, physique int, err error) {
 
 	var totalMentalityOfDefenses, totalPhysiqueOfDefenses int
 
@@ -223,11 +295,7 @@ func (a *AppService) CalculatePossessionByBuildUpPlay(buildUpPlay string) (posse
 	}
 }
 
-func (a *AppService) CalculateRivalChancesByAttackFocus(attackFocus string) (chances float64, err error) {
-	lineup, err := a.lineupRepo.GetLineup()
-	if err != nil {
-		return 0, errors.New("Error al obtener la alineación")
-	}
+func (a *AppService) CalculateRivalChancesByAttackFocus(lineup []Lineup, attackFocus string) (chances float64, err error) {
 
 	var totalTechniqueOfMidfield, totalPhysiqueOfMidfild int
 	var forwardCount, midfieldCount int
@@ -285,11 +353,7 @@ func (a *AppService) CalculateRivalChancesByAttackFocus(attackFocus string) (cha
 	}
 }
 
-func (a *AppService) CalculateRivalChancesByKeyPlayerUsage(keyPlayerUsage string) (possession, chances float64, err error) {
-	lineup, err := a.lineupRepo.GetLineup()
-	if err != nil {
-		return 0, 0, errors.New("Error al obtener la alineación")
-	}
+func (a *AppService) CalculateRivalChancesByKeyPlayerUsage(lineup []Lineup, keyPlayerUsage string) (possession, chances float64, err error) {
 
 	var keyPlayer Lineup
 
