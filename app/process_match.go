@@ -2,6 +2,7 @@ package app
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"math/rand"
 	"time"
@@ -46,17 +47,30 @@ func (a *AppService) ProcessMatch(calendaryId int) (Match, error) {
 	totalMental := lineup[0].TotalMental
 	totalPhysique := lineup[0].TotalPhysique
 
+	strategy, err := a.GetStrategy()
+	if err != nil {
+		log.Println("Error al obtener la estrategia:", err)
+		return Match{}, fmt.Errorf("error al obtener la estrategia: %w", err)
+	}
+	resultOfStrategy, err := a.ResultOfStrategy(lineup, strategy.Formation, strategy.PlayingStyle, strategy.GameTempo, strategy.PassingStyle, strategy.DefensivePositioning, strategy.BuildUpPlay, strategy.AttackFocus, strategy.KeyPlayerUsage)
+	if err != nil {
+		log.Println("Error al calcular el resultado de la estrategia:", err)
+		return Match{}, fmt.Errorf("error al calcular el resultado de la estrategia: %w", err)
+	}
+
+	totalPhysique = totalPhysique + int(resultOfStrategy["teamPhysique"])
+
 	lineupTotalQuality, rivalTotalQuality, allQuality, err := CalculateTotalQuality(totalTechnique, totalMental, totalPhysique, rival.Technique, rival.Mental, rival.Physique)
 	if err != nil {
 		return Match{}, err
 	}
 
-	lineupPercentagePossession, rivalPercentagePossession, err := a.CalculateBallPossession(totalTechnique, rival.Technique, lineupTotalQuality, rivalTotalQuality, allQuality, homeOrAwayString)
+	lineupPercentagePossession, rivalPercentagePossession, err := a.CalculateBallPossession(totalTechnique, rival.Technique, lineupTotalQuality, rivalTotalQuality, allQuality, homeOrAwayString, resultOfStrategy["teamPossession"])
 	if err != nil {
 		return Match{}, err
 	}
 
-	lineupScoreChances, rivalScoreChances, err := a.CalculateScoringChances(lineupTotalQuality, rivalTotalQuality, totalMental, rival.Mental, homeOrAwayString)
+	lineupScoreChances, rivalScoreChances, err := a.CalculateScoringChances(lineupTotalQuality, rivalTotalQuality, totalMental, rival.Mental, homeOrAwayString, resultOfStrategy["teamChances"], resultOfStrategy["rivalChances"])
 	if err != nil {
 		return Match{}, err
 	}
@@ -107,7 +121,7 @@ func CalculateTotalQuality(lineupTotalTechnique, lineupTotalMental, lineupTotalP
 
 }
 
-func (a *AppService) CalculateBallPossession(lineupTotalTechnique, rivalTotalTechnique, lineupTotalQuality, rivalTotalQuality, allQuality int, homeOrAway string) (int, int, error) {
+func (a *AppService) CalculateBallPossession(lineupTotalTechnique, rivalTotalTechnique, lineupTotalQuality, rivalTotalQuality, allQuality int, homeOrAway string, lineupPossessionResultOfStrategy float64) (int, int, error) {
 	percentageLineupQuality := (float64(lineupTotalQuality) / float64(allQuality)) * 100
 
 	switch {
@@ -136,14 +150,8 @@ func (a *AppService) CalculateBallPossession(lineupTotalTechnique, rivalTotalTec
 		percentageLineupQuality /= 1.05
 	}
 	log.Println("posesión equipo antes de strategia", percentageLineupQuality)
-	lineup, err := a.lineupRepo.GetLineup()
 
-	strategy, err := a.strategyRepo.GetStrategy()
-	if err != nil {
-
-	}
-	resultOfStrategy, err := a.ResultOfStrategy(lineup, strategy.Formation, strategy.PlayingStyle, strategy.GameTempo, strategy.PassingStyle, strategy.DefensivePositioning, strategy.BuildUpPlay, strategy.AttackFocus, strategy.KeyPlayerUsage)
-	percentageLineupQuality = percentageLineupQuality * resultOfStrategy["teamPossession"]
+	percentageLineupQuality = percentageLineupQuality * lineupPossessionResultOfStrategy
 
 	log.Println("posesión equipo después de strategia", percentageLineupQuality)
 
@@ -186,7 +194,7 @@ func (a *AppService) CalculateBallPossession(lineupTotalTechnique, rivalTotalTec
 	return percentageLineup, percentageRival, nil
 }
 
-func (a *AppService) CalculateScoringChances(lineupTotalQuality, rivalTotalQuality, lineupTotalMental, rivalTotalMental int, homeOrAway string) (int, int, error) {
+func (a *AppService) CalculateScoringChances(lineupTotalQuality, rivalTotalQuality, lineupTotalMental, rivalTotalMental int, homeOrAway string, lineupScoringChancesResultOfStrategy, rivalScoringChancesResultOfStrategy float64) (int, int, error) {
 	var lineupScoringChances, rivalScoringChances float64
 
 	switch {
@@ -276,14 +284,8 @@ func (a *AppService) CalculateScoringChances(lineupTotalQuality, rivalTotalQuali
 	log.Println("lineupScoringChances antes de strategy", lineupScoringChances)
 	log.Println("rivalScoringChances antes de strategy", rivalScoringChances)
 
-	lineup, err := a.lineupRepo.GetLineup()
-	if err != nil {
-	}
-	strategy, err := a.GetStrategy()
-	resultOfStrategy, err := a.ResultOfStrategy(lineup, strategy.Formation, strategy.PlayingStyle, strategy.GameTempo, strategy.PassingStyle, strategy.DefensivePositioning, strategy.BuildUpPlay, strategy.AttackFocus, strategy.KeyPlayerUsage)
-
-	lineupScoringChances = lineupScoringChances * resultOfStrategy["teamChances"]
-	rivalScoringChances = rivalScoringChances * resultOfStrategy["rivalChances"]
+	lineupScoringChances = lineupScoringChances * lineupScoringChancesResultOfStrategy
+	rivalScoringChances = rivalScoringChances * rivalScoringChancesResultOfStrategy
 
 	log.Println("lineupScoringChances después de strategy", lineupScoringChances)
 	log.Println("rivalScoringChances después de strategy", rivalScoringChances)
@@ -310,15 +312,38 @@ func (a *AppService) CalculateScoringChances(lineupTotalQuality, rivalTotalQuali
 	if lineupScoringChances <= 2 {
 		randomFactor = 0 + rand.Float64()*(3-0)
 		log.Println("El segundo randomFactor, utilizado si las ocasiones son nulas o escasas del Equipo, es:", randomFactor)
-		lineupScoringChances := 1
-		lineupScoringChances = int(float64(lineupScoringChances) * randomFactor)
+		lineupScoringChances = 1.00
+		lineupScoringChances = lineupScoringChances * randomFactor
 	}
 
 	if rivalScoringChances <= 2 {
 		randomFactor = 0 + rand.Float64()*(3-0)
 		log.Println("El segundo randomFactor, utilizado si las ocasiones son nulas o escasas del Rival, es:", randomFactor)
-		rivalScoringChancesWithRandomFactor := 1
-		rivalScoringChancesWithRandomFactor = int(float64(rivalScoringChancesWithRandomFactor) * randomFactor)
+		rivalScoringChances = 1.00
+		rivalScoringChances = rivalScoringChances * randomFactor
+	}
+
+	if lineupScoringChances > 29 {
+		lineupScoringChances = 29
+	}
+	if rivalScoringChances > 29 {
+		rivalScoringChances = 29
+	}
+	if lineupScoringChances > 19 {
+		randomFactor := 0.81 + rand.Float64()*(1.01-0.81)
+		log.Println("El tercer randomFactor, utilizado si las ocasiones son muy altas del Equipo, es:", randomFactor)
+
+		lineupScoringChances = lineupScoringChances * randomFactor
+		log.Println("Ocasiones del equipo después de aplicar el factor:", lineupScoringChances)
+	}
+
+	if rivalScoringChances > 19 {
+		randomFactor := 0.81 + rand.Float64()*(1.01-0.81)
+
+		log.Println("El tercer randomFactor, utilizado si las ocasiones  son muy altas del Rival, es:", randomFactor)
+
+		rivalScoringChances = rivalScoringChances * randomFactor
+		log.Println("Ocasiones del rival después de aplicar el factor:", rivalScoringChances)
 	}
 
 	return int(lineupScoringChances), int(rivalScoringChances), nil
@@ -339,7 +364,7 @@ func CalculateGoals(lineupTotalPhysique, rivalTotalPhysique, lineupPossession, r
 		for i := 0; i < scoringChances; i++ {
 			chance := rand.Float64() * 100
 
-			probability := float64(possession)*0.5 + float64(physique)*0.015
+			probability := float64(possession)*0.5 + float64(physique)*0.009
 
 			if chance < probability {
 				goals++
@@ -349,8 +374,64 @@ func CalculateGoals(lineupTotalPhysique, rivalTotalPhysique, lineupPossession, r
 		return goals
 	}
 
+	randomFactor := 0.71 + rand.Float64()*(1.01-0.71)
+
 	goalsLineup := calculateGoals(lineupScoringChances, lineupPossession, lineupTotalPhysique)
+	if goalsLineup > 12 {
+		goalsLineup = 12
+	}
+	if goalsLineup >= 8 {
+		goalsLineup = int(float64(goalsLineup) * randomFactor)
+	}
+	if goalsLineup > 5 {
+		restarGol := rand.Intn(4) < 3
+		if restarGol {
+			goalsLineup--
+		}
+	}
+
 	goalsRival := calculateGoals(rivalScoringChances, rivalPossession, rivalTotalPhysique)
+	if goalsRival > 12 {
+		goalsRival = 12
+	}
+	if goalsRival >= 8 {
+		goalsRival = int(float64(goalsRival) * randomFactor)
+	}
+	if goalsRival > 5 {
+		restarGol := rand.Intn(4) < 3
+		if restarGol {
+			goalsRival--
+		}
+	}
+
+	if goalsLineup > 2 && goalsRival > 2 && (goalsLineup+goalsRival > 8) {
+		goalsLineup--
+		goalsRival--
+	}
+
+	if goalsLineup > 2 && goalsRival > 2 && (goalsLineup+goalsRival > 6) {
+		restarGol := rand.Intn(2) == 0
+		if restarGol {
+			goalsLineup--
+			goalsRival--
+		}
+	}
+
+	if goalsLineup > 4 {
+		restarGol := rand.Intn(3) == 0
+		if restarGol {
+			goalsLineup--
+
+		}
+	}
+	if goalsRival > 4 {
+		restarGol := rand.Intn(3) == 0
+		if restarGol {
+			goalsRival--
+
+		}
+
+	}
 
 	return goalsLineup, goalsRival, nil
 }
