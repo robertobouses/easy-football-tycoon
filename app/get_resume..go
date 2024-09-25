@@ -17,6 +17,8 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 
 	var goalkeeperCount, defenseCount, midfieldCount, forwardCount int
 
+	//TODO COMPROBACIONES DE ALINEACION EN UNA FUNCIÓN FUERA DE GET RESUME
+
 	for _, player := range lineup {
 		switch player.Position {
 		case "goalkeeper":
