@@ -11,7 +11,8 @@ teamscoringchances INT,
 teamgoals INT,
 rivalballpossession INT,
 rivalscoringchances INT,
-rivalgoals INT
+rivalgoals INT,
+result VARCHAR(255) NOT NULL
 );
 
 COMMIT;

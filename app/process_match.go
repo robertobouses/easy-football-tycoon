@@ -79,6 +79,16 @@ func (a *AppService) ProcessMatch(calendaryId int) (Match, error) {
 	if err != nil {
 		return Match{}, err
 	}
+
+	var result string
+	if lineupGoals > rivalGoals {
+		result = "WIN"
+	} else if lineupGoals < rivalGoals {
+		result = "LOSE"
+	} else {
+		result = "DRAW"
+	}
+
 	match := Match{
 		MatchId:        uuid.New(),
 		CalendaryId:    calendaryId,
@@ -95,13 +105,62 @@ func (a *AppService) ProcessMatch(calendaryId int) (Match, error) {
 			ScoringChances: rivalScoreChances,
 			Goals:          rivalGoals,
 		},
+		Result: result,
 	}
 
 	a.SetCurrentMatch(&match)
 
 	err = a.matchRepo.PostMatch(match)
 	if err != nil {
-		log.Println(ErrProcessingMatch)
+		log.Println("Error en el procesamiento del partido:", err)
+		return Match{}, ErrProcessingMatch
+	}
+
+	analytics, err := a.analyticsRepo.GetAnalytics()
+	if err != nil {
+		log.Println("Error al obtener analíticas en ProcessMatch:", err)
+		return Match{}, err
+	}
+
+	matches, err := a.matchRepo.GetMatches()
+	if err != nil {
+		log.Println("Error al obtener partidos en ProcessMatch:", err)
+		return Match{}, err
+	}
+
+	var previousMatchScoreChances int
+	var previousMatchResult string
+
+	if len(matches) > 0 {
+		lastMatch := matches[len(matches)-1]
+		previousMatchScoreChances = lastMatch.Team.ScoringChances
+		previousMatchResult = lastMatch.Result
+	} else {
+		log.Println("No hay partidos previos disponibles")
+
+		previousMatchScoreChances = 0
+		previousMatchResult = "DRAW"
+	}
+
+	log.Println("stadiumCapacity en ProcessMatch:", analytics.StadiumCapacity)
+	log.Println("currentTrust en ProcessMatch:", analytics.Trust)
+
+	ticketSales, err := a.CalculateTicketSales(analytics.StadiumCapacity, lineupTotalQuality, rivalTotalQuality, analytics.Trust, previousMatchScoreChances, previousMatchResult, homeOrAwayString)
+	if err != nil {
+		log.Println("Error en el cálculo de tickets del estadio:", err)
+		return Match{}, err
+	}
+
+	initialBalance, err := a.bankRepo.GetBalance()
+	if err != nil {
+		return Match{}, ErrBalanceNotFound
+	}
+
+	newBalance := initialBalance + ticketSales
+	err = a.bankRepo.PostTransactions(ticketSales, newBalance, "Ticket Sales", "Ticket Sales")
+	if err != nil {
+		log.Println("Error al registrar la transacción:", err)
+		return Match{}, err
 	}
 
 	return match, nil

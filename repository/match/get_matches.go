@@ -30,6 +30,7 @@ func (r *repository) GetMatches() ([]app.Match, error) {
 			&match.Rival.BallPossession,
 			&match.Rival.ScoringChances,
 			&match.Rival.Goals,
+			&match.Result,
 		)
 		if err != nil {
 			return nil, err

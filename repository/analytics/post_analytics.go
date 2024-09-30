@@ -21,6 +21,8 @@ func (r *repository) PostAnalytics(req app.Analytics, job string) error {
 		req.FinanceStaffCount,
 		req.ScoutingStaffCount,
 		req.PhysiotherapyStaffCount,
+		req.Trust,
+		req.StadiumCapacity,
 		job,
 	)
 

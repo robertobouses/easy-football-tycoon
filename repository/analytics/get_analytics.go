@@ -26,6 +26,8 @@ func (r *repository) GetAnalytics() (app.Analytics, error) {
 		&analytics.FinanceStaffCount,
 		&analytics.ScoutingStaffCount,
 		&analytics.PhysiotherapyStaffCount,
+		&analytics.Trust,
+		&analytics.StadiumCapacity,
 	); err != nil {
 		if err == sql.ErrNoRows {
 			log.Printf("No se encontraron datos GetAnalytics")

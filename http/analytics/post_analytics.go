@@ -10,10 +10,12 @@ import (
 )
 
 type PostAnalyticsRequest struct {
-	Training      int `json:"training"`
-	Finances      int `json:"finances"`
-	Scouting      int `json:"scouting"`
-	Physiotherapy int `json:"physiotherapy"`
+	Training        int `json:"training"`
+	Finances        int `json:"finances"`
+	Scouting        int `json:"scouting"`
+	Physiotherapy   int `json:"physiotherapy"`
+	Trust           int `json:"trust"`
+	StadiumCapacity int `json:"stadiumcapacity"`
 }
 
 func (h Handler) PostAnalytics(c *gin.Context) {
@@ -25,10 +27,12 @@ func (h Handler) PostAnalytics(c *gin.Context) {
 	}
 
 	analytics := app.Analytics{
-		Training:      req.Training,
-		Finances:      req.Finances,
-		Scouting:      req.Scouting,
-		Physiotherapy: req.Physiotherapy,
+		Training:        req.Training,
+		Finances:        req.Finances,
+		Scouting:        req.Scouting,
+		Physiotherapy:   req.Physiotherapy,
+		Trust:           req.Trust,
+		StadiumCapacity: req.StadiumCapacity,
 	}
 
 	job := "movimientos iniciales"
