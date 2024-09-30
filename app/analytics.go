@@ -18,4 +18,5 @@ type Analytics struct {
 	ScoutingStaffCount      int
 	PhysiotherapyStaffCount int
 	Trust                   int
+	StadiumCapacity         int
 }

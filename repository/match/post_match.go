@@ -18,6 +18,7 @@ func (r *repository) PostMatch(match app.Match) error {
 		match.Rival.BallPossession,
 		match.Rival.ScoringChances,
 		match.Rival.Goals,
+		match.Result,
 	)
 
 	if err != nil {

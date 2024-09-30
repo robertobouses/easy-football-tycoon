@@ -126,6 +126,7 @@ func (h Handler) GetResume(ctx *gin.Context) {
 				},
 			},
 			"calendary": calendary,
+			"result":    match.Result,
 		})
 		return
 	}

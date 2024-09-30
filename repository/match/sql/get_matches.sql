@@ -9,5 +9,6 @@ SELECT
     teamgoals,
     rivalballpossession,
     rivalscoringchances,
-    rivalgoals
+    rivalgoals, 
+    result
 FROM eft.match

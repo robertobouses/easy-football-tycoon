@@ -16,6 +16,7 @@ CREATE TABLE eft.analytics (
     scoutingstaffcount INT,
     physiotherapystaffcount INT,
     trust INT,
+    stadiumcapacity INT,
     job VARCHAR(255)
 );
 

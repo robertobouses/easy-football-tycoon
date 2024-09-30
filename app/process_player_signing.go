@@ -66,12 +66,12 @@ func (a *AppService) AcceptPlayerSigning(signings *Signings) error {
 		return ErrPaidNotFound
 	}
 
-	initalBalance, err := a.bankRepo.GetBalance()
+	initialBalance, err := a.bankRepo.GetBalance()
 	if err != nil {
 		return ErrBalanceNotFound
 	}
 
-	newBalance := initalBalance - paid
+	newBalance := initialBalance - paid
 
 	a.bankRepo.PostTransactions(paid, newBalance, signings.SigningsName, "Player Signing")
 
