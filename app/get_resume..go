@@ -80,6 +80,7 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 		log.Println("Formación desconocida:", strategy.Formation)
 		return []Calendary{}, ErrUnknownFormation
 	}
+
 	a.callCounter++
 	calendary, err := a.calendaryRepo.GetCalendary()
 	if err != nil {
@@ -87,9 +88,58 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 		return []Calendary{}, err
 	}
 
-	if a.callCounter > len(calendary) {
+	if a.callCounter >= len(calendary) {
 		log.Println("No hay más fechas disponibles en el calendario")
-		return []Calendary{}, ErrCalendaryDatesNoAvaliable
+		return []Calendary{}, ErrCalendaryDatesNoAvailable
+	}
+
+	lenCalendary := len(calendary)
+	i := lenCalendary / 3
+	j := (2 * lenCalendary) / 3
+	k := lenCalendary - 1
+
+	team, err := a.teamRepo.GetTeam()
+	if err != nil {
+		log.Println("Error obtener Team en GetResume:", err)
+		return nil, err
+	}
+
+	staff, err := a.staffRepo.GetStaff()
+	if err != nil {
+		log.Println("Error obtener Staff en GetResume:", err)
+		return nil, err
+	}
+
+	thirdOfPlayersSalary := calculateTotalTeamSalary(team) / 3
+	thirdOfStaffSalary := calculateTotalStaffSalary(staff) / 3
+
+	if a.callCounter == i || a.callCounter == j || a.callCounter == k {
+		initialBalance, err := a.bankRepo.GetBalance()
+		if err != nil {
+			log.Println("Error al obtener el balance inicial:", err)
+			return nil, err
+		}
+		newBalance := initialBalance - thirdOfPlayersSalary
+
+		err = a.bankRepo.PostTransactions(thirdOfPlayersSalary, newBalance, "Player Salaries Payment", "Salaries")
+		if err != nil {
+			log.Println("Error al procesar el pago de salarios de los jugadores:", err)
+			return nil, err
+		}
+
+		initialBalance, err = a.bankRepo.GetBalance()
+		if err != nil {
+			log.Println("Error al obtener el balance inicial:", err)
+			return nil, err
+		}
+		newBalance = initialBalance - thirdOfStaffSalary
+		err = a.bankRepo.PostTransactions(thirdOfStaffSalary, newBalance, "Staff Salaries Payment", "Salaries")
+		if err != nil {
+			log.Println("Error al procesar el pago de salarios del personal:", err)
+			return nil, err
+		}
+
+		log.Println("Salarios pagados exitosamente en la fecha del calendario:", a.callCounter)
 	}
 
 	day := calendary[a.callCounter-1]
