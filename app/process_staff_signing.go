@@ -4,30 +4,31 @@ import (
 	"log"
 
 	"github.com/google/uuid"
+	"github.com/robertobouses/easy-football-tycoon/app/staff"
 )
 
-func (a *AppService) ProcessStaffSigning() (Staff, error) {
+func (a *AppService) ProcessStaffSigning() (staff.Staff, error) {
 	analytics, err := a.analyticsRepo.GetAnalytics()
 	if err != nil {
 		log.Println("Error al extraer GetAnalytics", err)
-		return Staff{}, err
+		return staff.Staff{}, err
 	}
 
 	staffSigning, err := a.staffRepo.GetStaffRandomByAnalytics(analytics.Scouting)
 	log.Println("Signings asignado en ProcessStaffSigning 1:", staffSigning)
 	if err != nil {
 		log.Println("Error al extraer GetStaffRandomByAnalytics", err)
-		return Staff{}, err
+		return staff.Staff{}, err
 	}
 
 	if len(staffSigning.StaffId.String()) != 36 {
 		log.Println("UUID inválido:", staffSigning.StaffId)
-		return Staff{}, ErrInvalidUUID
+		return staff.Staff{}, ErrInvalidUUID
 	}
 
 	if staffSigning.StaffId == uuid.Nil {
 		log.Println("No se encontró un Signings válido")
-		return Staff{}, nil
+		return staff.Staff{}, nil
 	}
 
 	a.SetCurrentStaffSigning(&staffSigning)
@@ -36,7 +37,7 @@ func (a *AppService) ProcessStaffSigning() (Staff, error) {
 	return staffSigning, nil
 }
 
-func (a *AppService) SetCurrentStaffSigning(staffSigning *Staff) {
+func (a *AppService) SetCurrentStaffSigning(staffSigning *staff.Staff) {
 	if staffSigning == nil || staffSigning.StaffId == uuid.Nil {
 		log.Println("Staff Signings no válido, no se asignará. Signings:", staffSigning)
 		a.currentStaffSigning = nil
@@ -46,7 +47,7 @@ func (a *AppService) SetCurrentStaffSigning(staffSigning *Staff) {
 	}
 }
 
-func (a *AppService) GetCurrentStaffSigning() (*Staff, error) {
+func (a *AppService) GetCurrentStaffSigning() (*staff.Staff, error) {
 	log.Println("a.currentStaffSigning en GetCurrentStaffSigning 1:", a.currentStaffSigning)
 	if a.currentStaffSigning == nil {
 		log.Println("a.currentStaffSigning es nil en GetCurrentStaffSigning 2")
@@ -56,7 +57,7 @@ func (a *AppService) GetCurrentStaffSigning() (*Staff, error) {
 	return a.currentStaffSigning, nil
 }
 
-func (a *AppService) AcceptStaffSigning(signings *Staff) error {
+func (a *AppService) AcceptStaffSigning(signings *staff.Staff) error {
 
 	initialFee := signings.Fee
 
@@ -84,6 +85,6 @@ func (a *AppService) AcceptStaffSigning(signings *Staff) error {
 	return nil
 }
 
-func (a *AppService) RejectStaffSigning(signings *Staff) {
+func (a *AppService) RejectStaffSigning(signings *staff.Staff) {
 	a.SetCurrentStaffSigning(nil)
 }

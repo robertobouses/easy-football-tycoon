@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/robertobouses/easy-football-tycoon/app"
+	"github.com/robertobouses/easy-football-tycoon/app/staff"
 	"github.com/robertobouses/easy-football-tycoon/http"
 
 	analyticsServer "github.com/robertobouses/easy-football-tycoon/http/analytics"
@@ -110,6 +111,7 @@ func main() {
 	}
 
 	app := app.NewApp(lineupRepo, teamRepo, rivalRepo, signingsRepo, staffRepo, teamStaffRepo, calendaryRepo, analyticsRepo, bankRepo, matchRepo, strategyRepo)
+	staffApp := staff.NewApp(staffRepo)
 
 	lineupHandler := lineup.NewHandler(app)
 
@@ -119,7 +121,7 @@ func main() {
 
 	signingsHandler := signingsServer.NewHandler(app)
 
-	staffHandler := staffServer.NewHandler(app)
+	staffHandler := staffServer.NewHandler(staffApp)
 
 	teamStaffHandler := teamStaffServer.NewHandler(app)
 

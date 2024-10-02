@@ -4,10 +4,10 @@ import (
 	//"database/sql"
 	"log"
 
-	"github.com/robertobouses/easy-football-tycoon/app"
+	"github.com/robertobouses/easy-football-tycoon/app/staff"
 )
 
-func (r *repository) GetStaff() ([]app.Staff, error) {
+func (r *repository) GetStaff() ([]staff.Staff, error) {
 
 	rows, err := r.getStaff.Query()
 	if err != nil {
@@ -15,9 +15,9 @@ func (r *repository) GetStaff() ([]app.Staff, error) {
 	}
 	defer rows.Close()
 
-	var staffs []app.Staff
+	var staffs []staff.Staff
 	for rows.Next() {
-		var staff app.Staff
+		var staff staff.Staff
 		if err := rows.Scan(
 			&staff.StaffId,
 			&staff.StaffName,

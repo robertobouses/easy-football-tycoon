@@ -5,37 +5,39 @@ import (
 	"log"
 	"math/rand"
 	"time"
+
+	"github.com/robertobouses/easy-football-tycoon/app/staff"
 )
 
 func (a *AppService) ProcessTeamStaffSale() error {
-	staff, err := a.GetRandomStaff()
+	staffs, err := a.GetRandomStaff()
 	if err != nil {
 		return err
 	}
-	if staff == (Staff{}) {
+	if staffs == (staff.Staff{}) {
 		return errors.New("no staff available for sale")
 	}
 
-	transferFeeReceived, err := a.ProcessTransferFeeReceived(staff.Fee)
+	transferFeeReceived, err := a.ProcessTransferFeeReceived(staffs.Fee)
 	if err != nil {
 		return err
 	}
 
-	a.SetCurrentStaffSale(&staff, &transferFeeReceived)
+	a.SetCurrentStaffSale(&staffs, &transferFeeReceived)
 
 	return nil
 }
 
-func (a *AppService) GetCurrentStaffSale() (*Staff, *int, error) {
+func (a *AppService) GetCurrentStaffSale() (*staff.Staff, *int, error) {
 	return a.currentStaffOnSale, a.transferFeeReceived, nil
 }
 
-func (a *AppService) SetCurrentStaffSale(staff *Staff, transferFeeReceived *int) {
+func (a *AppService) SetCurrentStaffSale(staff *staff.Staff, transferFeeReceived *int) {
 	a.currentStaffOnSale = staff
 	a.transferFeeReceived = transferFeeReceived
 }
 
-func (a *AppService) AcceptStaffSale(staff Staff) error {
+func (a *AppService) AcceptStaffSale(staff staff.Staff) error {
 	if a.transferFeeReceived == nil {
 		return ErrTransferNotFound
 	}
@@ -64,21 +66,21 @@ func (a *AppService) AcceptStaffSale(staff Staff) error {
 	return nil
 }
 
-func (a *AppService) RejectStaffSale(staff Staff) {
+func (a *AppService) RejectStaffSale(staff staff.Staff) {
 	a.SetCurrentStaffSale(nil, nil)
 }
 
 // TODO ROBERTO CREO QUE ESTE MÉTODO DE TRAER Y LUEGO HACER ALEATORIO ES MÁS ÓPTIMO QUE EL QUE LO HACE TODO EN REPO GetSigningsRandomByAnalytics
-func (a *AppService) GetRandomStaff() (Staff, error) {
+func (a *AppService) GetRandomStaff() (staff.Staff, error) {
 	staffs, err := a.teamStaffRepo.GetTeamStaff()
 	if err != nil {
 		log.Println("Error al extraer GetStaff:", err)
-		return Staff{}, err
+		return staff.Staff{}, err
 	}
 
 	if len(staffs) == 0 {
 		log.Println("No se encontraron jugadores")
-		return Staff{}, nil
+		return staff.Staff{}, nil
 	}
 
 	log.Printf("Jugadores obtenidos: %+v", staffs)

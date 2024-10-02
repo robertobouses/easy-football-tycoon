@@ -2,11 +2,12 @@ package team_staff
 
 import (
 	"github.com/robertobouses/easy-football-tycoon/app"
+	"github.com/robertobouses/easy-football-tycoon/app/staff"
 )
 
 type App interface {
-	GetTeamStaff() ([]app.Staff, error)
-	PostTeamStaff(app.Staff) error
+	GetTeamStaff() ([]staff.Staff, error)
+	PostTeamStaff(staff.Staff) error
 }
 
 func NewHandler(app app.AppService) Handler {

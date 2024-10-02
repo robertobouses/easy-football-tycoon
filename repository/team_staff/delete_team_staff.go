@@ -3,10 +3,10 @@ package team_staff
 import (
 	"log"
 
-	"github.com/robertobouses/easy-football-tycoon/app"
+	"github.com/robertobouses/easy-football-tycoon/app/staff"
 )
 
-func (r *repository) DeleteTeamStaff(staff app.Staff) error {
+func (r *repository) DeleteTeamStaff(staff staff.Staff) error {
 	log.Printf("Intentando eliminar jugador con StaffId: %v", staff.StaffId)
 	_, err := r.deleteTeamStaff.Exec(staff.StaffId)
 	if err != nil {

@@ -1,14 +1,14 @@
 package staff
 
 import (
-	"github.com/robertobouses/easy-football-tycoon/app"
+	"github.com/robertobouses/easy-football-tycoon/app/staff"
 )
 
 type App interface {
-	PostStaff(app.Staff) error
+	PostStaff(staff.Staff) error
 }
 
-func NewHandler(app app.AppService) Handler {
+func NewHandler(app staff.StaffService) Handler {
 	return Handler{
 		app: app,
 	}

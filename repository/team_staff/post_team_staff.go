@@ -3,10 +3,10 @@ package team_staff
 import (
 	"log"
 
-	"github.com/robertobouses/easy-football-tycoon/app"
+	"github.com/robertobouses/easy-football-tycoon/app/staff"
 )
 
-func (r *repository) PostTeamStaff(req app.Staff) error {
+func (r *repository) PostTeamStaff(req staff.Staff) error {
 	_, err := r.postTeamStaff.Exec(
 		req.StaffName,
 		req.Job,

@@ -1,6 +1,9 @@
 package app
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"github.com/robertobouses/easy-football-tycoon/app/staff"
+)
 
 type LineupRepository interface {
 	GetLineup() ([]Lineup, error)
@@ -45,16 +48,15 @@ type SigningsRepository interface {
 }
 
 type StaffRepository interface {
-	PostStaff(req Staff) error
-	GetStaff() ([]Staff, error)
-	GetStaffRandomByAnalytics(scouting int) (Staff, error)
-	DeleteStaffSigning(staff Staff) error
+	GetStaff() ([]staff.Staff, error)
+	GetStaffRandomByAnalytics(scouting int) (staff.Staff, error)
+	DeleteStaffSigning(staff staff.Staff) error
 }
 
 type TeamStaffRepository interface {
-	PostTeamStaff(req Staff) error
-	GetTeamStaff() ([]Staff, error)
-	DeleteTeamStaff(staff Staff) error
+	PostTeamStaff(req staff.Staff) error
+	GetTeamStaff() ([]staff.Staff, error)
+	DeleteTeamStaff(staff staff.Staff) error
 }
 
 type CalendaryRepository interface {
@@ -130,8 +132,8 @@ type AppService struct {
 	currentPlayerOnSale  *Team
 	currentPlayerSigning *Signings
 	currentInjuredPlayer *Team
-	currentStaffSigning  *Staff
-	currentStaffOnSale   *Staff
+	currentStaffSigning  *staff.Staff
+	currentStaffOnSale   *staff.Staff
 	injuryDays           *int
 	transferFeeReceived  *int
 	transferFeeIssued    *int

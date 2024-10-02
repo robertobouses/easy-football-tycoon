@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/robertobouses/easy-football-tycoon/app"
+	"github.com/robertobouses/easy-football-tycoon/app/staff"
 )
 
 // TODO PODRÍA EVITAR DUCPLICAR ESTA FUNCIÓN Y LA DEL package staff PostStaff?
@@ -32,7 +32,7 @@ func (h Handler) PostTeamStaff(c *gin.Context) {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
-	staff := app.Staff{
+	staff := staff.Staff{
 		StaffId:       req.StaffId,
 		StaffName:     req.StaffName,
 		Job:           req.Job,

@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/robertobouses/easy-football-tycoon/app"
+	"github.com/robertobouses/easy-football-tycoon/app/staff"
 )
 
 type PostStaffRequest struct {
@@ -32,7 +32,7 @@ func (h Handler) PostStaff(c *gin.Context) {
 		return
 	}
 
-	staff := app.Staff{
+	staff := staff.Staff{
 		StaffId:       req.StaffId,
 		StaffName:     req.StaffName,
 		Job:           req.Job,

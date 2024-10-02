@@ -5,34 +5,34 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/robertobouses/easy-football-tycoon/app"
+	"github.com/robertobouses/easy-football-tycoon/app/staff"
 )
 
-func (r *repository) GetStaffRandomByAnalytics(scouting int) (app.Staff, error) {
+func (r *repository) GetStaffRandomByAnalytics(scouting int) (staff.Staff, error) {
 
 	row := r.getStaffRandomByAnalytics.QueryRow(scouting)
 	log.Println("el valor del scouting es", scouting)
-	var staff app.Staff
+	var oneStaff staff.Staff
 	if err := row.Scan(
-		&staff.StaffId,
-		&staff.StaffName,
-		&staff.Job,
-		&staff.Age,
-		&staff.Fee,
-		&staff.Salary,
-		&staff.Training,
-		&staff.Finances,
-		&staff.Scouting,
-		&staff.Physiotherapy,
-		&staff.Rarity,
+		&oneStaff.StaffId,
+		&oneStaff.StaffName,
+		&oneStaff.Job,
+		&oneStaff.Age,
+		&oneStaff.Fee,
+		&oneStaff.Salary,
+		&oneStaff.Training,
+		&oneStaff.Finances,
+		&oneStaff.Scouting,
+		&oneStaff.Physiotherapy,
+		&oneStaff.Rarity,
 	); err != nil {
 		if err == sql.ErrNoRows {
 			log.Printf("No se encontraron datos GetStaffRandomByAnalytics")
-			return app.Staff{}, nil
+			return staff.Staff{}, nil
 		}
 		log.Printf("Error al escanear la fila: %v", err)
-		return app.Staff{}, err
+		return staff.Staff{}, err
 	}
 
-	return staff, nil
+	return oneStaff, nil
 }

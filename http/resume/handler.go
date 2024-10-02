@@ -2,6 +2,7 @@ package resume
 
 import (
 	"github.com/robertobouses/easy-football-tycoon/app"
+	"github.com/robertobouses/easy-football-tycoon/app/staff"
 )
 
 type App interface {
@@ -19,17 +20,17 @@ type App interface {
 	AcceptPlayerSigning(signings *app.Signings) error
 	RejectPlayerSigning(signings *app.Signings)
 
-	ProcessStaffSigning() (app.Staff, error)
-	SetCurrentStaffSigning(staffSigning *app.Staff)
-	GetCurrentStaffSigning() (*app.Staff, error)
-	AcceptStaffSigning(staff *app.Staff) error
-	RejectStaffSigning(staff *app.Staff)
+	ProcessStaffSigning() (staff.Staff, error)
+	SetCurrentStaffSigning(staffSigning *staff.Staff)
+	GetCurrentStaffSigning() (*staff.Staff, error)
+	AcceptStaffSigning(staff *staff.Staff) error
+	RejectStaffSigning(staff *staff.Staff)
 
 	ProcessTeamStaffSale() error
-	SetCurrentStaffSale(*app.Staff, *int)
-	GetCurrentStaffSale() (*app.Staff, *int, error)
-	AcceptStaffSale(staff app.Staff) error
-	RejectStaffSale(staff app.Staff)
+	SetCurrentStaffSale(*staff.Staff, *int)
+	GetCurrentStaffSale() (*staff.Staff, *int, error)
+	AcceptStaffSale(staff staff.Staff) error
+	RejectStaffSale(staff staff.Staff)
 
 	ProcessMatch(int) (app.Match, error)
 

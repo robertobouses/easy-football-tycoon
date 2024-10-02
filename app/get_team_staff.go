@@ -1,12 +1,16 @@
 package app
 
-import "log"
+import (
+	"log"
 
-func (a AppService) GetTeamStaff() ([]Staff, error) {
-	staff, err := a.teamStaffRepo.GetTeamStaff()
+	"github.com/robertobouses/easy-football-tycoon/app/staff"
+)
+
+func (a AppService) GetTeamStaff() ([]staff.Staff, error) {
+	staffs, err := a.teamStaffRepo.GetTeamStaff()
 	if err != nil {
 		log.Println("Error al extraer GetTeam", err)
-		return []Staff{}, err
+		return []staff.Staff{}, err
 	}
-	return staff, nil
+	return staffs, nil
 }
