@@ -1,24 +1,22 @@
-package autoplayergenerator
+package signings
 
 import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"math/rand"
 	"net/http"
 	"net/url"
 	"time"
-
-	"github.com/google/uuid"
-	"github.com/robertobouses/easy-football-tycoon/app"
 )
 
 var positions = []string{"Goalkeeper", "Defender", "Midfielder", "Forward"}
 var nationalities = []string{"us", "gb", "es", "fr", "de"} //TODO AMPLIAR NUMERO NAC. HACER MAS PROBABLE Y MAS POSIBLE CALIDAD CIERTAS NAC
 
-func AutoPlayerGenerator(numberOfPlayers int) ([]app.Player, error) {
+func (a *SigningsService) RunAutoPlayerGenerator(numberOfPlayers int) ([]Signings, error) {
 	rand.Seed(time.Now().UnixNano())
-	var players []app.Player
+	var players []Signings
 
 	for i := 0; i < numberOfPlayers; i++ {
 		nat := nationalities[rand.Intn(len(nationalities))]
@@ -28,8 +26,7 @@ func AutoPlayerGenerator(numberOfPlayers int) ([]app.Player, error) {
 			return nil, fmt.Errorf("error generating player name: %v", err)
 		}
 
-		player := app.Player{
-			PlayerId:    uuid.New(),
+		player := Signings{
 			FirstName:   firstName,
 			LastName:    lastName,
 			Nationality: nat,
@@ -41,14 +38,18 @@ func AutoPlayerGenerator(numberOfPlayers int) ([]app.Player, error) {
 			Mental:      rand.Intn(100) + 1,
 			Physique:    rand.Intn(100) + 1,
 			InjuryDays:  rand.Intn(30),
-			Lined:       false,
-			Familiarity: rand.Intn(100) + 1,
 			Fitness:     rand.Intn(100) + 1,
-			Happiness:   rand.Intn(100) + 1,
 		}
 		players = append(players, player)
+
+		err = a.signingsRepo.PostSignings(player)
+		if err != nil {
+			log.Printf("Error inserting player %v %v: %v", player.FirstName, player.LastName, err)
+			return nil, err
+		}
 	}
 	return players, nil
+
 }
 
 type RandomUserName struct {

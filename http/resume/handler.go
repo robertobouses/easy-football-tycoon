@@ -3,6 +3,7 @@ package resume
 import (
 	"github.com/robertobouses/easy-football-tycoon/app"
 	"github.com/robertobouses/easy-football-tycoon/app/staff"
+	"github.com/robertobouses/easy-football-tycoon/http/signings"
 )
 
 type App interface {
@@ -14,11 +15,11 @@ type App interface {
 	AcceptPlayerSale(player app.Player) error
 	RejectPlayerSale(player app.Player)
 
-	ProcessPlayerSigning() (app.Signings, error)
-	SetCurrentPlayerSigning(signings *app.Signings)
-	GetCurrentPlayerSigning() (*app.Signings, error)
-	AcceptPlayerSigning(signings *app.Signings) error
-	RejectPlayerSigning(signings *app.Signings)
+	ProcessPlayerSigning() (signings.Signings, error)
+	SetCurrentPlayerSigning(signings *signings.Signings)
+	GetCurrentPlayerSigning() (*signings.Signings, error)
+	AcceptPlayerSigning(signings *signings.Signings) error
+	RejectPlayerSigning(signings *signings.Signings)
 
 	ProcessStaffSigning() (staff.Staff, error)
 	SetCurrentStaffSigning(staffSigning *staff.Staff)

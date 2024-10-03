@@ -7,7 +7,7 @@ import (
 )
 
 func (h Handler) GetSignings(ctx *gin.Context) {
-	player, err := h.app.GetSignings()
+	player, err := h.signings.GetSignings()
 	if err != nil {
 		ctx.JSON(nethttp.StatusBadRequest, gin.H{"error": err.Error()})
 	}
