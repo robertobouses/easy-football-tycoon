@@ -8,7 +8,9 @@ import (
 
 func (r *repository) PostSignings(req app.Signings) error {
 	_, err := r.postSignings.Exec(
-		req.SigningsName,
+		req.FirstName,
+		req.LastName,
+		req.Nationality,
 		req.Position,
 		req.Age,
 		req.Fee,

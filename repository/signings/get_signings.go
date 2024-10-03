@@ -20,7 +20,9 @@ func (r *repository) GetSignings() ([]app.Signings, error) {
 		var signings app.Signings
 		if err := rows.Scan(
 			&signings.SigningsId,
-			&signings.SigningsName,
+			&signings.FirstName,
+			&signings.LastName,
+			&signings.Nationality,
 			&signings.Position,
 			&signings.Age,
 			&signings.Fee,

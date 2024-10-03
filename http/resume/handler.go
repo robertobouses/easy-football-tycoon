@@ -9,10 +9,10 @@ type App interface {
 	GetResume() ([]app.Calendary, error)
 
 	ProcessPlayerSale() error
-	SetCurrentPlayerSale(*app.Team, *int)
-	GetCurrentPlayerSale() (*app.Team, *int, error)
-	AcceptPlayerSale(player app.Team) error
-	RejectPlayerSale(player app.Team)
+	SetCurrentPlayerSale(*app.Player, *int)
+	GetCurrentPlayerSale() (*app.Player, *int, error)
+	AcceptPlayerSale(player app.Player) error
+	RejectPlayerSale(player app.Player)
 
 	ProcessPlayerSigning() (app.Signings, error)
 	SetCurrentPlayerSigning(signings *app.Signings)
@@ -34,9 +34,9 @@ type App interface {
 
 	ProcessMatch(int) (app.Match, error)
 
-	ProcessInjury() (app.Team, error)
-	GetCurrentInjuredPlayer() (*app.Team, *int, error)
-	SetCurrentInjuredPlayer(*app.Team, *int)
+	ProcessInjury() (app.Player, error)
+	GetCurrentInjuredPlayer() (*app.Player, *int, error)
+	SetCurrentInjuredPlayer(*app.Player, *int)
 
 	GetCurrentRival() (app.Rival, string, int, error)
 	SetCurrentMatch(match *app.Match)

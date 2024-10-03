@@ -65,8 +65,8 @@ func (a *AppService) ResultOfStrategy(lineup []Lineup, formation, playingStyle, 
 
 func (a *AppService) CalculatePossessionChancesByFormation(lineup []Lineup, formation string) (teamPossession, teamChances, rivalChances float64, err error) {
 
-	totalDefendersQuality, err := getTwoBestPlayers(lineup, "defense")
-	totalMidfieldersQuality, err := getTwoBestPlayers(lineup, "midfield")
+	totalDefendersQuality, err := getTwoBestPlayers(lineup, "defender")
+	totalMidfieldersQuality, err := getTwoBestPlayers(lineup, "midfielder")
 	totalForwardersQuality, err := getTwoBestPlayers(lineup, "forwarder")
 
 	switch formation {
@@ -129,8 +129,8 @@ func (a *AppService) CalculatePossessionChancesByFormation(lineup []Lineup, form
 }
 
 func (a *AppService) CalculatePossessionChancesByPlayingStyle(lineup []Lineup, playingStyle string) (teamPossession, teamChances, rivalChances float64, physique int, err error) {
-	totalDefendersQuality, err := getTwoBestPlayers(lineup, "defense")
-	totalMidfieldersQuality, err := getTwoBestPlayers(lineup, "midfield")
+	totalDefendersQuality, err := getTwoBestPlayers(lineup, "defender")
+	totalMidfieldersQuality, err := getTwoBestPlayers(lineup, "midfielder")
 	totalForwardersQuality, err := getTwoBestPlayers(lineup, "forwarder")
 
 	switch playingStyle {
@@ -193,37 +193,37 @@ func (a *AppService) CalculatePossessionChancesByPassingStyle(passingStyle strin
 
 func (a *AppService) CalculateRivalChancesByDefensivePositioning(lineup []Lineup, defensivePositioning string) (rivalChances float64, physique int, err error) {
 
-	var totalMentalityOfDefenses, totalPhysiqueOfDefenses int
+	var totalMentalityOfDefenders, totalPhysiqueOfDefenders int
 
 	for _, player := range lineup {
-		if player.Position == "defense" {
-			totalMentalityOfDefenses += player.Mental
-			totalPhysiqueOfDefenses += player.Physique
+		if player.Position == "defender" {
+			totalMentalityOfDefenders += player.Mental
+			totalPhysiqueOfDefenders += player.Physique
 		}
 	}
 
 	switch defensivePositioning {
 	case "zonal_marking":
-		if totalMentalityOfDefenses >= 370 {
+		if totalMentalityOfDefenders >= 370 {
 			return 0.7, 65, nil
 		}
-		if totalMentalityOfDefenses >= 290 {
+		if totalMentalityOfDefenders >= 290 {
 			return 0.9, 40, nil
 		}
-		if totalMentalityOfDefenses >= 200 {
+		if totalMentalityOfDefenders >= 200 {
 			return 1, 2, nil
 		}
 
 		return 1.45, -20, nil
 
 	case "man_marking":
-		if totalMentalityOfDefenses >= 340 {
+		if totalMentalityOfDefenders >= 340 {
 			return 0.8, 15, nil
 		}
-		if totalMentalityOfDefenses >= 250 {
+		if totalMentalityOfDefenders >= 250 {
 			return 0.9, 1, nil
 		}
-		if totalPhysiqueOfDefenses >= 190 {
+		if totalPhysiqueOfDefenders >= 190 {
 			return 1, -40, nil
 		}
 
@@ -240,37 +240,37 @@ func (a *AppService) CalculatePossessionByBuildUpPlay(buildUpPlay string) (posse
 		return 0, errors.New("Error al obtener la alineación")
 	}
 
-	var totalTechniqueOfGoalkeeper, totalMentalityOfGoalkeeper, totalTechniqueOfDefenses, totalMentalOfDefenses int
-	var defenseCount int
+	var totalTechniqueOfGoalkeeper, totalMentalityOfGoalkeeper, totalTechniqueOfDefenders, totalMentalOfDefenders int
+	var defenderCount int
 
 	for _, player := range lineup {
 		if player.Position == "goalkeeper" {
 			totalTechniqueOfGoalkeeper += player.Technique
 			totalMentalityOfGoalkeeper += player.Mental
-		} else if player.Position == "defense" {
-			totalTechniqueOfDefenses += player.Technique
-			totalMentalOfDefenses += player.Mental
-			defenseCount++
+		} else if player.Position == "defender" {
+			totalTechniqueOfDefenders += player.Technique
+			totalMentalOfDefenders += player.Mental
+			defenderCount++
 
 		}
 	}
 
-	if defenseCount == 0 {
+	if defenderCount == 0 {
 		return 0, errors.New("No hay defensores en la alineación")
 	}
 
 	totalQualityOfGoalkeeper := totalTechniqueOfGoalkeeper + totalMentalityOfGoalkeeper
-	averageTotalQualityOfDefenses := (totalTechniqueOfDefenses + totalMentalOfDefenses) / defenseCount
+	averageTotalQualityOfDefenders := (totalTechniqueOfDefenders + totalMentalOfDefenders) / defenderCount
 
 	switch buildUpPlay {
 	case "play_from_back":
-		if totalTechniqueOfGoalkeeper >= 84 && totalMentalityOfGoalkeeper >= 84 && averageTotalQualityOfDefenses >= 79 {
+		if totalTechniqueOfGoalkeeper >= 84 && totalMentalityOfGoalkeeper >= 84 && averageTotalQualityOfDefenders >= 79 {
 			return 1.3, nil
 		}
-		if totalTechniqueOfGoalkeeper >= 82 && totalMentalityOfGoalkeeper >= 82 || averageTotalQualityOfDefenses >= 70 && totalQualityOfGoalkeeper >= 150 {
+		if totalTechniqueOfGoalkeeper >= 82 && totalMentalityOfGoalkeeper >= 82 || averageTotalQualityOfDefenders >= 70 && totalQualityOfGoalkeeper >= 150 {
 			return 1.23, nil
 		}
-		if totalQualityOfGoalkeeper >= 139 || averageTotalQualityOfDefenses >= 72 {
+		if totalQualityOfGoalkeeper >= 139 || averageTotalQualityOfDefenders >= 72 {
 			return 1.10, nil
 		}
 		if totalTechniqueOfGoalkeeper >= 66 || totalMentalityOfGoalkeeper >= 66 {
@@ -281,10 +281,10 @@ func (a *AppService) CalculatePossessionByBuildUpPlay(buildUpPlay string) (posse
 
 	case "long_clearance":
 
-		if averageTotalQualityOfDefenses >= 86 {
+		if averageTotalQualityOfDefenders >= 86 {
 			return 1.1, nil
 		}
-		if averageTotalQualityOfDefenses >= 74 {
+		if averageTotalQualityOfDefenders >= 74 {
 			return 1.02, nil
 		}
 
@@ -298,13 +298,13 @@ func (a *AppService) CalculatePossessionByBuildUpPlay(buildUpPlay string) (posse
 func (a *AppService) CalculateRivalChancesByAttackFocus(lineup []Lineup, attackFocus string) (chances float64, err error) {
 
 	var totalTechniqueOfMidfield, totalPhysiqueOfMidfild int
-	var forwardCount, midfieldCount int
+	var forwardCount, midfieldersCount int
 
 	for _, player := range lineup {
-		if player.Position == "midfield" {
+		if player.Position == "midfielder" {
 			totalTechniqueOfMidfield += player.Technique
 			totalPhysiqueOfMidfild += player.Physique
-			midfieldCount++
+			midfieldersCount++
 		} else if player.Position == "forward" {
 			forwardCount++
 
@@ -316,7 +316,7 @@ func (a *AppService) CalculateRivalChancesByAttackFocus(lineup []Lineup, attackF
 	}
 
 	totalQualityOfMidfield := totalTechniqueOfMidfield + totalPhysiqueOfMidfild
-	averageTotalQualityOfMidfield := totalQualityOfMidfield / midfieldCount
+	averageTotalQualityOfMidfield := totalQualityOfMidfield / midfieldersCount
 
 	switch attackFocus {
 	case "wide_play":
@@ -336,13 +336,13 @@ func (a *AppService) CalculateRivalChancesByAttackFocus(lineup []Lineup, attackF
 		return 0.83, nil
 
 	case "central_play":
-		if averageTotalQualityOfMidfield >= 79 && midfieldCount >= 4 {
+		if averageTotalQualityOfMidfield >= 79 && midfieldersCount >= 4 {
 			return 1.21, nil
 		}
 		if averageTotalQualityOfMidfield >= 76 {
 			return 1.14, nil
 		}
-		if midfieldCount >= 4 {
+		if midfieldersCount >= 4 {
 			return 1.09, nil
 		}
 

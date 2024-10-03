@@ -2,7 +2,7 @@ BEGIN;
 
 CREATE TABLE eft.lineup (
     playerid UUID PRIMARY KEY NOT NULL, 
-    playername VARCHAR(255) NOT NULL,
+    lastname VARCHAR(255) NOT NULL,
     position VARCHAR(255) NOT NULL,
     technique INT,
     mental INT,
@@ -10,20 +10,3 @@ CREATE TABLE eft.lineup (
 );
 
 COMMIT;
-
-
--- BEGIN;
-
--- CREATE TABLE eft.lineup (
---     playerid UUID NOT NULL PRIMARY KEY,
---     playername VARCHAR(255) NOT NULL,
---     position VARCHAR(255) NOT NULL,
---     technique INT,
---     mental INT,
---     physique INT,
---     FOREIGN KEY (playerid) REFERENCES eft.team(playerid)
--- );
-
-
-
--- COMMIT;

@@ -73,7 +73,7 @@ func (a *AppService) AcceptPlayerSigning(signings *Signings) error {
 
 	newBalance := initialBalance - paid
 
-	a.bankRepo.PostTransactions(paid, newBalance, signings.SigningsName, "Player Signing")
+	a.bankRepo.PostTransactions(paid, newBalance, signings.LastName, "Player Signing")
 
 	team := ConvertSigningsToTeam(signings)
 	a.teamRepo.PostTeam(team)
@@ -90,7 +90,7 @@ func (a *AppService) RejectPlayerSigning(signings *Signings) {
 	a.SetCurrentPlayerSigning(nil)
 }
 
-func ConvertSigningsToTeam(signings *Signings) Team {
+func ConvertSigningsToTeam(signings *Signings) Player {
 	randomFactor := 0.8 + rand.Float64()*1.5
 	happiness := int(70 * randomFactor)
 	happiness = int(math.Min(float64(happiness), 100))
@@ -98,9 +98,11 @@ func ConvertSigningsToTeam(signings *Signings) Team {
 	randomFactor2 := 1 + rand.Float64()*17
 	familiarity := int(randomFactor2)
 
-	return Team{
+	return Player{
 		PlayerId:    signings.SigningsId,
-		PlayerName:  signings.SigningsName,
+		FirstName:   signings.FirstName,
+		LastName:    signings.LastName,
+		Nationality: signings.Nationality,
 		Position:    signings.Position,
 		Age:         signings.Age,
 		Fee:         signings.Fee,

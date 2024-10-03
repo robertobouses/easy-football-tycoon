@@ -2,7 +2,7 @@ package app
 
 import "github.com/robertobouses/easy-football-tycoon/app/staff"
 
-func calculateTotalTeamSalary(players []Team) int {
+func calculateTotalTeamSalary(players []Player) int {
 	totalSalary := 0
 	for _, staff := range players {
 		totalSalary += staff.Salary

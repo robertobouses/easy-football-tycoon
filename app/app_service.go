@@ -7,19 +7,21 @@ import (
 
 type LineupRepository interface {
 	GetLineup() ([]Lineup, error)
-	PostLineup(player Team) error
+	PostLineup(player Player) error
 	PlayerExistsInLineup(playerId uuid.UUID) (bool, error)
 }
 
 type TeamRepository interface {
-	GetTeam() ([]Team, error)
-	PostTeam(req Team) error
+	GetTeam() ([]Player, error)
+	PostTeam(req Player) error
 	UpdatePlayerLinedStatus(req uuid.UUID) error
-	GetPlayerByPlayerId(playerId uuid.UUID) (*Team, error)
-	DeletePlayerFromTeam(player Team) error
+	GetPlayerByPlayerId(playerId uuid.UUID) (*Player, error)
+	DeletePlayerFromTeam(player Player) error
 	UpdatePlayerData(
 		playerID uuid.UUID,
-		playerName *string,
+		firstName *string,
+		lastName *string,
+		nationality *string,
 		position *string,
 		age *int,
 		fee *int,
@@ -129,9 +131,9 @@ type AppService struct {
 	matchRepo     MatchRepository
 	strategyRepo  StrategyRepository
 
-	currentPlayerOnSale  *Team
+	currentPlayerOnSale  *Player
 	currentPlayerSigning *Signings
-	currentInjuredPlayer *Team
+	currentInjuredPlayer *Player
 	currentStaffSigning  *staff.Staff
 	currentStaffOnSale   *staff.Staff
 	injuryDays           *int

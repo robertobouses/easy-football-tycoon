@@ -7,7 +7,7 @@ import (
 	"github.com/robertobouses/easy-football-tycoon/app"
 )
 
-func (r *repository) GetTeam() ([]app.Team, error) {
+func (r *repository) GetTeam() ([]app.Player, error) {
 
 	rows, err := r.getTeam.Query()
 	if err != nil {
@@ -15,32 +15,34 @@ func (r *repository) GetTeam() ([]app.Team, error) {
 	}
 	defer rows.Close()
 
-	var teams []app.Team
+	var players []app.Player
 	for rows.Next() {
-		var team app.Team
+		var player app.Player
 		if err := rows.Scan(
-			&team.PlayerId,
-			&team.PlayerName,
-			&team.Position,
-			&team.Age,
-			&team.Fee,
-			&team.Salary,
-			&team.Technique,
-			&team.Mental,
-			&team.Physique,
-			&team.InjuryDays,
-			&team.Lined,
-			&team.Familiarity,
-			&team.Fitness,
-			&team.Happiness,
+			&player.PlayerId,
+			&player.FirstName,
+			&player.LastName,
+			&player.Nationality,
+			&player.Position,
+			&player.Age,
+			&player.Fee,
+			&player.Salary,
+			&player.Technique,
+			&player.Mental,
+			&player.Physique,
+			&player.InjuryDays,
+			&player.Lined,
+			&player.Familiarity,
+			&player.Fitness,
+			&player.Happiness,
 		); err != nil {
 			log.Printf("Error al escanear las filas GetTeam: %v", err)
 			return nil, err
 		}
-		log.Printf("Jugador recuperado de la base de datos: %+v", team)
+		log.Printf("Jugador recuperado de la base de datos: %+v", player)
 
-		teams = append(teams, team)
+		players = append(players, player)
 	}
-	log.Printf("Jugadores obtenido con éxito: %+v", teams)
-	return teams, nil
+	log.Printf("Jugadores obtenido con éxito: %+v", players)
+	return players, nil
 }

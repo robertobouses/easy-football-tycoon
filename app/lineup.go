@@ -1,7 +1,7 @@
 package app
 
 type Lineup struct {
-	PlayerName     string
+	LastName       string
 	Position       string
 	Technique      int
 	Mental         int

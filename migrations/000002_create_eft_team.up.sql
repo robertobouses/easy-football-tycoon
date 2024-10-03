@@ -2,7 +2,9 @@ BEGIN;
 
 CREATE TABLE eft.team (
     playerid UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    playername VARCHAR(255) NOT NULL,
+    firstname VARCHAR(255) NOT NULL,
+    lastname VARCHAR(255) NOT NULL,
+    nationality VARCHAR(255) NOT NULL,
     position VARCHAR(255) NOT NULL,
     age INT,
     fee INT,

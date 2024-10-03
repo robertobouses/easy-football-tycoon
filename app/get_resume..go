@@ -15,7 +15,7 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 		return []Calendary{}, ErrLineupIncompleted
 	}
 
-	var goalkeeperCount, defenseCount, midfieldCount, forwardCount int
+	var goalkeeperCount, defenderCount, midfieldersCount, forwardCount int
 
 	//TODO COMPROBACIONES DE ALINEACION EN UNA FUNCIÓN FUERA DE GET RESUME
 
@@ -23,10 +23,10 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 		switch player.Position {
 		case "goalkeeper":
 			goalkeeperCount++
-		case "defense":
-			defenseCount++
-		case "midfield":
-			midfieldCount++
+		case "defender":
+			defenderCount++
+		case "midfielder":
+			midfieldersCount++
 		case "forward":
 			forwardCount++
 		default:
@@ -41,38 +41,38 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 	switch strategy.Formation {
 	case "4-4-2":
 
-		if goalkeeperCount != 1 || defenseCount != 4 || midfieldCount != 4 || forwardCount != 2 {
+		if goalkeeperCount != 1 || defenderCount != 4 || midfieldersCount != 4 || forwardCount != 2 {
 			log.Println("La alineación no cumple con la formación 4-4-2.")
 			return []Calendary{}, ErrInvalidFormation
 		}
 	case "4-3-3":
 
-		if goalkeeperCount != 1 || defenseCount != 4 || midfieldCount != 3 || forwardCount != 3 {
+		if goalkeeperCount != 1 || defenderCount != 4 || midfieldersCount != 3 || forwardCount != 3 {
 			log.Println("La alineación no cumple con la formación 4-3-3.")
 			return []Calendary{}, ErrInvalidFormation
 		}
 
 	case "4-5-1":
 
-		if goalkeeperCount != 1 || defenseCount != 4 || midfieldCount != 5 || forwardCount != 1 {
+		if goalkeeperCount != 1 || defenderCount != 4 || midfieldersCount != 5 || forwardCount != 1 {
 			log.Println("La alineación no cumple con la formación 4-5-1.")
 			return []Calendary{}, ErrInvalidFormation
 		}
 	case "5-3-2":
 
-		if goalkeeperCount != 1 || defenseCount != 5 || midfieldCount != 3 || forwardCount != 2 {
+		if goalkeeperCount != 1 || defenderCount != 5 || midfieldersCount != 3 || forwardCount != 2 {
 			log.Println("La alineación no cumple con la formación 5-3-2.")
 			return []Calendary{}, ErrInvalidFormation
 		}
 	case "3-4-3":
 
-		if goalkeeperCount != 1 || defenseCount != 3 || midfieldCount != 4 || forwardCount != 3 {
+		if goalkeeperCount != 1 || defenderCount != 3 || midfieldersCount != 4 || forwardCount != 3 {
 			log.Println("La alineación no cumple con la formación 3-4-3.")
 			return []Calendary{}, ErrInvalidFormation
 		}
 	case "3-5-2":
 
-		if goalkeeperCount != 1 || defenseCount != 3 || midfieldCount != 5 || forwardCount != 2 {
+		if goalkeeperCount != 1 || defenderCount != 3 || midfieldersCount != 5 || forwardCount != 2 {
 			log.Println("La alineación no cumple con la formación 3-5-2.")
 			return []Calendary{}, ErrInvalidFormation
 		}

@@ -1,5 +1,5 @@
 SELECT
-    playername,
+    lastname,
     position,
     technique,
     mental,

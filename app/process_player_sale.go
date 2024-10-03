@@ -12,7 +12,7 @@ func (a *AppService) ProcessPlayerSale() error {
 	if err != nil {
 		return err
 	}
-	if player == (Team{}) {
+	if player == (Player{}) {
 		return errors.New("no player available for sale")
 	}
 
@@ -26,16 +26,16 @@ func (a *AppService) ProcessPlayerSale() error {
 	return nil
 }
 
-func (a *AppService) GetCurrentPlayerSale() (*Team, *int, error) {
+func (a *AppService) GetCurrentPlayerSale() (*Player, *int, error) {
 	return a.currentPlayerOnSale, a.transferFeeReceived, nil
 }
 
-func (a *AppService) SetCurrentPlayerSale(player *Team, transferFeeReceived *int) {
+func (a *AppService) SetCurrentPlayerSale(player *Player, transferFeeReceived *int) {
 	a.currentPlayerOnSale = player
 	a.transferFeeReceived = transferFeeReceived
 }
 
-func (a *AppService) AcceptPlayerSale(player Team) error {
+func (a *AppService) AcceptPlayerSale(player Player) error {
 	if a.transferFeeReceived == nil {
 		return ErrTransferNotFound
 	}
@@ -51,7 +51,7 @@ func (a *AppService) AcceptPlayerSale(player Team) error {
 	log.Println("balance inicial en APP", balance)
 	log.Println("new balance en APP", newBalance)
 
-	err = a.bankRepo.PostTransactions(amount, newBalance, player.PlayerName, "sale")
+	err = a.bankRepo.PostTransactions(amount, newBalance, player.LastName, "sale")
 	if err != nil {
 		return err
 	}
@@ -64,21 +64,21 @@ func (a *AppService) AcceptPlayerSale(player Team) error {
 	return nil
 }
 
-func (a *AppService) RejectPlayerSale(player Team) {
+func (a *AppService) RejectPlayerSale(player Player) {
 	a.SetCurrentPlayerSale(nil, nil)
 }
 
 // TODO ROBERTO CREO QUE ESTE MÉTODO DE TRAER Y LUEGO HACER ALEATORIO ES MÁS ÓPTIMO QUE EL QUE LO HACE TODO EN REPO GetSigningsRandomByAnalytics
-func (a *AppService) GetRandomPlayer() (Team, error) {
+func (a *AppService) GetRandomPlayer() (Player, error) {
 	players, err := a.teamRepo.GetTeam()
 	if err != nil {
 		log.Println("Error al extraer GetTeam:", err)
-		return Team{}, err
+		return Player{}, err
 	}
 
 	if len(players) == 0 {
 		log.Println("No se encontraron jugadores")
-		return Team{}, nil
+		return Player{}, nil
 	}
 
 	log.Printf("Jugadores obtenidos: %+v", players)

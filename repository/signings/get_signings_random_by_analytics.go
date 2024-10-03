@@ -15,7 +15,9 @@ func (r *repository) GetSigningsRandomByAnalytics(scouting int) (app.Signings, e
 	var signings app.Signings
 	if err := row.Scan(
 		&signings.SigningsId,
-		&signings.SigningsName,
+		&signings.FirstName,
+		&signings.LastName,
+		&signings.Nationality,
 		&signings.Position,
 		&signings.Age,
 		&signings.Fee,

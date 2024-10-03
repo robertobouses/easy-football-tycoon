@@ -10,14 +10,16 @@ import (
 )
 
 type PostTeamRequest struct {
-	PlayerName string `json:"playername"`
-	Position   string `json:"position"`
-	Age        int    `json:"age"`
-	Fee        int    `json:"fee"`
-	Salary     int    `json:"salary"`
-	Technique  int    `json:"technique"`
-	Mental     int    `json:"mental"`
-	Physique   int    `json:"physique"`
+	FirstName   string `json:"firstname"`
+	LastName    string `json:"lastname"`
+	Nationality string `json:"nationality"`
+	Position    string `json:"position"`
+	Age         int    `json:"age"`
+	Fee         int    `json:"fee"`
+	Salary      int    `json:"salary"`
+	Technique   int    `json:"technique"`
+	Mental      int    `json:"mental"`
+	Physique    int    `json:"physique"`
 }
 
 func (h Handler) PostTeam(c *gin.Context) {
@@ -27,17 +29,19 @@ func (h Handler) PostTeam(c *gin.Context) {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
-	team := app.Team{
-		PlayerName: req.PlayerName,
-		Position:   req.Position,
-		Age:        req.Age,
-		Fee:        req.Fee,
-		Salary:     req.Salary,
-		Technique:  req.Technique,
-		Mental:     req.Mental,
-		Physique:   req.Physique,
-		InjuryDays: 0,
-		Lined:      false,
+	team := app.Player{
+		FirstName:   req.FirstName,
+		LastName:    req.LastName,
+		Nationality: req.Nationality,
+		Position:    req.Position,
+		Age:         req.Age,
+		Fee:         req.Fee,
+		Salary:      req.Salary,
+		Technique:   req.Technique,
+		Mental:      req.Mental,
+		Physique:    req.Physique,
+		InjuryDays:  0,
+		Lined:       false,
 	}
 	err := h.app.PostTeam(team)
 
