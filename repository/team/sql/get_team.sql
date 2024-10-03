@@ -1,6 +1,8 @@
 SELECT  
     	playerid,
-		playername,
+		firstname,
+		lastname,
+		nationality,
 		position,
 		age,
 		fee,

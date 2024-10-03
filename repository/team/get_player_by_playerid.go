@@ -9,13 +9,15 @@ import (
 	"github.com/robertobouses/easy-football-tycoon/app"
 )
 
-func (r *repository) GetPlayerByPlayerId(playerId uuid.UUID) (*app.Team, error) {
+func (r *repository) GetPlayerByPlayerId(playerId uuid.UUID) (*app.Player, error) {
 
 	row := r.getPlayerByPlayerId.QueryRow(playerId)
-	var player app.Team
+	var player app.Player
 	if err := row.Scan(
 		&player.PlayerId,
-		&player.PlayerName,
+		&player.FirstName,
+		&player.LastName,
+		&player.Nationality,
 		&player.Position,
 		&player.Technique,
 		&player.Mental,

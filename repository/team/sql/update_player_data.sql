@@ -1,6 +1,8 @@
 UPDATE eft.team
 		SET 
-			playername = COALESCE($1, playername),
+			firstname = COALESCE($1, firstname),
+			lastname = COALESCE($1, lastname),
+			nationality = COALESCE($1, nationality),
 			position = COALESCE($2, position),
 			age = COALESCE($3, age),
 			fee = COALESCE($4, fee),

@@ -18,7 +18,7 @@ func (r *repository) GetLineup() ([]app.Lineup, error) {
 	for rows.Next() {
 		var lineup app.Lineup
 		if err := rows.Scan(
-			&lineup.PlayerName,
+			&lineup.LastName,
 			&lineup.Position,
 			&lineup.Technique,
 			&lineup.Mental,

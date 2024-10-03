@@ -6,15 +6,15 @@ import (
 	"time"
 )
 
-func (a *AppService) ProcessInjury() (Team, error) {
+func (a *AppService) ProcessInjury() (Player, error) {
 	analytics, err := a.analyticsRepo.GetAnalytics()
 	if err != nil {
 		log.Println("Error al extraer GetAnalytics", err)
-		return Team{}, err
+		return Player{}, err
 	}
 	player, err := a.GetRandomPlayer()
 	if err != nil {
-		return Team{}, err
+		return Player{}, err
 	}
 
 	injuryDays := a.calculateInjurySeverity(analytics.Physiotherapy)
@@ -28,13 +28,13 @@ func (a *AppService) ProcessInjury() (Team, error) {
 
 	err = a.teamRepo.UpdatePlayerData(
 		player.PlayerId,
-		nil, nil, nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil, nil, nil, nil, nil, nil, nil,
 		&injuryDays, &lined,
 		&familiarity, &fitness, &happiness,
 	)
 	if err != nil {
 		log.Println("Error al actualizar los datos del jugador", err)
-		return Team{}, err
+		return Player{}, err
 	}
 
 	return player, nil
@@ -66,10 +66,10 @@ func (a *AppService) calculateInjurySeverity(physiotherapy int) int {
 	}
 }
 
-func (a *AppService) GetCurrentInjuredPlayer() (*Team, *int, error) {
+func (a *AppService) GetCurrentInjuredPlayer() (*Player, *int, error) {
 	return a.currentInjuredPlayer, a.injuryDays, nil
 }
-func (a *AppService) SetCurrentInjuredPlayer(player *Team, injuryDays *int) {
+func (a *AppService) SetCurrentInjuredPlayer(player *Player, injuryDays *int) {
 	a.currentInjuredPlayer = player
 	a.injuryDays = injuryDays
 }

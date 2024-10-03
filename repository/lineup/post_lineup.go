@@ -6,10 +6,10 @@ import (
 	"github.com/robertobouses/easy-football-tycoon/app"
 )
 
-func (r *repository) PostLineup(player app.Team) error {
+func (r *repository) PostLineup(player app.Player) error {
 	_, err := r.postLineup.Exec(
 		player.PlayerId,
-		player.PlayerName,
+		player.LastName,
 		player.Position,
 		player.Technique,
 		player.Mental,

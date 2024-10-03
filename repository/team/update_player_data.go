@@ -8,7 +8,9 @@ import (
 
 func (r *repository) UpdatePlayerData(
 	playerID uuid.UUID,
-	playerName *string,
+	firstName *string,
+	lastName *string,
+	nationality *string,
 	position *string,
 	age *int,
 	fee *int,
@@ -23,10 +25,12 @@ func (r *repository) UpdatePlayerData(
 	happiness *int,
 ) error {
 	log.Printf("Updating player data: %v, %v, %v, %v, %v, %v, %v, %v, %v, %v, %v, %v, %v, %v",
-		playerID, playerName, position, age, fee, salary, technique, mental, physique, injuryDays, lined, familiarity, fitness, happiness)
+		playerID, firstName, lastName, nationality, position, age, fee, salary, technique, mental, physique, injuryDays, lined, familiarity, fitness, happiness)
 
 	_, err := r.updatePlayerData.Exec(
-		playerName,
+		firstName,
+		lastName,
+		nationality,
 		position,
 		age,
 		fee,

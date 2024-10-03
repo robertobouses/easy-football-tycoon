@@ -1,6 +1,8 @@
 SELECT
 			signingsid,
-			signingsname,
+			firstname,
+			lastname,
+			nationality,
 			position,
 			age,
 			fee,

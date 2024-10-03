@@ -5,8 +5,8 @@ import (
 )
 
 type App interface {
-	GetTeam() ([]app.Team, error)
-	PostTeam(app.Team) error
+	GetTeam() ([]app.Player, error)
+	PostTeam(app.Player) error
 }
 
 func NewHandler(app app.AppService) Handler {
