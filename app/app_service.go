@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/google/uuid"
+	"github.com/robertobouses/easy-football-tycoon/app/signings"
 	"github.com/robertobouses/easy-football-tycoon/app/staff"
 )
 
@@ -43,10 +44,10 @@ type RivalRepository interface {
 }
 
 type SigningsRepository interface {
-	GetSignings() ([]Signings, error)
-	PostSignings(req Signings) error
-	GetSigningsRandomByAnalytics(scouting int) (Signings, error)
-	DeleteSigning(signing Signings) error
+	GetSignings() ([]signings.Signings, error)
+	PostSignings(req signings.Signings) error
+	GetSigningsRandomByAnalytics(scouting int) (signings.Signings, error)
+	DeleteSigning(signing signings.Signings) error
 }
 
 type StaffRepository interface {
@@ -86,9 +87,18 @@ type StrategyRepository interface {
 	GetStrategy() (Strategy, error)
 }
 
-func NewApp(lineupRepository LineupRepository, teamRepository TeamRepository, rivalRepository RivalRepository, signingsRepository SigningsRepository,
-	staffRepository StaffRepository, teamStaffRepository TeamStaffRepository, calendaryRepository CalendaryRepository, analyticsRepository AnalyticsRepository,
-	bankRepository BankRepository, matchRepository MatchRepository, strategyRepository StrategyRepository) AppService {
+func NewApp(
+	lineupRepository LineupRepository,
+	teamRepository TeamRepository,
+	rivalRepository RivalRepository,
+	signingsRepository SigningsRepository,
+	staffRepository StaffRepository,
+	teamStaffRepository TeamStaffRepository,
+	calendaryRepository CalendaryRepository,
+	analyticsRepository AnalyticsRepository,
+	bankRepository BankRepository,
+	matchRepository MatchRepository,
+	strategyRepository StrategyRepository) AppService {
 	return AppService{
 		lineupRepo:    lineupRepository,
 		teamRepo:      teamRepository,
@@ -132,7 +142,7 @@ type AppService struct {
 	strategyRepo  StrategyRepository
 
 	currentPlayerOnSale  *Player
-	currentPlayerSigning *Signings
+	currentPlayerSigning *signings.Signings
 	currentInjuredPlayer *Player
 	currentStaffSigning  *staff.Staff
 	currentStaffOnSale   *staff.Staff

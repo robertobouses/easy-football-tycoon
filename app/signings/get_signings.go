@@ -1,8 +1,8 @@
-package app
+package signings
 
 import "log"
 
-func (a AppService) GetSignings() ([]Signings, error) {
+func (a SigningsService) GetSignings() ([]Signings, error) {
 	signings, err := a.signingsRepo.GetSignings()
 	if err != nil {
 		log.Println("Error al extraer GetSignings", err)

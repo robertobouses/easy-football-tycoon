@@ -5,36 +5,36 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/robertobouses/easy-football-tycoon/app"
+	"github.com/robertobouses/easy-football-tycoon/app/signings"
 )
 
-func (r *repository) GetSigningsRandomByAnalytics(scouting int) (app.Signings, error) {
+func (r *repository) GetSigningsRandomByAnalytics(scouting int) (signings.Signings, error) {
 
 	row := r.getSigningsRandomByAnalytics.QueryRow(scouting)
 	log.Println("el valor del scouting es", scouting)
-	var signings app.Signings
+	var signing signings.Signings
 	if err := row.Scan(
-		&signings.SigningsId,
-		&signings.FirstName,
-		&signings.LastName,
-		&signings.Nationality,
-		&signings.Position,
-		&signings.Age,
-		&signings.Fee,
-		&signings.Salary,
-		&signings.Technique,
-		&signings.Mental,
-		&signings.Physique,
-		&signings.InjuryDays,
-		&signings.Rarity,
+		&signing.SigningsId,
+		&signing.FirstName,
+		&signing.LastName,
+		&signing.Nationality,
+		&signing.Position,
+		&signing.Age,
+		&signing.Fee,
+		&signing.Salary,
+		&signing.Technique,
+		&signing.Mental,
+		&signing.Physique,
+		&signing.InjuryDays,
+		&signing.Rarity,
 	); err != nil {
 		if err == sql.ErrNoRows {
 			log.Printf("No se encontraron datos GetSigningsRandomByAnalytics")
-			return app.Signings{}, nil
+			return signings.Signings{}, nil
 		}
 		log.Printf("Error al escanear la fila: %v", err)
-		return app.Signings{}, err
+		return signings.Signings{}, err
 	}
 
-	return signings, nil
+	return signing, nil
 }

@@ -4,10 +4,10 @@ import (
 	//"database/sql"
 	"log"
 
-	"github.com/robertobouses/easy-football-tycoon/app"
+	"github.com/robertobouses/easy-football-tycoon/app/signings"
 )
 
-func (r *repository) GetSignings() ([]app.Signings, error) {
+func (r *repository) GetSignings() ([]signings.Signings, error) {
 
 	rows, err := r.getSignings.Query()
 	if err != nil {
@@ -15,29 +15,29 @@ func (r *repository) GetSignings() ([]app.Signings, error) {
 	}
 	defer rows.Close()
 
-	var signingss []app.Signings
+	var allSignings []signings.Signings
 	for rows.Next() {
-		var signings app.Signings
+		var signing signings.Signings
 		if err := rows.Scan(
-			&signings.SigningsId,
-			&signings.FirstName,
-			&signings.LastName,
-			&signings.Nationality,
-			&signings.Position,
-			&signings.Age,
-			&signings.Fee,
-			&signings.Salary,
-			&signings.Technique,
-			&signings.Mental,
-			&signings.Physique,
-			&signings.InjuryDays,
-			&signings.Rarity,
+			&signing.SigningsId,
+			&signing.FirstName,
+			&signing.LastName,
+			&signing.Nationality,
+			&signing.Position,
+			&signing.Age,
+			&signing.Fee,
+			&signing.Salary,
+			&signing.Technique,
+			&signing.Mental,
+			&signing.Physique,
+			&signing.InjuryDays,
+			&signing.Rarity,
 		); err != nil {
 			log.Printf("Error al escanear las filas GetSignings: %v", err)
 			return nil, err
 		}
-		signingss = append(signingss, signings)
+		allSignings = append(allSignings, signing)
 	}
 
-	return signingss, nil
+	return allSignings, nil
 }

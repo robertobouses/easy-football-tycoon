@@ -1,15 +1,16 @@
 package signings
 
 import (
-	"github.com/robertobouses/easy-football-tycoon/app"
+	"github.com/robertobouses/easy-football-tycoon/app/signings"
 )
 
 type App interface {
-	GetSignings() ([]app.Signings, error)
-	PostSignings(app.Signings) error
+	GetSignings() ([]signings.Signings, error)
+	PostSignings(signings.Signings) error
+	RunAutoPlayerGenerator(numberOfPlayers int) ([]signings.Signings, error)
 }
 
-func NewHandler(app app.AppService) Handler {
+func NewHandler(app *signings.SigningsService) Handler {
 	return Handler{
 		app: app,
 	}

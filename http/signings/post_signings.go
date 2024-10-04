@@ -7,14 +7,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/robertobouses/easy-football-tycoon/app"
+	"github.com/robertobouses/easy-football-tycoon/app/signings"
 )
 
 type PostSigningsRequest struct {
 	SigningsId  uuid.UUID `json:"signingsid"`
 	FirstName   string    `json:"firstname"`
 	LastName    string    `json:"lastname"`
-	Nationality string    `json: "nationality"`
+	Nationality string    `json:"nationality"`
 	Position    string    `json:"position"`
 	Age         int       `json:"age"`
 	Fee         int       `json:"fee"`
@@ -34,7 +34,7 @@ func (h Handler) PostSignings(c *gin.Context) {
 		return
 	}
 
-	signings := app.Signings{
+	signing := signings.Signings{
 		SigningsId:  req.SigningsId,
 		FirstName:   req.FirstName,
 		LastName:    req.LastName,
@@ -50,7 +50,7 @@ func (h Handler) PostSignings(c *gin.Context) {
 		Rarity:      req.Rarity,
 	}
 
-	err := h.app.PostSignings(signings)
+	err := h.app.PostSignings(signing)
 	if err != nil {
 		c.JSON(nethttp.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

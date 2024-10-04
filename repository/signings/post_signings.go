@@ -3,10 +3,10 @@ package signings
 import (
 	"log"
 
-	"github.com/robertobouses/easy-football-tycoon/app"
+	"github.com/robertobouses/easy-football-tycoon/app/signings"
 )
 
-func (r *repository) PostSignings(req app.Signings) error {
+func (r *repository) PostSignings(req signings.Signings) error {
 	_, err := r.postSignings.Exec(
 		req.FirstName,
 		req.LastName,

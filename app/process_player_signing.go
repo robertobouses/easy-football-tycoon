@@ -7,37 +7,38 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/robertobouses/easy-football-tycoon/app/signings"
 )
 
-func (a *AppService) ProcessPlayerSigning() (Signings, error) {
+func (a *AppService) ProcessPlayerSigning() (signings.Signings, error) {
 	analytics, err := a.analyticsRepo.GetAnalytics()
 	if err != nil {
 		log.Println("Error al extraer GetAnalytics", err)
-		return Signings{}, err
+		return signings.Signings{}, err
 	}
 
-	signings, err := a.signingsRepo.GetSigningsRandomByAnalytics(analytics.Scouting)
-	log.Println("Signings asignado en ProcessPlayerSigning 1:", signings)
+	signing, err := a.signingsRepo.GetSigningsRandomByAnalytics(analytics.Scouting)
+	log.Println("Signings asignado en ProcessPlayerSigning 1:", signing)
 	if err != nil {
 		log.Println("Error al extraer GetSigningsRandomByAnalytics", err)
-		return Signings{}, err
+		return signings.Signings{}, err
 	}
 
 	//TODO ESTABLECER UN FACTOR PARA QUE SEA RAMDON EL PRECIO DEL FICHAJES, RELACIONADO CON FINANCES
 	//transferFeeIssued utilizar función ProcessTransferFeeReceived
 
-	if signings.SigningsId == uuid.Nil {
+	if signing.SigningsId == uuid.Nil {
 		log.Println("No se encontró un signings válido")
-		return Signings{}, nil
+		return signings.Signings{}, nil
 	}
 
-	a.SetCurrentPlayerSigning(&signings)
-	log.Println("Signings asignado en ProcessPlayerSigning 2:", signings)
+	a.SetCurrentPlayerSigning(&signing)
+	log.Println("Signings asignado en ProcessPlayerSigning 2:", signing)
 
-	return signings, nil
+	return signing, nil
 }
 
-func (a *AppService) SetCurrentPlayerSigning(signings *Signings) {
+func (a *AppService) SetCurrentPlayerSigning(signings *signings.Signings) {
 	if signings == nil || signings.SigningsId == uuid.Nil {
 		log.Println("Signings no válido, no se asignará. Signings:", signings)
 		a.currentPlayerSigning = nil
@@ -47,7 +48,7 @@ func (a *AppService) SetCurrentPlayerSigning(signings *Signings) {
 	}
 }
 
-func (a *AppService) GetCurrentPlayerSigning() (*Signings, error) {
+func (a *AppService) GetCurrentPlayerSigning() (*signings.Signings, error) {
 	log.Println("a.currentPlayerSigning en GetCurrentPlayerSigning 1:", a.currentPlayerSigning)
 	if a.currentPlayerSigning == nil {
 		log.Println("a.currentPlayerSigning es nil en GetCurrentPlayerSigning 2")
@@ -57,7 +58,7 @@ func (a *AppService) GetCurrentPlayerSigning() (*Signings, error) {
 	return a.currentPlayerSigning, nil
 }
 
-func (a *AppService) AcceptPlayerSigning(signings *Signings) error {
+func (a *AppService) AcceptPlayerSigning(signings *signings.Signings) error {
 
 	initialFee := signings.Fee
 
@@ -86,11 +87,11 @@ func (a *AppService) AcceptPlayerSigning(signings *Signings) error {
 	return nil
 }
 
-func (a *AppService) RejectPlayerSigning(signings *Signings) {
+func (a *AppService) RejectPlayerSigning(signings *signings.Signings) {
 	a.SetCurrentPlayerSigning(nil)
 }
 
-func ConvertSigningsToTeam(signings *Signings) Player {
+func ConvertSigningsToTeam(signings *signings.Signings) Player {
 	randomFactor := 0.8 + rand.Float64()*1.5
 	happiness := int(70 * randomFactor)
 	happiness = int(math.Min(float64(happiness), 100))

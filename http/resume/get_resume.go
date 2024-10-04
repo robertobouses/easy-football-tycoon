@@ -43,7 +43,7 @@ func (h Handler) GetResume(ctx *gin.Context) {
 	}
 	log.Println("el signings en GetResume HHTP, es", playerSigning)
 
-	if playerSigning != nil && playerSigning.SigningsId != uuid.Nil {
+	if playerSigning != nil {
 		ctx.JSON(nethttp.StatusOK, gin.H{
 			"message":            "Player on Signing",
 			"signings":           playerSigning,

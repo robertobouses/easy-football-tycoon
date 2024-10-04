@@ -1,4 +1,4 @@
-package app
+package signings
 
 import "github.com/google/uuid"
 

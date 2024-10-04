@@ -92,6 +92,7 @@ func (s *Server) Run(port string) error {
 	signings := s.engine.Group("/signings")
 	signings.GET("", s.signings.GetSignings)
 	signings.POST("/person", s.signings.PostSignings)
+	signings.POST("/auto", s.signings.PostAutoPlayerGenerator)
 
 	staff := s.engine.Group("/staff")
 	staff.POST("/create", s.staff.PostStaff)
