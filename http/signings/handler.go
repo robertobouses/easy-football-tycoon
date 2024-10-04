@@ -10,7 +10,7 @@ type App interface {
 	RunAutoPlayerGenerator(numberOfPlayers int) ([]signings.Signings, error)
 }
 
-func NewHandler(app signings.SigningsService) Handler {
+func NewHandler(app *signings.SigningsService) Handler {
 	return Handler{
 		app: app,
 	}

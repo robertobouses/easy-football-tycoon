@@ -2,8 +2,8 @@ package resume
 
 import (
 	"github.com/robertobouses/easy-football-tycoon/app"
+	"github.com/robertobouses/easy-football-tycoon/app/signings"
 	"github.com/robertobouses/easy-football-tycoon/app/staff"
-	"github.com/robertobouses/easy-football-tycoon/http/signings"
 )
 
 type App interface {

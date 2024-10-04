@@ -11,12 +11,25 @@ import (
 	"time"
 )
 
-var positions = []string{"Goalkeeper", "Defender", "Midfielder", "Forward"}
-var nationalities = []string{"us", "gb", "es", "fr", "de"} //TODO AMPLIAR NUMERO NAC. HACER MAS PROBABLE Y MAS POSIBLE CALIDAD CIERTAS NAC
+var positions = []string{"goalkeeper", "defender", "midfielder", "forward"}
+var nationalities = []string{
+	"gb", "gb", "gb", "gb", "gb",
+	"es", "es", "es", "es", "es",
+	"fr", "fr", "fr", "fr", "fr",
+	"de", "de", "de", "de", "de",
+	"it", "it", "it", "it", "it",
+	"nl", "nl", "nl", "nl", "nl",
+	"pt", "pt", "pt", "pt", "pt",
+
+	"ar", "br", "mx", "jp", "kr", "cn", "ru", "se", "no", "dk",
+	"au", "ca", "pl", "be", "ch", "at", "fi", "cz", "gr", "ro",
+	"ie", "hu", "sk", "hr", "tr", "za", "co", "uy", "cl", "ec",
+}
 
 func (a *SigningsService) RunAutoPlayerGenerator(numberOfPlayers int) ([]Signings, error) {
 	rand.Seed(time.Now().UnixNano())
 	var players []Signings
+	log.Printf("Número de jugadores a generar: %d", numberOfPlayers)
 
 	for i := 0; i < numberOfPlayers; i++ {
 		nat := nationalities[rand.Intn(len(nationalities))]
@@ -42,12 +55,16 @@ func (a *SigningsService) RunAutoPlayerGenerator(numberOfPlayers int) ([]Signing
 		}
 		players = append(players, player)
 
+		log.Println("jugador generado automáticamente", player)
+
 		err = a.signingsRepo.PostSignings(player)
 		if err != nil {
-			log.Printf("Error inserting player %v %v: %v", player.FirstName, player.LastName, err)
-			return nil, err
+			log.Printf("Error insertando jugador %v %v: %v", player.FirstName, player.LastName, err)
+		} else {
+			log.Printf("Jugador %v %v insertado correctamente", player.FirstName, player.LastName)
 		}
 	}
+	log.Println("todos los jugadores generados", players)
 	return players, nil
 
 }
@@ -70,17 +87,22 @@ func getRandomNameByNationality(nationality string) (string, string, string, err
 
 	resp, err := http.Get(apiURL)
 	if err != nil {
+		log.Printf("Error al obtener nombre de la API: %v", err)
 		return "", "", "", err
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		log.Printf("Error al leer el cuerpo de la respuesta de la API: %v", err)
 		return "", "", "", err
 	}
 
+	log.Printf("Respuesta de la API: %s", string(body))
+
 	var userName RandomUserName
 	if err := json.Unmarshal(body, &userName); err != nil {
+		log.Printf("Error al deserializar la respuesta JSON: %v", err)
 		return "", "", "", err
 	}
 

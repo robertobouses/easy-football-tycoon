@@ -9,7 +9,7 @@ import (
 )
 
 type PostAutoPlayerGeneratorRequest struct {
-	numberOfPlayersToGenerate int `json:"numberofplayertogenerate"`
+	NumberOfPlayersToGenerate int `json:"numberofplayertogenerate"`
 }
 
 func (h Handler) PostAutoPlayerGenerator(c *gin.Context) {
@@ -20,7 +20,9 @@ func (h Handler) PostAutoPlayerGenerator(c *gin.Context) {
 		return
 	}
 
-	players, err := h.app.RunAutoPlayerGenerator(req.numberOfPlayersToGenerate)
+	log.Printf("Número de jugadores a generar: %d", req.NumberOfPlayersToGenerate)
+
+	players, err := h.app.RunAutoPlayerGenerator(req.NumberOfPlayersToGenerate)
 	if err != nil {
 		c.JSON(nethttp.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

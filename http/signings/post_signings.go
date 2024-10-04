@@ -50,7 +50,7 @@ func (h Handler) PostSignings(c *gin.Context) {
 		Rarity:      req.Rarity,
 	}
 
-	err := h.signings.PostSignings(signing)
+	err := h.app.PostSignings(signing)
 	if err != nil {
 		c.JSON(nethttp.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

@@ -134,7 +134,7 @@ func main() {
 
 	rivalHandler := rivalServer.NewHandler(app)
 
-	signingsHandler := signingsServer.NewHandler(signingsApp)
+	signingsHandler := signingsServer.NewHandler(&signingsApp)
 
 	staffHandler := staffServer.NewHandler(staffApp)
 
