@@ -39,17 +39,31 @@ func (a *SigningsService) RunAutoPlayerGenerator(numberOfPlayers int) ([]Signing
 			return nil, fmt.Errorf("error generating player name: %v", err)
 		}
 
+		// Genera los atributos antes de calcular el salario y el fee
+		age := rand.Intn(18) + 18
+		technique := rand.Intn(100) + 1
+		mental := rand.Intn(100) + 1
+		physique := rand.Intn(100) + 1
+
+		// Ahora sí puedes calcular el fee y salary
+		fee, salary := CalculatePlayerFeeAndSalary(technique, mental, physique, age)
+
+		log.Println("valor de age", age)
+		log.Println("valor de technique", technique)
+		log.Println("valor de mental", mental)
+		log.Println("valor de physique", physique)
+
 		player := Signings{
 			FirstName:   firstName,
 			LastName:    lastName,
 			Nationality: nat,
 			Position:    positions[rand.Intn(len(positions))],
-			Age:         rand.Intn(18) + 18,
-			Fee:         rand.Intn(50_000_000) + 1_000_000, // TODO CALCULAR
-			Salary:      rand.Intn(200_000) + 20_000,       // TODO CALCULAR
-			Technique:   rand.Intn(100) + 1,
-			Mental:      rand.Intn(100) + 1,
-			Physique:    rand.Intn(100) + 1,
+			Age:         age,
+			Fee:         fee,    // Usa el valor calculado
+			Salary:      salary, // Usa el valor calculado
+			Technique:   technique,
+			Mental:      mental,
+			Physique:    physique,
 			InjuryDays:  rand.Intn(30),
 			Fitness:     rand.Intn(100) + 1,
 		}
@@ -66,7 +80,6 @@ func (a *SigningsService) RunAutoPlayerGenerator(numberOfPlayers int) ([]Signing
 	}
 	log.Println("todos los jugadores generados", players)
 	return players, nil
-
 }
 
 type RandomUserName struct {
