@@ -19,7 +19,7 @@ const (
 	oldValue             = 31
 )
 
-func CalculatePlayerFeeAndSalary(technique, mental, physique, age int) (int, int) {
+func CalculatePlayerFeeAndSalary(technique, mental, physique, age int) (int, int, int) {
 	rand.Seed(time.Now().UnixNano())
 
 	totalPlayerQuality := technique + mental + physique
@@ -72,5 +72,16 @@ func CalculatePlayerFeeAndSalary(technique, mental, physique, age int) (int, int
 		fee = 0
 	}
 
-	return fee, salary
+	rarity := 0
+
+	switch {
+	case salary > 10_000_000:
+		rarity = rand.Intn(31) + 70
+	case salary > 4_000_000 && salary <= 7_000_000:
+		rarity = rand.Intn(36) + 55
+	default:
+		rarity = rand.Intn(65)
+	}
+
+	return fee, salary, rarity
 }

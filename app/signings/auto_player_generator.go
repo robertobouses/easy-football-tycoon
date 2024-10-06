@@ -39,14 +39,12 @@ func (a *SigningsService) RunAutoPlayerGenerator(numberOfPlayers int) ([]Signing
 			return nil, fmt.Errorf("error generating player name: %v", err)
 		}
 
-		// Genera los atributos antes de calcular el salario y el fee
 		age := rand.Intn(18) + 18
 		technique := rand.Intn(100) + 1
 		mental := rand.Intn(100) + 1
 		physique := rand.Intn(100) + 1
 
-		// Ahora sí puedes calcular el fee y salary
-		fee, salary := CalculatePlayerFeeAndSalary(technique, mental, physique, age)
+		fee, salary, rarity := CalculatePlayerFeeAndSalary(technique, mental, physique, age)
 
 		log.Println("valor de age", age)
 		log.Println("valor de technique", technique)
@@ -59,12 +57,13 @@ func (a *SigningsService) RunAutoPlayerGenerator(numberOfPlayers int) ([]Signing
 			Nationality: nat,
 			Position:    positions[rand.Intn(len(positions))],
 			Age:         age,
-			Fee:         fee,    // Usa el valor calculado
-			Salary:      salary, // Usa el valor calculado
+			Fee:         fee,
+			Salary:      salary,
 			Technique:   technique,
 			Mental:      mental,
 			Physique:    physique,
 			InjuryDays:  rand.Intn(30),
+			Rarity:      rarity,
 			Fitness:     rand.Intn(100) + 1,
 		}
 		players = append(players, player)
@@ -82,20 +81,11 @@ func (a *SigningsService) RunAutoPlayerGenerator(numberOfPlayers int) ([]Signing
 	return players, nil
 }
 
-type RandomUserName struct {
-	Results []struct {
-		Name struct {
-			First string `json:"first"`
-			Last  string `json:"last"`
-		} `json:"name"`
-		Nat string `json:"nat"`
-	} `json:"results"`
-}
-
 func getRandomNameByNationality(nationality string) (string, string, string, error) {
 	baseURL := "https://randomuser.me/api/"
 	params := url.Values{}
 	params.Add("nat", nationality)
+	params.Add("gender", "male")
 	apiURL := fmt.Sprintf("%s?%s", baseURL, params.Encode())
 
 	resp, err := http.Get(apiURL)
@@ -124,4 +114,14 @@ func getRandomNameByNationality(nationality string) (string, string, string, err
 	nationalityCode := userName.Results[0].Nat
 
 	return firstName, lastName, nationalityCode, nil
+}
+
+type RandomUserName struct {
+	Results []struct {
+		Name struct {
+			First string `json:"first"`
+			Last  string `json:"last"`
+		} `json:"name"`
+		Nat string `json:"nat"`
+	} `json:"results"`
 }
