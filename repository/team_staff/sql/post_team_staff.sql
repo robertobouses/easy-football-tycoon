@@ -1,5 +1,7 @@
 INSERT  into EFT.team_staff
-    	(staffname,
+    	(firstname, 
+		lastname, 
+		nationality,
 		job,
 		age,
 		fee,
@@ -8,6 +10,8 @@ INSERT  into EFT.team_staff
 		finances,
 		scouting,
 		physiotherapy,
+		knowledge,
+		intelligence,
 		rarity)
 VALUES
-   ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
+   ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);

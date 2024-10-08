@@ -15,7 +15,9 @@ func (r *repository) GetStaffRandomByAnalytics(scouting int) (staff.Staff, error
 	var oneStaff staff.Staff
 	if err := row.Scan(
 		&oneStaff.StaffId,
-		&oneStaff.StaffName,
+		&oneStaff.FirstName,
+		&oneStaff.LastName,
+		&oneStaff.Nationality,
 		&oneStaff.Job,
 		&oneStaff.Age,
 		&oneStaff.Fee,
@@ -24,6 +26,8 @@ func (r *repository) GetStaffRandomByAnalytics(scouting int) (staff.Staff, error
 		&oneStaff.Finances,
 		&oneStaff.Scouting,
 		&oneStaff.Physiotherapy,
+		&oneStaff.Knowledge,
+		&oneStaff.Intelligence,
 		&oneStaff.Rarity,
 	); err != nil {
 		if err == sql.ErrNoRows {

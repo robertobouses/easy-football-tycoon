@@ -34,7 +34,7 @@ func (a *SigningsService) RunAutoPlayerGenerator(numberOfPlayers int) ([]Signing
 	for i := 0; i < numberOfPlayers; i++ {
 		nat := nationalities[rand.Intn(len(nationalities))]
 
-		firstName, lastName, _, err := getRandomNameByNationality(nat)
+		firstName, lastName, _, err := GetRandomNameByNationality(nat)
 		if err != nil {
 			return nil, fmt.Errorf("error generating player name: %v", err)
 		}
@@ -89,7 +89,7 @@ func (a *SigningsService) RunAutoPlayerGenerator(numberOfPlayers int) ([]Signing
 	return players, nil
 }
 
-func getRandomNameByNationality(nationality string) (string, string, string, error) {
+func GetRandomNameByNationality(nationality string) (string, string, string, error) {
 	baseURL := "https://randomuser.me/api/"
 	params := url.Values{}
 	params.Add("nat", nationality)

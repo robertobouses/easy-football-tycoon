@@ -14,6 +14,8 @@ type PostAnalyticsRequest struct {
 	Finances        int `json:"finances"`
 	Scouting        int `json:"scouting"`
 	Physiotherapy   int `json:"physiotherapy"`
+	Knowledge       int `json:"knowledge"`
+	Intelligence    int `json:"intelligence"`
 	Trust           int `json:"trust"`
 	StadiumCapacity int `json:"stadiumcapacity"`
 }

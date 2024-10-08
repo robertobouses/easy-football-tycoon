@@ -73,7 +73,7 @@ func (a *AppService) AcceptStaffSigning(signings *staff.Staff) error {
 
 	newBalance := initalBalance - paid
 
-	a.bankRepo.PostTransactions(paid, newBalance, signings.StaffName, "Staff Signing")
+	a.bankRepo.PostTransactions(paid, newBalance, signings.LastName, "Staff Signing")
 
 	a.teamStaffRepo.PostTeamStaff(*signings)
 

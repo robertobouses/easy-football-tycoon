@@ -96,6 +96,7 @@ func (s *Server) Run(port string) error {
 
 	staff := s.engine.Group("/staff")
 	staff.POST("/create", s.staff.PostStaff)
+	staff.POST("/auto", s.staff.PostAutoStaffGenerator)
 
 	team_staff := s.engine.Group("/team_staff")
 	team_staff.POST("/create", s.team_staff.PostTeamStaff)

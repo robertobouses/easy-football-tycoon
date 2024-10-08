@@ -1,6 +1,8 @@
 SELECT  
     	staffid,
-		staffname,
+		firstname,
+		lastname, 
+		nationality,
 		job,
 		age,
 		fee,

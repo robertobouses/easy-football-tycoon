@@ -4,7 +4,9 @@ import "github.com/google/uuid"
 
 type Staff struct {
 	StaffId       uuid.UUID
-	StaffName     string
+	FirstName     string
+	LastName      string
+	Nationality   string
 	Job           string
 	Age           int
 	Fee           int
@@ -13,5 +15,7 @@ type Staff struct {
 	Finances      int
 	Scouting      int
 	Physiotherapy int
+	Knowledge     int
+	Intelligence  int
 	Rarity        int
 }

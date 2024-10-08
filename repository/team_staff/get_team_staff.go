@@ -20,7 +20,9 @@ func (r *repository) GetTeamStaff() ([]staff.Staff, error) {
 		var staff staff.Staff
 		if err := rows.Scan(
 			&staff.StaffId,
-			&staff.StaffName,
+			&staff.FirstName,
+			&staff.LastName,
+			&staff.Nationality,
 			&staff.Job,
 			&staff.Age,
 			&staff.Fee,
@@ -29,6 +31,8 @@ func (r *repository) GetTeamStaff() ([]staff.Staff, error) {
 			&staff.Finances,
 			&staff.Scouting,
 			&staff.Physiotherapy,
+			&staff.Knowledge,
+			&staff.Intelligence,
 			&staff.Rarity,
 		); err != nil {
 			log.Printf("Error al escanear las filas GetTeamStaff: %v", err)

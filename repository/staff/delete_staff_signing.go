@@ -13,6 +13,6 @@ func (r *repository) DeleteStaffSigning(staff staff.Staff) error {
 		log.Printf("Error en deletestaffFromTeam repo: %v", err)
 		return err
 	}
-	log.Printf("El Empleado %v se fue de tu equipo", staff.StaffName)
+	log.Printf("El Empleado %v %v se fue a tu equipo", staff.FirstName, staff.LastName)
 	return nil
 }

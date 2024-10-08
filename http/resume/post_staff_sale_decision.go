@@ -47,9 +47,10 @@ func (h Handler) PostStaffSaleDecision(ctx *gin.Context) {
 		}
 		log.Printf("Venta aceptada, jugador vendido con éxito")
 		ctx.JSON(nethttp.StatusOK, gin.H{
-			"staff":   staff.StaffName,
-			"sold by": transferFeeReceived,
-			"message": "Staff sold successfully"})
+			"staff first name": staff.FirstName,
+			"staff last name":  staff.LastName,
+			"sold by":          transferFeeReceived,
+			"message":          "Staff sold successfully"})
 	} else {
 		h.app.RejectStaffSale(*staff)
 		log.Printf("Venta rechazada, jugador no vendido")

@@ -1,6 +1,8 @@
 SELECT
 			staffid,
-			staffname,
+			firstname,
+			lastname,
+			nationality,
 			job,
 			age,
 			fee,
@@ -9,6 +11,8 @@ SELECT
 			finances,
 			scouting,
 			physiotherapy,
+			knowledge,
+			intelligence,
 			rarity
 		FROM
 			eft.staff
