@@ -53,7 +53,7 @@ func (a *AppService) AcceptStaffSale(staff staff.Staff) error {
 	log.Println("balance inicial en APP", balance)
 	log.Println("new balance en APP", newBalance)
 
-	err = a.bankRepo.PostTransactions(amount, newBalance, staff.StaffName, "sale")
+	err = a.bankRepo.PostTransactions(amount, newBalance, staff.LastName, "sale")
 	if err != nil {
 		return err
 	}

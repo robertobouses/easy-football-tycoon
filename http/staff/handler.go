@@ -6,9 +6,10 @@ import (
 
 type App interface {
 	PostStaff(staff.Staff) error
+	RunAutoStaffGenerator(numberOfStaffs int) ([]staff.Staff, error)
 }
 
-func NewHandler(app staff.StaffService) Handler {
+func NewHandler(app *staff.StaffService) Handler {
 	return Handler{
 		app: app,
 	}

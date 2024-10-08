@@ -13,7 +13,9 @@ import (
 // TODO PODRÍA EVITAR DUCPLICAR ESTA FUNCIÓN Y LA DEL package staff PostStaff?
 type PostTeamStaffRequest struct {
 	StaffId       uuid.UUID `json:"staffid"`
-	StaffName     string    `json:"staffname"`
+	FirstName     string    `json:"firstname"`
+	LastName      string    `json:"lastname"`
+	Nationality   string    `json:"nationality"`
 	Job           string    `json:"job"`
 	Age           int       `json:"age"`
 	Fee           int       `json:"fee"`
@@ -22,6 +24,8 @@ type PostTeamStaffRequest struct {
 	Finances      int       `json:"finances"`
 	Scouting      int       `json:"scouting"`
 	Physiotherapy int       `json:"physiotherapy"`
+	Knowledge     int       `json:"knowledge"`
+	Intelligence  int       `json:"intelligence"`
 	Rarity        int       `json:"rarity"`
 }
 
@@ -34,7 +38,9 @@ func (h Handler) PostTeamStaff(c *gin.Context) {
 	}
 	staff := staff.Staff{
 		StaffId:       req.StaffId,
-		StaffName:     req.StaffName,
+		FirstName:     req.FirstName,
+		LastName:      req.LastName,
+		Nationality:   req.Nationality,
 		Job:           req.Job,
 		Age:           req.Age,
 		Fee:           req.Fee,
@@ -43,6 +49,8 @@ func (h Handler) PostTeamStaff(c *gin.Context) {
 		Finances:      req.Finances,
 		Scouting:      req.Scouting,
 		Physiotherapy: req.Physiotherapy,
+		Knowledge:     req.Knowledge,
+		Intelligence:  req.Intelligence,
 		Rarity:        req.Rarity,
 	}
 	err := h.app.PostTeamStaff(staff)

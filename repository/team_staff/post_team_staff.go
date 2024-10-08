@@ -8,7 +8,9 @@ import (
 
 func (r *repository) PostTeamStaff(req staff.Staff) error {
 	_, err := r.postTeamStaff.Exec(
-		req.StaffName,
+		req.FirstName,
+		req.LastName,
+		req.Nationality,
 		req.Job,
 		req.Age,
 		req.Fee,
@@ -17,6 +19,8 @@ func (r *repository) PostTeamStaff(req staff.Staff) error {
 		req.Finances,
 		req.Scouting,
 		req.Physiotherapy,
+		req.Knowledge,
+		req.Intelligence,
 		req.Rarity,
 	)
 

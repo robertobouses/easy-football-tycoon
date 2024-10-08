@@ -136,7 +136,7 @@ func main() {
 
 	signingsHandler := signingsServer.NewHandler(&signingsApp)
 
-	staffHandler := staffServer.NewHandler(staffApp)
+	staffHandler := staffServer.NewHandler(&staffApp)
 
 	teamStaffHandler := teamStaffServer.NewHandler(app)
 
