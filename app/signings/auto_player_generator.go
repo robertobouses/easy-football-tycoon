@@ -11,21 +11,6 @@ import (
 	"time"
 )
 
-var positions = []string{"goalkeeper", "defender", "defender", "defender", "midfielder", "midfielder", "midfielder", "forward", "forward"}
-var nationalities = []string{
-	"gb", "gb", "gb", "gb", "gb",
-	"es", "es", "es", "es", "es",
-	"fr", "fr", "fr", "fr", "fr",
-	"de", "de", "de", "de", "de",
-	"it", "it", "it", "it", "it",
-	"nl", "nl", "nl", "nl", "nl",
-	"pt", "pt", "pt", "pt", "pt",
-
-	"ar", "br", "mx", "jp", "kr", "cn", "ru", "se", "no", "dk",
-	"au", "ca", "pl", "be", "ch", "at", "fi", "cz", "gr", "ro",
-	"ie", "hu", "sk", "hr", "tr", "za", "co", "uy", "cl", "ec",
-}
-
 func (a *SigningsService) RunAutoPlayerGenerator(numberOfPlayers int) ([]Signings, error) {
 	rand.Seed(time.Now().UnixNano())
 	var players []Signings
@@ -39,19 +24,7 @@ func (a *SigningsService) RunAutoPlayerGenerator(numberOfPlayers int) ([]Signing
 			return nil, fmt.Errorf("error generating player name: %v", err)
 		}
 
-		position := positions[rand.Intn(len(positions))]
-		age := rand.Intn(18) + 18
-		technique := rand.Intn(100) + 1
-		mental := rand.Intn(100) + 1
-		physique := rand.Intn(100) + 1
-		var injuryDays int
-		if physique < 12 {
-			injuryDays = rand.Intn(32)
-		}
-		if physique < 27 {
-			injuryDays = rand.Intn(17)
-		}
-
+		position, age, technique, mental, physique, injuryDays := CalculatePlayerAtributes()
 		fee, salary, rarity := CalculatePlayerFeeAndSalary(technique, mental, physique, age, nat, position)
 
 		log.Println("valor de age", age)

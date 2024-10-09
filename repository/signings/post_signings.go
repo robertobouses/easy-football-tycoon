@@ -20,6 +20,7 @@ func (r *repository) PostSignings(req signings.Signings) error {
 		req.Physique,
 		req.InjuryDays,
 		req.Rarity,
+		req.Fitness,
 	)
 
 	if err != nil {
