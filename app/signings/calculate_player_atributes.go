@@ -44,7 +44,7 @@ func CalculatePlayerAtributes() (string, int, int, int, int, int) {
 
 	case age < primePlayer:
 		log.Println("jugador tipo primePlayer")
-		technique = rand.Intn(90) + 11
+		technique = rand.Intn(85) + 16
 		mental = rand.Intn(80) + 21
 		physique = rand.Intn(68) + 33
 
@@ -52,7 +52,7 @@ func CalculatePlayerAtributes() (string, int, int, int, int, int) {
 		log.Println("jugador tipo experiencedPlayer")
 		technique = rand.Intn(80) + 21
 		mental = rand.Intn(70) + 31
-		physique = rand.Intn(70) + 24
+		physique = rand.Intn(70) + 27
 
 	case age < oldPlayer:
 		log.Println("jugador tipo oldPlayer")
