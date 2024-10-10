@@ -29,6 +29,7 @@ type PostTeamStaffRequest struct {
 	Rarity        int       `json:"rarity"`
 }
 
+// TODO UTILIZAR ESTAS FORMULAS PARA DETERMINAR LA CALIDAD EN ANALITICS Y NO SOLO METER ATRIBUTOS
 func (h Handler) PostTeamStaff(c *gin.Context) {
 	var req PostTeamStaffRequest
 	if err := c.BindJSON(&req); err != nil {

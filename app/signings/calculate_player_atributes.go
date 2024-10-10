@@ -27,13 +27,13 @@ func CalculatePlayerAtributes() (string, int, int, int, int, int) {
 	case age < emergingPlayer:
 		log.Println("jugador tipo emergingPlayer")
 		technique = rand.Intn(73) + 1
-		mental = rand.Intn(61) + 1
-		physique = rand.Intn(82) + 3
+		mental = rand.Intn(53) + 1
+		physique = rand.Intn(60) + 10
 
 	case age < veryYoungPlayer:
 		log.Println("jugador tipo veryYoungPlayer")
 		technique = rand.Intn(80) + 1
-		mental = rand.Intn(64) + 1
+		mental = rand.Intn(60) + 1
 		physique = rand.Intn(73) + 23
 
 	case age < youngPlayer:
