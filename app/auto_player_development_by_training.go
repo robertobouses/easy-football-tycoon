@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	masterTraining   = 92
-	veryGoodTraining = 83
+	masterTraining   = 93
+	veryGoodTraining = 84
 	goodTraining     = 69
 	averageTraining  = 57
 	basicTraining    = 48
@@ -15,18 +15,12 @@ const (
 	badTraining      = 21
 )
 
-func (a *AppService) RunAutoPlayerDevelopment() error {
+func (a *AppService) RunAutoPlayerDevelopmentByTraining(teamPlayers []Player) error {
 	//al acabar año cambio age y cambio valor y salary decidir si se negocia renovacion
 	//TODO GESTION ERRORES EN FORMULAS AUTOCALCULO DE JUGADORES Y STAFF
 	analytics, err := a.analyticsRepo.GetAnalytics()
 	if err != nil {
 		log.Println("error al obtener analytics")
-		return err
-	}
-
-	teamPlayers, err := a.teamRepo.GetTeam()
-	if err != nil {
-		log.Println("error al obtener team players")
 		return err
 	}
 
@@ -39,42 +33,37 @@ func (a *AppService) RunAutoPlayerDevelopment() error {
 		case analytics.TotalTraining > masterTraining:
 			technique += rand.Intn(7)
 			mental += rand.Intn(2)
-			physique += rand.Intn(6)
+			physique += rand.Intn(5)
 
 		case analytics.TotalTraining > veryGoodTraining:
 			technique += rand.Intn(5)
-			mental += probabilisticIncrement33()
+			mental += ProbabilisticIncrement33()
 			physique += rand.Intn(4)
 
 		case analytics.TotalTraining > goodTraining:
 			technique += rand.Intn(3)
-			mental += probabilisticIncrement33()
-			physique += rand.Intn(3) + probabilisticIncrement33()
+			mental += ProbabilisticIncrement33()
+			physique += rand.Intn(3) + ProbabilisticIncrement33()
 
 		case analytics.TotalTraining > averageTraining:
 			technique += rand.Intn(2)
-			mental += probabilisticIncrement14()
-			physique += rand.Intn(3) + probabilisticIncrement14()
+			mental += ProbabilisticIncrement14()
+			physique += rand.Intn(3) + ProbabilisticIncrement14()
 
 		case analytics.TotalTraining > basicTraining:
 			technique = rand.Intn(2)
-			mental = 0
-			physique += probabilisticIncrement66() + probabilisticIncrement14()
+			physique += ProbabilisticIncrement66() + ProbabilisticIncrement14()
 
 		case analytics.TotalTraining > poorTraining:
-			technique = probabilisticIncrement33()
-			mental = 0
-			physique += rand.Intn(2) + probabilisticIncrement14()
+			technique = ProbabilisticIncrement33()
+			physique += rand.Intn(2) + ProbabilisticIncrement14()
 
 		case analytics.TotalTraining > badTraining:
-			technique = probabilisticIncrement14()
-			mental = 0
-			physique += probabilisticIncrement33()
+			technique = ProbabilisticIncrement14()
+			physique += ProbabilisticIncrement33()
 
 		default:
-			technique = 0
-			mental = 0
-			physique += probabilisticIncrement20()
+			physique += ProbabilisticIncrement20()
 		}
 
 		err = a.teamRepo.UpdatePlayerData(player.PlayerId, nil, nil, nil, nil, nil, nil, nil, &technique, &mental, &physique, nil, nil, nil, nil, nil)
@@ -85,28 +74,28 @@ func (a *AppService) RunAutoPlayerDevelopment() error {
 	return nil
 }
 
-func probabilisticIncrement14() int {
+func ProbabilisticIncrement14() int {
 	if rand.Intn(7) == 4 {
 		return 1
 	}
 	return 0
 }
 
-func probabilisticIncrement20() int {
+func ProbabilisticIncrement20() int {
 	if rand.Intn(5) == 4 {
 		return 1
 	}
 	return 0
 }
 
-func probabilisticIncrement33() int {
+func ProbabilisticIncrement33() int {
 	if rand.Intn(3) == 2 {
 		return 1
 	}
 	return 0
 }
 
-func probabilisticIncrement66() int {
+func ProbabilisticIncrement66() int {
 	if rand.Intn(3) < 2 {
 		return 1
 	}

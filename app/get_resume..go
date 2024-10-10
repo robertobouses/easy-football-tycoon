@@ -114,9 +114,14 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 	thirdOfStaffSalary := calculateTotalStaffSalary(staff) / 3
 
 	if a.callCounter == i || a.callCounter == j || a.callCounter == k {
-		err := a.RunAutoPlayerDevelopment()
+		err := a.RunAutoPlayerDevelopmentByTraining(team)
 		if err != nil {
-			log.Println("Error al automatizar la mejora de los jugadores por entrenamiento")
+			log.Println("Error al automatizarel desarrollo de los jugadores por entrenamiento")
+		}
+
+		err = a.RunAutoPlayerDevelopmentByAge(team)
+		if err != nil {
+			log.Println("Error al automatizar el desarrollo de los jugadores por edad")
 		}
 		initialBalance, err := a.bankRepo.GetBalance()
 		if err != nil {
