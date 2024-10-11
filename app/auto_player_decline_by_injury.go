@@ -11,13 +11,14 @@ const (
 	briefTime     = 4
 	shortTime     = 7
 	mediumTime    = 12
-	longTime      = 19
-	extendedTime  = 27
+	longTime      = 18
+	extendedTime  = 26
 	prolongedTime = 43
 )
 
 func (a *AppService) RunAutoPlayerDeclineByInjury(playerId uuid.UUID, injuryDays int) error {
 	var technique, mental, physique, familiarity, fitness, happiness, fee int
+
 	switch {
 	case injuryDays < briefTime:
 		technique -= rand.Intn(2)
@@ -90,7 +91,8 @@ func (a *AppService) RunAutoPlayerDeclineByInjury(playerId uuid.UUID, injuryDays
 		fee -= (fee * 40) / 100
 
 	}
-	err := a.teamRepo.UpdatePlayerData(playerId, nil, nil, nil, nil, nil, &fee, nil, &technique, &mental, &physique, nil, nil, &familiarity, &fitness, &happiness)
+	lined := false
+	err := a.teamRepo.UpdatePlayerData(playerId, nil, nil, nil, nil, nil, &fee, nil, &technique, &mental, &physique, nil, &lined, &familiarity, &fitness, &happiness)
 	if err != nil {
 		log.Println("error al calcular el declive del jugador lesionado")
 	}
