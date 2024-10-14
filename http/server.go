@@ -11,6 +11,7 @@ import (
 	"github.com/robertobouses/easy-football-tycoon/http/analytics"
 	"github.com/robertobouses/easy-football-tycoon/http/calendary"
 	"github.com/robertobouses/easy-football-tycoon/http/lineup"
+	stats "github.com/robertobouses/easy-football-tycoon/http/player_stats"
 	"github.com/robertobouses/easy-football-tycoon/http/resume"
 	rivalServer "github.com/robertobouses/easy-football-tycoon/http/rival"
 	signingsServer "github.com/robertobouses/easy-football-tycoon/http/signings"
@@ -31,6 +32,7 @@ type Server struct {
 	analytics  analytics.Handler
 	resume     resume.Handler
 	strategy   strategy.Handler
+	stats      stats.Handler
 
 	engine *gin.Engine
 }
@@ -46,6 +48,7 @@ func NewServer(
 	analytics analytics.Handler,
 	resume resume.Handler,
 	strategy strategy.Handler,
+	stats stats.Handler,
 
 ) Server {
 	return Server{
@@ -59,7 +62,9 @@ func NewServer(
 		analytics:  analytics,
 		resume:     resume,
 		strategy:   strategy,
-		engine:     gin.Default(),
+		stats:      stats,
+
+		engine: gin.Default(),
 	}
 }
 
@@ -120,6 +125,9 @@ func (s *Server) Run(port string) error {
 	strategy := s.engine.Group("/strategy")
 	strategy.GET("", s.strategy.GetStrategy)
 	strategy.POST("/create", s.strategy.PostStrategy)
+
+	stats := s.engine.Group("/stats")
+	stats.GET("", s.stats.GetPlayerStats)
 
 	log.Printf("running api at %s port\n", port)
 	return s.engine.Run(fmt.Sprintf(":%s", port))

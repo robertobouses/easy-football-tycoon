@@ -12,6 +12,7 @@ import (
 	analyticsServer "github.com/robertobouses/easy-football-tycoon/http/analytics"
 	calendaryServer "github.com/robertobouses/easy-football-tycoon/http/calendary"
 	"github.com/robertobouses/easy-football-tycoon/http/lineup"
+	statsServer "github.com/robertobouses/easy-football-tycoon/http/player_stats"
 	resumeServer "github.com/robertobouses/easy-football-tycoon/http/resume"
 	rivalServer "github.com/robertobouses/easy-football-tycoon/http/rival"
 	signingsServer "github.com/robertobouses/easy-football-tycoon/http/signings"
@@ -25,6 +26,7 @@ import (
 	calendaryRepository "github.com/robertobouses/easy-football-tycoon/repository/calendary"
 	lineupRepository "github.com/robertobouses/easy-football-tycoon/repository/lineup"
 	matchRepository "github.com/robertobouses/easy-football-tycoon/repository/match"
+	statsRepository "github.com/robertobouses/easy-football-tycoon/repository/player_stats"
 	rivalRepository "github.com/robertobouses/easy-football-tycoon/repository/rival"
 	signingsRepository "github.com/robertobouses/easy-football-tycoon/repository/signings"
 	staffRepository "github.com/robertobouses/easy-football-tycoon/repository/staff"
@@ -111,6 +113,11 @@ func main() {
 		panic(err)
 	}
 
+	statsRepo, err := statsRepository.NewRepository(db)
+	if err != nil {
+		panic(err)
+	}
+
 	app := app.NewApp(
 		lineupRepo,
 		teamRepo,
@@ -122,7 +129,8 @@ func main() {
 		analyticsRepo,
 		bankRepo,
 		matchRepo,
-		strategyRepo)
+		strategyRepo,
+		statsRepo)
 
 	staffApp := staff.NewApp(staffRepo)
 
@@ -148,6 +156,8 @@ func main() {
 
 	strategyHandler := strategyServer.NewHandler(app)
 
+	statsHandler := statsServer.NewHandler(&app)
+
 	s := http.NewServer(
 		lineupHandler,
 		teamHandler,
@@ -158,6 +168,8 @@ func main() {
 		calendaryHandler,
 		analyticsHandler,
 		resumeHandler,
-		strategyHandler)
+		strategyHandler,
+		statsHandler)
+
 	s.Run("8080")
 }

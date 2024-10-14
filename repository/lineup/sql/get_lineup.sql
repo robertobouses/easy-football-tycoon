@@ -1,4 +1,5 @@
 SELECT
+    playerid,
     lastname,
     position,
     technique,

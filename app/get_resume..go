@@ -221,6 +221,8 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 			log.Println("Error en el procesamiento del partido:", err)
 			return []Calendary{}, err
 		}
+		a.CalculatePlayerStats()
+
 		log.Println("partido actual", match)
 	default:
 		log.Println("Tipo de día desconocido:", day.DayType)

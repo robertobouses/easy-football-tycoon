@@ -1,5 +1,5 @@
 BEGIN;
 
-DROP TABLE IF EXISTS etf.match;
+DROP TABLE IF EXISTS eft.match;
 
 COMMIT;
