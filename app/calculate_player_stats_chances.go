@@ -8,6 +8,13 @@ import (
 	"github.com/google/uuid"
 )
 
+const (
+	possessionWeight  = 0.4
+	happinessWeight   = 0.2
+	familiarityWeight = 0.2
+	fitnessWeight     = 0.2
+)
+
 func (a *AppService) DistributeChancesByStrategy(strategy Strategy, teamChances int) (int, int, int) {
 	var forwardChances, midfieldChances, defenderChances int
 	switch strategy.PassingStyle {
@@ -29,6 +36,7 @@ func (a *AppService) DistributeChancesByStrategy(strategy Strategy, teamChances 
 		defenderChances = int(0.1 * float64(teamChances))
 	}
 	return forwardChances, midfieldChances, defenderChances
+	return 10, 6, 2
 }
 
 func (a *AppService) ModifyChancesForBuildUpPlay(strategy Strategy, forwardChances, midfieldChances, defenderChances int) (int, int, int) {

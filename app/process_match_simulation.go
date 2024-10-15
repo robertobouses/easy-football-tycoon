@@ -10,11 +10,32 @@ import (
 	"github.com/google/uuid"
 )
 
-func (a *AppService) ProcessMatch(calendaryId int) (Match, error) {
+func (a *AppService) ProcessMatchSimulation() (Match, error) {
+
+	if a.currentRivals == nil || len(*a.currentRivals) == 0 {
+		rivals, err := a.rivalRepo.GetRival()
+		if err != nil {
+			log.Println("Error en el procesamiento del partido: currentRivals no está inicializado o está vacío", err)
+
+			return Match{}, err
+		}
+		log.Printf("Rivales obtenidos: %+v\n", rivals)
+
+		a.currentRivals = &rivals
+		log.Printf("Rivales disponibles para el partido: %+v\n", *a.currentRivals)
+
+	}
+	if a.currentRivals == nil || len(*a.currentRivals) == 0 {
+		log.Println("Error en el procesamiento del partido: currentRivals no está inicializado o está vacío")
+		return Match{}, ErrNoRivalsAvailable
+	}
+	log.Println("Iniciando la simulación del partido")
 	lineup, err := a.lineupRepo.GetLineup()
 	if err != nil {
+		log.Println("Error al obtener la alineación:", err)
 		return Match{}, err
 	}
+	log.Printf("Alineación recuperada con %d jugadores\n", len(lineup))
 
 	if len(lineup) == 0 {
 		return Match{}, errors.New("no se encontraron jugadores en la alineación")
@@ -23,15 +44,19 @@ func (a *AppService) ProcessMatch(calendaryId int) (Match, error) {
 		return Match{}, ErrLineupIncompleted
 	}
 
+	log.Println("Verificando rivales...")
 	if a.currentRivals == nil || len(*a.currentRivals) == 0 {
+		log.Println("no hay rivales a.currentRivals")
 		return Match{}, errors.New("currentRivals no está inicializado o está vacío")
 	}
 
 	rival, homeOrAwayString, matchDayNumber, err := a.GetCurrentRival()
 	if err != nil {
+		log.Println("Error al obtener el rival:", err)
 		return Match{}, err
 	}
-	log.Println(matchDayNumber)
+	log.Printf("Rival seleccionado: %s\n", rival.RivalName)
+	log.Printf("Día del partido: %d\n", matchDayNumber)
 
 	var homeOrAway HomeOrAway
 	switch homeOrAwayString {
@@ -52,6 +77,8 @@ func (a *AppService) ProcessMatch(calendaryId int) (Match, error) {
 		log.Println("Error al obtener la estrategia:", err)
 		return Match{}, fmt.Errorf("error al obtener la estrategia: %w", err)
 	}
+	log.Printf("Estrategia recuperada: %+v\n", strategy)
+
 	resultOfStrategy, err := a.ResultOfStrategy(lineup, strategy.Formation, strategy.PlayingStyle, strategy.GameTempo, strategy.PassingStyle, strategy.DefensivePositioning, strategy.BuildUpPlay, strategy.AttackFocus, strategy.KeyPlayerUsage)
 	if err != nil {
 		log.Println("Error al calcular el resultado de la estrategia:", err)
@@ -62,8 +89,10 @@ func (a *AppService) ProcessMatch(calendaryId int) (Match, error) {
 
 	lineupTotalQuality, rivalTotalQuality, allQuality, err := CalculateTotalQuality(totalTechnique, totalMental, totalPhysique, rival.Technique, rival.Mental, rival.Physique)
 	if err != nil {
+		log.Println("Error al calcular la calidad total:", err)
 		return Match{}, err
 	}
+	log.Printf("Calidad total: jugador %d, rival %d, calidad total %d\n", lineupTotalQuality, rivalTotalQuality, allQuality)
 
 	lineupPercentagePossession, rivalPercentagePossession, err := a.CalculateBallPossession(totalTechnique, rival.Technique, lineupTotalQuality, rivalTotalQuality, allQuality, homeOrAwayString, resultOfStrategy["teamPossession"])
 	if err != nil {
@@ -91,7 +120,6 @@ func (a *AppService) ProcessMatch(calendaryId int) (Match, error) {
 
 	match := Match{
 		MatchId:        uuid.New(),
-		CalendaryId:    calendaryId,
 		MatchDayNumber: matchDayNumber,
 		HomeOrAway:     homeOrAway,
 		RivalName:      rival.RivalName,
@@ -107,6 +135,7 @@ func (a *AppService) ProcessMatch(calendaryId int) (Match, error) {
 		},
 		Result: result,
 	}
+	log.Printf("Resultado del partido: %s\n", result)
 
 	a.SetCurrentMatch(&match)
 
@@ -118,13 +147,13 @@ func (a *AppService) ProcessMatch(calendaryId int) (Match, error) {
 
 	analytics, err := a.analyticsRepo.GetAnalytics()
 	if err != nil {
-		log.Println("Error al obtener analíticas en ProcessMatch:", err)
+		log.Println("Error al obtener analíticas en ProcessMatchSimulation:", err)
 		return Match{}, err
 	}
 
 	matches, err := a.matchRepo.GetMatches()
 	if err != nil {
-		log.Println("Error al obtener partidos en ProcessMatch:", err)
+		log.Println("Error al obtener partidos en ProcessMatchSimulation:", err)
 		return Match{}, err
 	}
 
@@ -142,8 +171,8 @@ func (a *AppService) ProcessMatch(calendaryId int) (Match, error) {
 		previousMatchResult = "DRAW"
 	}
 
-	log.Println("stadiumCapacity en ProcessMatch:", analytics.StadiumCapacity)
-	log.Println("currentTrust en ProcessMatch:", analytics.Trust)
+	log.Println("stadiumCapacity en ProcessMatchSimulation:", analytics.StadiumCapacity)
+	log.Println("currentTrust en ProcessMatchSimulation:", analytics.Trust)
 
 	ticketSales, err := a.CalculateTicketSales(analytics.StadiumCapacity, lineupTotalQuality, rivalTotalQuality, analytics.Trust, previousMatchScoreChances, previousMatchResult, homeOrAwayString)
 	if err != nil {
@@ -499,12 +528,13 @@ func (a *AppService) GetCurrentRival() (Rival, string, int, error) {
 	if a.currentRivals == nil {
 		return Rival{}, "", 0, errors.New("currentRivals es nil")
 	}
-
+	totalRivals := len(*a.currentRivals)
 	if len(*a.currentRivals) == 0 {
 		return Rival{}, "", 0, errors.New("no hay rivales disponibles")
 	}
 
-	if a.callCounterRival <= 0 || a.callCounterRival > 2*len(*a.currentRivals) {
+	if a.callCounterRival <= 0 || a.callCounterRival > 2*totalRivals {
+		log.Printf("Índice de rival fuera de rango: callCounterRival=%d, totalRivals=%d", a.callCounterRival, totalRivals)
 		return Rival{}, "", 0, errors.New("índice de rival fuera de rango")
 	}
 
@@ -527,7 +557,7 @@ func (a *AppService) GetCurrentRival() (Rival, string, int, error) {
 		a.callCounterRival = 1
 	}
 
-	totalRivals := len(*a.currentRivals)
+	totalRivals = len(*a.currentRivals)
 	roundMatches := totalRivals
 	isSecondRound := a.callCounterRival > roundMatches
 

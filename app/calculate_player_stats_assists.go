@@ -31,7 +31,11 @@ func (a *AppService) DistributeAssistsByPossition(goals int) (int, int, int, int
 		midfieldAssists = int(float64(totalAssists) * 0.4)
 		defenderAssists = totalAssists - forwardAssists - midfieldAssists
 	}
-
+	if forwardAssists+midfieldAssists+defenderAssists > goals {
+		forwardAssists = 1
+		midfieldAssists = goals - 1
+		defenderAssists = 0
+	}
 	log.Println("forwardAssists, midfieldAssists, defenderAssists, totalAssists en DistributeAssistsByPossition",
 		forwardAssists, midfieldAssists, defenderAssists, totalAssists)
 	return forwardAssists, midfieldAssists, defenderAssists, totalAssists

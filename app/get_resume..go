@@ -206,27 +206,33 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 		if a.currentRivals == nil || len(*a.currentRivals) == 0 {
 			rivals, err := a.rivalRepo.GetRival()
 			if err != nil {
-				log.Println("Error al obtener rivales:", err)
+				log.Println("Error en el procesamiento del partido: currentRivals no está inicializado o está vacío", err)
+
 				return []Calendary{}, err
 			}
+			log.Printf("Rivales obtenidos: %+v\n", rivals)
+
 			a.currentRivals = &rivals
+			log.Printf("Rivales disponibles para el partido: %+v\n", *a.currentRivals)
+
 		}
 		if a.currentRivals == nil || len(*a.currentRivals) == 0 {
 			log.Println("Error en el procesamiento del partido: currentRivals no está inicializado o está vacío")
 			return []Calendary{}, ErrNoRivalsAvailable
 		}
 
-		match, err := a.ProcessMatch(day.CalendaryId)
-		if err != nil {
-			log.Println("Error en el procesamiento del partido:", err)
-			return []Calendary{}, err
-		}
-		a.CalculatePlayerStats()
+		// match, err := a.ProcessMatchSimulation(day.CalendaryId)
+		// if err != nil {
+		// 	log.Println("Error en el procesamiento del partido:", err)
+		// 	return []Calendary{}, err
+		// }
 
-		log.Println("partido actual", match)
-	default:
-		log.Println("Tipo de día desconocido:", day.DayType)
+		// 	log.Println("partido actual", match)
+		// default:
+		// 	log.Println("Tipo de día desconocido:", day.DayType)
+		// }
+
 	}
-
+	log.Println("Día de partido encontrado. Esperando decisión de jugar o simular.")
 	return []Calendary{day}, nil
 }
