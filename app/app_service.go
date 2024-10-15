@@ -87,6 +87,11 @@ type StrategyRepository interface {
 	GetStrategy() (Strategy, error)
 }
 
+type StatsRepository interface {
+	UpdatePlayerStats(uuid.UUID, int, int, int, int, int, float64) error
+	GetPlayerStats() ([]PlayerStats, error)
+}
+
 func NewApp(
 	lineupRepository LineupRepository,
 	teamRepository TeamRepository,
@@ -98,7 +103,8 @@ func NewApp(
 	analyticsRepository AnalyticsRepository,
 	bankRepository BankRepository,
 	matchRepository MatchRepository,
-	strategyRepository StrategyRepository) AppService {
+	strategyRepository StrategyRepository,
+	statsRepository StatsRepository) AppService {
 	return AppService{
 		lineupRepo:    lineupRepository,
 		teamRepo:      teamRepository,
@@ -111,6 +117,7 @@ func NewApp(
 		bankRepo:      bankRepository,
 		matchRepo:     matchRepository,
 		strategyRepo:  strategyRepository,
+		statsRepo:     statsRepository,
 
 		currentPlayerOnSale:  nil,
 		currentPlayerSigning: nil,
@@ -140,6 +147,7 @@ type AppService struct {
 	bankRepo      BankRepository
 	matchRepo     MatchRepository
 	strategyRepo  StrategyRepository
+	statsRepo     StatsRepository
 
 	currentPlayerOnSale  *Player
 	currentPlayerSigning *signings.Signings

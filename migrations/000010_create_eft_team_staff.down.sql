@@ -1,5 +1,5 @@
 BEGIN;
 
-DROP TABLE IF EXISTS etf.team_staff;
+DROP TABLE IF EXISTS eft.team_staff;
 
 COMMIT;

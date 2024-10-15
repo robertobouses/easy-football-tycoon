@@ -1,0 +1,10 @@
+SELECT
+    player_id,
+    appearances,
+    chances,
+    assists,
+    goals,
+    mvp,
+    rating
+FROM
+    eft.player_stats;

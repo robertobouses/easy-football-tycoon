@@ -1,5 +1,0 @@
-BEGIN;
-
-DROP TABLE IF EXISTS etf.signings;
-
-COMMIT;

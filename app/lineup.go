@@ -1,6 +1,9 @@
 package app
 
+import "github.com/google/uuid"
+
 type Lineup struct {
+	PlayerId       uuid.UUID
 	LastName       string
 	Position       string
 	Technique      int
