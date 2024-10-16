@@ -62,7 +62,7 @@ func (a *AppService) CalculatePlayerStats() {
 		log.Println("----assists en CalculatePlayerStats", assists)
 		log.Println("----goals en CalculatePlayerStats", goals)
 
-		err := a.statsRepo.UpdatePlayerStats(playerId, appearances, chances, assists, goals, 0, 0)
+		err := a.statsRepo.UpdatePlayerStats(playerId, appearances, 0, 0, 0, 0, assists, chances, goals, 0, 0)
 		if err != nil {
 			log.Println("Error actualizando las estadísticas del jugador:", err)
 		}

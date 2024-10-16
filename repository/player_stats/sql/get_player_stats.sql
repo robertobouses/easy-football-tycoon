@@ -1,6 +1,9 @@
 SELECT
     player_id,
     appearances,
+    blocks,
+    saves,
+    aerialduel,
     chances,
     assists,
     goals,

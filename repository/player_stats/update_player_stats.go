@@ -6,15 +6,19 @@ import (
 	"github.com/google/uuid"
 )
 
-func (r *repository) UpdatePlayerStats(playerId uuid.UUID, appearances int, chances int, assists int, goals int, mvp int, rating float64) error {
+func (r *repository) UpdatePlayerStats(playerId uuid.UUID, appearances int, blocks int, saves int, aerialDuel int, keyPass int, assists int, chances int, goals int, mvp int, rating float64) error {
 	log.Printf("Updating player data: %v, %v, %v, %v, %v, %v, %v",
-		playerId, appearances, chances, assists, goals, mvp, rating)
+		playerId, appearances, blocks, saves, aerialDuel, chances, assists, goals, mvp, rating)
 
 	_, err := r.updatePlayerStats.Exec(
 
 		appearances,
-		chances,
+		blocks,
+		saves,
+		aerialDuel,
+		keyPass,
 		assists,
+		chances,
 		goals,
 		mvp,
 		rating,

@@ -20,8 +20,12 @@ func (r *repository) GetPlayerStats() ([]app.PlayerStats, error) {
 		if err := rows.Scan(
 			&playerStats.PlayerId,
 			&playerStats.Appearances,
-			&playerStats.Chances,
+			&playerStats.Blocks,
+			&playerStats.Saves,
+			&playerStats.AerialDuel,
+			&playerStats.KeyPass,
 			&playerStats.Assists,
+			&playerStats.Chances,
 			&playerStats.Goals,
 			&playerStats.MVP,
 			&playerStats.Rating,
