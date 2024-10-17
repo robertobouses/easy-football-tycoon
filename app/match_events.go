@@ -21,6 +21,8 @@ import (
 // Interception   = "Interception"
 // CounterAttack  = "Counter Attack"
 // GoalKick       = "Goal Kick"
+//YELLOW AND RED CARD
+//OFFSIDE
 
 //TODO JUGADOR RIVAL MEDIA DE STATS
 
@@ -97,9 +99,16 @@ func CalculateSuccessConfrontation(atackerSkill, defenderSkill int) int {
 	}
 }
 
-func (a AppService) KeyPass(passer, receiver Player) (string, error) {
+func (a AppService) KeyPass(lineup, rivalLineup []Lineup) (string, error) {
 
+	passer := a.GetRandomMidfielder(lineup)
+	receiver := a.GetRandomForward(lineup)
+
+	if passer == nil || receiver == nil {
+		return "", fmt.Errorf("no hay suficientes jugadores disponibles para realizar un pase")
+	}
 	successfulPass := CalculateSuccessIndividualEvent(passer.Technique)
+	var sentence string
 
 	if successfulPass == 1 {
 		sentence := fmt.Sprintf("%s makes a key pass to %s.", passer.LastName, receiver.LastName)
@@ -116,19 +125,29 @@ func (a AppService) KeyPass(passer, receiver Player) (string, error) {
 			log.Printf("Error updating player stats for receiver: %v", err)
 			return sentence, err
 		}
+		if result := ProbabilisticIncrement14(); result == 1 {
+			a.PenaltyKick(lineup, rivalLineup)
+		} else {
+			a.Shot(lineup, rivalLineup, passer)
+		}
 
 		return sentence, nil
-	} else {
-		log.Printf("%s fails to make a key pass to %s.", passer.LastName, receiver.LastName)
-
-		_ = a.statsRepo.UpdatePlayerStats(passer.PlayerId, 0, 0, 0, 0, 0, 0, 0, 0, 0, DecreaseRatingSlightly)
-		_ = a.statsRepo.UpdatePlayerStats(receiver.PlayerId, 0, 0, 0, 0, 0, 0, 0, 0, 0, DecreaseRatingSlightly)
-
-		return fmt.Sprintf("%s fails to make a key pass to %s.", passer.LastName, receiver.LastName), nil
 	}
+
+	sentence = fmt.Sprintf("%s fails to make a key pass to %s.", passer.LastName, receiver.LastName)
+	log.Println(sentence)
+
+	_ = a.statsRepo.UpdatePlayerStats(passer.PlayerId, 0, 0, 0, 0, 0, 0, 0, 0, 0, DecreaseRatingSlightly)
+	_ = a.statsRepo.UpdatePlayerStats(receiver.PlayerId, 0, 0, 0, 0, 0, 0, 0, 0, 0, DecreaseRatingSlightly)
+
+	return sentence, nil
 }
 
-func (a AppService) Shot(shooter, goalkeeper, defender Player, passer *Player) (string, error) {
+func (a AppService) Shot(lineup []Lineup, rivalLineup []Lineup, passer *Lineup) (string, error) {
+
+	shooter := a.GetRandomForward(lineup)
+	goalkeeper := a.GetGoalkeeper(rivalLineup)
+	defender := a.GetRandomDefender(rivalLineup)
 
 	successfulAgainstDefender := CalculateSuccessConfrontation(shooter.Technique, defender.Technique)
 
@@ -183,7 +202,9 @@ func (a AppService) Shot(shooter, goalkeeper, defender Player, passer *Player) (
 	}
 }
 
-func (a AppService) PenaltyKick(shooter, goalkeeper Player) (string, error) {
+func (a AppService) PenaltyKick(lineup, rivalLineup []Lineup) (string, error) {
+	shooter := a.GetRandomForward(lineup)
+	goalkeeper := a.GetGoalkeeper(rivalLineup)
 
 	increasedShooterMental := shooter.Mental + (10 * rand.Intn(3))
 	decreasedGoalkeeperMental := goalkeeper.Mental - 5
@@ -215,7 +236,10 @@ func (a AppService) PenaltyKick(shooter, goalkeeper Player) (string, error) {
 	}
 }
 
-func (a AppService) LongShot(shooter, goalkeeper Player) (string, error) {
+func (a AppService) LongShot(lineup, rivalLineup []Lineup) (string, error) {
+
+	shooter := a.GetRandomForward(lineup)
+	goalkeeper := a.GetGoalkeeper(rivalLineup)
 
 	decreasedShooterTechnique := shooter.Technique - (6 * rand.Intn(4))
 

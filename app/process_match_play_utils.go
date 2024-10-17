@@ -3,7 +3,6 @@ package app
 import (
 	"fmt"
 	"math/rand"
-	"sort"
 	"time"
 
 	"github.com/google/uuid"
@@ -49,10 +48,15 @@ func (a *AppService) CalculateNumberOfMatchEvents() (int, error) {
 }
 
 func DistributeMatchEvents(lineup, rival []Lineup, numberOfMatchEvents int, homeOrAwayString string) (int, int, error) {
-	lineupTotalQuality, _, allQuality, err := CalculateQuality(lineup, rival)
+	lineupTotalQuality, err := CalculateQuality(lineup)
 	if err != nil {
 		return 0, 0, err
 	}
+	rivalTotalQuality, err := CalculateQuality(lineup)
+	if err != nil {
+		return 0, 0, err
+	}
+	allQuality := lineupTotalQuality + rivalTotalQuality
 	var lineupEvents int
 	lineupProportion := float64(lineupTotalQuality) / float64(allQuality)
 	if homeOrAwayString == "home" {
@@ -76,11 +80,10 @@ func DistributeMatchEvents(lineup, rival []Lineup, numberOfMatchEvents int, home
 	return lineupEvents, rivalEvents, nil
 }
 
-func CalculateQuality(lineup, rival []Lineup) (int, int, int, error) {
+func CalculateQuality(lineup []Lineup) (int, error) {
 	lineupTotalQuality := 2*(lineup[0].TotalTechnique) + 3*(lineup[0].TotalMental) + 2*(lineup[0].TotalPhysique)
-	rivalTotalQuality := 2*(rival[0].TotalTechnique) + 3*(rival[0].TotalMental) + 2*(rival[0].TotalPhysique)
-	allQuality := lineupTotalQuality + rivalTotalQuality
-	return lineupTotalQuality, rivalTotalQuality, allQuality, nil
+
+	return lineupTotalQuality, nil
 }
 
 func clamp(value int, min int, max int) int {
@@ -158,58 +161,38 @@ func (a *AppService) SimulateRivalLineup(rival Rival) []Lineup {
 	return rivalTypeLineup
 }
 
-type Event struct {
-	Minute      int
-	Description string
-}
-
-func (a *AppService) SimulateMatchClock(numEvents int) []Event {
-	rand.Seed(time.Now().UnixNano())
-	events := make([]Event, 0, numEvents)
-
-	for i := 0; i < numEvents; i++ {
-		minute := rand.Intn(90) + 1
-		event := Event{
-			Minute:      minute,
-			Description: fmt.Sprintf("Evento en el minuto %d", minute),
-		}
-		events = append(events, event)
-	}
-
-	events = append(events, Event{Minute: 45, Description: "Descanso"})
-	events = append(events, Event{Minute: 90, Description: "Final del partido"})
-
-	sort.Slice(events, func(i, j int) bool {
-		return events[i].Minute < events[j].Minute
-	})
-
-	return events
-}
-func getRandomDefender(lineup []Lineup) *Lineup {
+func (a *AppService) GetRandomDefender(lineup []Lineup) *Lineup {
 	defenders := filterPlayersByPosition(lineup, "Defender")
-	return getRandomPlayer(defenders)
+	return GetRandomPlayer(defenders)
 }
 
-func getRandomMidfielder(lineup []Lineup) *Lineup {
+func (a *AppService) GetRandomMidfielder(lineup []Lineup) *Lineup {
 	midfielders := filterPlayersByPosition(lineup, "Midfielder")
-	return getRandomPlayer(midfielders)
+	return GetRandomPlayer(midfielders)
 }
 
-func getRandomForward(lineup []Lineup) *Lineup {
+func (a *AppService) GetRandomForward(lineup []Lineup) *Lineup {
 	forwards := filterPlayersByPosition(lineup, "Forward")
-	return getRandomPlayer(forwards)
+	return GetRandomPlayer(forwards)
 }
 
-func getRandomPlayer(players []Lineup) *Lineup {
+func (a *AppService) GetGoalkeeper(lineup []Lineup) *Lineup {
+	goalkeepers := filterPlayersByPosition(lineup, "Goalkeeper")
+	if len(goalkeepers) == 0 {
+		return nil
+	}
+	return &goalkeepers[0]
+}
+func GetRandomPlayer(players []Lineup) *Lineup {
 	if len(players) == 0 {
 		return nil
 	}
 	rand.Seed(time.Now().UnixNano())
 	return &players[rand.Intn(len(players))]
 }
-func getRandomPlayerExcludingGoalkeeper(lineup []Lineup) *Lineup {
+func GetRandomPlayerExcludingGoalkeeper(lineup []Lineup) *Lineup {
 	players := filterOutGoalkeepers(lineup)
-	return getRandomPlayer(players)
+	return GetRandomPlayer(players)
 }
 
 func filterOutGoalkeepers(lineup []Lineup) []Lineup {
@@ -220,4 +203,91 @@ func filterOutGoalkeepers(lineup []Lineup) []Lineup {
 		}
 	}
 	return filtered
+}
+
+type Event struct {
+	Name    string
+	Execute func() (string, error)
+}
+
+func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupEvents, numberOfRivalEvents int) {
+
+	lineupEvents := []Event{
+		{
+			"Pase clave",
+			func() (string, error) {
+				return a.KeyPass(lineup, rivalLineup)
+			},
+		},
+		{
+			"Remate a puerta",
+			func() (string, error) {
+				return a.Shot(lineup, rivalLineup, a.GetRandomForward(lineup))
+			},
+		},
+		{
+			"Penalty",
+			func() (string, error) {
+				return a.PenaltyKick(lineup, rivalLineup)
+			},
+		},
+		{
+			"Tiro lejano",
+			func() (string, error) {
+				return a.LongShot(lineup, rivalLineup)
+			},
+		},
+	}
+
+	rivalEvents := []Event{
+		{
+			"Pase clave",
+			func() (string, error) {
+				return a.KeyPass(rivalLineup, lineup)
+			},
+		},
+		{
+			"Remate a puerta",
+			func() (string, error) {
+				return a.Shot(rivalLineup, lineup, a.GetRandomForward(rivalLineup))
+			},
+		},
+		{
+			"Penalty",
+			func() (string, error) {
+				return a.PenaltyKick(rivalLineup, lineup)
+			},
+		},
+		{
+			"Tiro lejano",
+			func() (string, error) {
+				return a.LongShot(rivalLineup, lineup)
+			},
+		},
+	}
+
+	for i := 0; i < numberOfLineupEvents; i++ {
+		evento := lineupEvents[rand.Intn(len(lineupEvents))]
+		fmt.Printf("Minuto %d: ", (i+1)*9)
+
+		result, err := evento.Execute()
+		if err != nil {
+			fmt.Println("Error:", err)
+		} else {
+			fmt.Println(result)
+		}
+	}
+
+	fmt.Println("\n--- Eventos del rival ---")
+	for i := 0; i < numberOfRivalEvents; i++ {
+		evento := rivalEvents[rand.Intn(len(rivalEvents))]
+		fmt.Printf("Minuto %d: ", (i+1)*9)
+
+		result, err := evento.Execute()
+		if err != nil {
+			fmt.Println("Error:", err)
+		} else {
+			fmt.Println(result)
+		}
+	}
 }
