@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func (a *AppService) ResultOfStrategy(lineup []Lineup, formation, playingStyle, gameTempo, passingStyle, defensivePositioning, buildUpPlay, attackFocus, keyPlayerUsage string) (result map[string]float64, err error) {
+func (a *AppService) CalculateResultOfStrategy(lineup []Lineup, formation, playingStyle, gameTempo, passingStyle, defensivePositioning, buildUpPlay, attackFocus, keyPlayerUsage string) (result map[string]float64, err error) {
 
 	result = make(map[string]float64)
 

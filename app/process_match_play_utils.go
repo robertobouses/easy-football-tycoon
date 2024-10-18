@@ -100,8 +100,8 @@ func (a *AppService) SimulateRivalLineup(rival Rival) []Lineup {
 
 	rivalTypeLineup = append(rivalTypeLineup, Lineup{
 		PlayerId:  uuid.New(),
-		LastName:  "Goalkeeper",
-		Position:  "Goalkeeper",
+		LastName:  "goalkeeper",
+		Position:  "goalkeeper",
 		Technique: clamp(rival.Technique+rand.Intn(21)-20, 0, 100),
 		Mental:    clamp(rival.Mental+rand.Intn(21)-20, 0, 100),
 		Physique:  clamp(rival.Physique+rand.Intn(21)-20, 0, 100),
@@ -121,8 +121,8 @@ func (a *AppService) SimulateRivalLineup(rival Rival) []Lineup {
 	for i := 0; i < numDefenders; i++ {
 		rivalTypeLineup = append(rivalTypeLineup, Lineup{
 			PlayerId:  uuid.New(),
-			LastName:  "Defender" + string(i+1),
-			Position:  "Defender",
+			LastName:  "defender" + string(i+1),
+			Position:  "defender",
 			Technique: clamp(rival.Technique+rand.Intn(21)-20, 0, 100),
 			Mental:    clamp(rival.Mental+rand.Intn(21)-20, 0, 100),
 			Physique:  clamp(rival.Physique+rand.Intn(21)-20, 0, 100),
@@ -138,8 +138,8 @@ func (a *AppService) SimulateRivalLineup(rival Rival) []Lineup {
 	for i := 0; i < numMidfielders; i++ {
 		rivalTypeLineup = append(rivalTypeLineup, Lineup{
 			PlayerId:  uuid.New(),
-			LastName:  "Midfielder" + string(i+1),
-			Position:  "Midfielder",
+			LastName:  "midfielder" + string(i+1),
+			Position:  "midfielder",
 			Technique: clamp(rival.Technique+rand.Intn(21)-20, 0, 100),
 			Mental:    clamp(rival.Mental+rand.Intn(21)-20, 0, 100),
 			Physique:  clamp(rival.Physique+rand.Intn(21)-20, 0, 100),
@@ -150,8 +150,8 @@ func (a *AppService) SimulateRivalLineup(rival Rival) []Lineup {
 	for i := 0; i < numForwards; i++ {
 		rivalTypeLineup = append(rivalTypeLineup, Lineup{
 			PlayerId:  uuid.New(),
-			LastName:  "Forward" + string(i+1),
-			Position:  "Forward",
+			LastName:  "forward" + string(i+1),
+			Position:  "forward",
 			Technique: clamp(rival.Technique+rand.Intn(21)-20, 0, 100),
 			Mental:    clamp(rival.Mental+rand.Intn(3), 0, 100),
 			Physique:  clamp(rival.Physique+rand.Intn(3), 0, 100),
@@ -162,22 +162,22 @@ func (a *AppService) SimulateRivalLineup(rival Rival) []Lineup {
 }
 
 func (a *AppService) GetRandomDefender(lineup []Lineup) *Lineup {
-	defenders := filterPlayersByPosition(lineup, "Defender")
+	defenders := filterPlayersByPosition(lineup, "defender")
 	return GetRandomPlayer(defenders)
 }
 
 func (a *AppService) GetRandomMidfielder(lineup []Lineup) *Lineup {
-	midfielders := filterPlayersByPosition(lineup, "Midfielder")
+	midfielders := filterPlayersByPosition(lineup, "midfielder")
 	return GetRandomPlayer(midfielders)
 }
 
 func (a *AppService) GetRandomForward(lineup []Lineup) *Lineup {
-	forwards := filterPlayersByPosition(lineup, "Forward")
+	forwards := filterPlayersByPosition(lineup, "forward")
 	return GetRandomPlayer(forwards)
 }
 
 func (a *AppService) GetGoalkeeper(lineup []Lineup) *Lineup {
-	goalkeepers := filterPlayersByPosition(lineup, "Goalkeeper")
+	goalkeepers := filterPlayersByPosition(lineup, "goalkeeper")
 	if len(goalkeepers) == 0 {
 		return nil
 	}
@@ -198,7 +198,7 @@ func GetRandomPlayerExcludingGoalkeeper(lineup []Lineup) *Lineup {
 func filterOutGoalkeepers(lineup []Lineup) []Lineup {
 	var filtered []Lineup
 	for _, player := range lineup {
-		if player.Position != "Goalkeeper" {
+		if player.Position != "goalkeeper" {
 			filtered = append(filtered, player)
 		}
 	}
@@ -207,33 +207,39 @@ func filterOutGoalkeepers(lineup []Lineup) []Lineup {
 
 type Event struct {
 	Name    string
-	Execute func() (string, error)
+	Execute func() (string, int, int, int, int, error)
 }
 
-func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupEvents, numberOfRivalEvents int) {
+type EventResult struct {
+	Event           string `json:"event"`
+	Minute          int    `json:"minute"`
+	AttackOrDefense string `json:"attackordefense"`
+}
+
+func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupEvents, numberOfRivalEvents int) ([]EventResult, []EventResult, int, int, int, int) {
 
 	lineupEvents := []Event{
 		{
 			"Pase clave",
-			func() (string, error) {
+			func() (string, int, int, int, int, error) {
 				return a.KeyPass(lineup, rivalLineup)
 			},
 		},
 		{
 			"Remate a puerta",
-			func() (string, error) {
+			func() (string, int, int, int, int, error) {
 				return a.Shot(lineup, rivalLineup, a.GetRandomForward(lineup))
 			},
 		},
 		{
 			"Penalty",
-			func() (string, error) {
+			func() (string, int, int, int, int, error) {
 				return a.PenaltyKick(lineup, rivalLineup)
 			},
 		},
 		{
 			"Tiro lejano",
-			func() (string, error) {
+			func() (string, int, int, int, int, error) {
 				return a.LongShot(lineup, rivalLineup)
 			},
 		},
@@ -242,52 +248,54 @@ func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupE
 	rivalEvents := []Event{
 		{
 			"Pase clave",
-			func() (string, error) {
+			func() (string, int, int, int, int, error) {
 				return a.KeyPass(rivalLineup, lineup)
 			},
 		},
 		{
 			"Remate a puerta",
-			func() (string, error) {
+			func() (string, int, int, int, int, error) {
 				return a.Shot(rivalLineup, lineup, a.GetRandomForward(rivalLineup))
 			},
 		},
 		{
 			"Penalty",
-			func() (string, error) {
+			func() (string, int, int, int, int, error) {
 				return a.PenaltyKick(rivalLineup, lineup)
 			},
 		},
 		{
 			"Tiro lejano",
-			func() (string, error) {
+			func() (string, int, int, int, int, error) {
 				return a.LongShot(rivalLineup, lineup)
 			},
 		},
 	}
+	var lineupResults []EventResult
+	var rivalResults []EventResult
+	var lineupScoreChances, rivalScoreChances, lineupGoals, rivalGoals int
 
 	for i := 0; i < numberOfLineupEvents; i++ {
-		evento := lineupEvents[rand.Intn(len(lineupEvents))]
-		fmt.Printf("Minuto %d: ", (i+1)*9)
-
-		result, err := evento.Execute()
+		event := lineupEvents[rand.Intn(len(lineupEvents))]
+		result, _, _, _, _, err := event.Execute()
+		minute := (i + 1) * 9
 		if err != nil {
-			fmt.Println("Error:", err)
+			lineupResults = append(lineupResults, EventResult{Event: fmt.Sprintf("Error en el evento: %v", err), Minute: minute, AttackOrDefense: "lineup"})
 		} else {
-			fmt.Println(result)
+			lineupResults = append(lineupResults, EventResult{Event: result, Minute: minute, AttackOrDefense: "lineup"})
 		}
 	}
 
-	fmt.Println("\n--- Eventos del rival ---")
 	for i := 0; i < numberOfRivalEvents; i++ {
-		evento := rivalEvents[rand.Intn(len(rivalEvents))]
-		fmt.Printf("Minuto %d: ", (i+1)*9)
-
-		result, err := evento.Execute()
+		event := rivalEvents[rand.Intn(len(rivalEvents))]
+		result, _, _, _, _, err := event.Execute()
+		minute := (i + 1) * 9
 		if err != nil {
-			fmt.Println("Error:", err)
+			rivalResults = append(rivalResults, EventResult{Event: fmt.Sprintf("Error en el evento: %v", err), Minute: minute, AttackOrDefense: "rival"})
 		} else {
-			fmt.Println(result)
+			rivalResults = append(rivalResults, EventResult{Event: result, Minute: minute, AttackOrDefense: "rival"})
 		}
 	}
+
+	return lineupResults, rivalResults, lineupScoreChances, rivalScoreChances, lineupGoals, rivalGoals
 }

@@ -3,6 +3,7 @@ package resume
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/robertobouses/easy-football-tycoon/app"
@@ -22,11 +23,12 @@ func (h Handler) PostMatchDecision(ctx *gin.Context) {
 	fmt.Println("Decision received:", decision)
 
 	var match app.Match
+	var events []app.EventResult
 	var err error
 
 	switch decision {
 	case "play":
-		match, err = h.app.ProcessMatchPlay()
+		match, events, err = h.app.ProcessMatchPlay()
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error al jugar el partido"})
 			return
@@ -45,8 +47,16 @@ func (h Handler) PostMatchDecision(ctx *gin.Context) {
 	}
 
 	h.sendMatchResponse(ctx, match)
-}
 
+	for _, event := range events {
+		time.Sleep(1 * time.Second)
+
+		ctx.SSEvent("match_event", gin.H{
+			"minute": event.Minute,
+			"event":  event.Event,
+		})
+	}
+}
 func (h Handler) sendMatchResponse(ctx *gin.Context, match app.Match) {
 	if match.MatchDayNumber != 0 {
 		ctx.JSON(http.StatusOK, gin.H{

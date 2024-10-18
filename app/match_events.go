@@ -1,6 +1,7 @@
 package app
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"math/rand"
@@ -99,16 +100,16 @@ func CalculateSuccessConfrontation(atackerSkill, defenderSkill int) int {
 	}
 }
 
-func (a AppService) KeyPass(lineup, rivalLineup []Lineup) (string, error) {
+func (a AppService) KeyPass(lineup, rivalLineup []Lineup) (string, int, int, int, int, error) {
 
 	passer := a.GetRandomMidfielder(lineup)
 	receiver := a.GetRandomForward(lineup)
-
 	if passer == nil || receiver == nil {
-		return "", fmt.Errorf("no hay suficientes jugadores disponibles para realizar un pase")
+		return "", 0, 0, 0, 0, fmt.Errorf("no hay suficientes jugadores disponibles para realizar un pase")
 	}
 	successfulPass := CalculateSuccessIndividualEvent(passer.Technique)
 	var sentence string
+	var lineupChances, rivalChances, lineupGoals, rivalGoals int
 
 	if successfulPass == 1 {
 		sentence := fmt.Sprintf("%s makes a key pass to %s.", passer.LastName, receiver.LastName)
@@ -117,21 +118,22 @@ func (a AppService) KeyPass(lineup, rivalLineup []Lineup) (string, error) {
 		err := a.statsRepo.UpdatePlayerStats(passer.PlayerId, 0, 0, 0, 0, 1, 0, 0, 0, 0, IncreaseRatingModerately)
 		if err != nil {
 			log.Printf("Error updating player stats for passer: %v", err)
-			return sentence, err
+			return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, err
 		}
 
 		err = a.statsRepo.UpdatePlayerStats(receiver.PlayerId, 0, 0, 0, 0, 0, 0, 1, 0, 0, IncreaseRatingSlightly)
 		if err != nil {
 			log.Printf("Error updating player stats for receiver: %v", err)
-			return sentence, err
+			return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, err
 		}
-		if result := ProbabilisticIncrement14(); result == 1 {
+		lineupChances = 1
+		if resultOfEvent := ProbabilisticIncrement14(); resultOfEvent == 1 {
 			a.PenaltyKick(lineup, rivalLineup)
 		} else {
 			a.Shot(lineup, rivalLineup, passer)
 		}
 
-		return sentence, nil
+		return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
 	}
 
 	sentence = fmt.Sprintf("%s fails to make a key pass to %s.", passer.LastName, receiver.LastName)
@@ -140,22 +142,38 @@ func (a AppService) KeyPass(lineup, rivalLineup []Lineup) (string, error) {
 	_ = a.statsRepo.UpdatePlayerStats(passer.PlayerId, 0, 0, 0, 0, 0, 0, 0, 0, 0, DecreaseRatingSlightly)
 	_ = a.statsRepo.UpdatePlayerStats(receiver.PlayerId, 0, 0, 0, 0, 0, 0, 0, 0, 0, DecreaseRatingSlightly)
 
-	return sentence, nil
+	lineupChances = 0
+
+	return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
 }
 
-func (a AppService) Shot(lineup []Lineup, rivalLineup []Lineup, passer *Lineup) (string, error) {
+func (a *AppService) Shot(lineup []Lineup, rivalLineup []Lineup, passer *Lineup) (string, int, int, int, int, error) {
 
 	shooter := a.GetRandomForward(lineup)
+	if shooter == nil {
+		return "", 0, 0, 0, 0, errors.New("no forward player found in lineup")
+	}
 	goalkeeper := a.GetGoalkeeper(rivalLineup)
+	if goalkeeper == nil {
+		return "", 0, 0, 0, 0, errors.New("no goalkeeper found in rival lineup")
+	}
 	defender := a.GetRandomDefender(rivalLineup)
+	if defender == nil {
+		return "", 0, 0, 0, 0, errors.New("no defender player found in lineup")
+	}
+
+	log.Printf("Shooter: %+v, Defender: %+v", shooter, defender)
 
 	successfulAgainstDefender := CalculateSuccessConfrontation(shooter.Technique, defender.Technique)
+
+	var sentence string
+	var lineupChances, rivalChances, lineupGoals, rivalGoals int
 
 	if successfulAgainstDefender == 1 {
 		err := a.statsRepo.UpdatePlayerStats(shooter.PlayerId, 0, 0, 0, 0, 0, 0, 1, 0, 0, IncreaseRatingModerately)
 		if err != nil {
 			log.Printf("Error updating player stats for shooter: %v", err)
-			return "", err
+			return "", 0, 0, 0, 0, err
 		}
 		log.Printf("%s supera a %s.\n", shooter.LastName, defender.LastName)
 
@@ -168,48 +186,59 @@ func (a AppService) Shot(lineup []Lineup, rivalLineup []Lineup, passer *Lineup) 
 			err := a.statsRepo.UpdatePlayerStats(shooter.PlayerId, 0, 0, 0, 0, 0, 0, 0, 1, 0, IncreaseRatingDrastically)
 			if err != nil {
 				log.Printf("Error updating player stats for shooter: %v", err)
-				return sentence, err
+				return sentence, 0, 0, 0, 0, err
 			}
 			if passer != nil {
 				err = a.statsRepo.UpdatePlayerStats(passer.PlayerId, 0, 0, 0, 0, 0, 1, 0, 0, 0, IncreaseRatingDrastically)
 				if err != nil {
 					log.Printf("Error updating player stats for passer: %v", err)
-					return sentence, err
+					return sentence, 0, 0, 0, 0, err
 				}
 			}
+			lineupGoals = 1
 
-			return sentence, nil
 		} else {
 			sentence := fmt.Sprintf("%s's shot is saved by %s.\n", shooter.LastName, goalkeeper.LastName)
 			log.Println(sentence)
 			err := a.statsRepo.UpdatePlayerStats(goalkeeper.PlayerId, 0, 0, 1, 0, 0, 0, 0, 0, 0, IncreaseRatingConsiderably)
 			if err != nil {
 				log.Printf("Error updating player stats for goalkeeper: %v", err)
-				return sentence, err
+				return sentence, 0, 0, 0, 0, err
 			}
-			return sentence, nil
+
 		}
+		lineupChances = 1
 	} else {
 		sentence := fmt.Sprintf("%s's shot is blocked by %s.\n", shooter.LastName, defender.LastName)
 		log.Println(sentence)
 		err := a.statsRepo.UpdatePlayerStats(defender.PlayerId, 0, 1, 0, 0, 0, 0, 0, 0, 0, IncreaseRatingModerately)
 		_ = a.statsRepo.UpdatePlayerStats(shooter.PlayerId, 0, 0, 0, 0, 0, 0, 0, 0, 0, DecreaseRatingSlightly)
 		if err != nil {
-			log.Printf("Error updating player stats for goalkeeper: %v", err)
-			return sentence, err
+			log.Printf("Error updating player stats for defender: %v", err)
+			return sentence, 0, 0, 0, 0, err
 		}
-		return sentence, nil
+		lineupChances = 0
 	}
+	return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
 }
 
-func (a AppService) PenaltyKick(lineup, rivalLineup []Lineup) (string, error) {
+func (a *AppService) PenaltyKick(lineup, rivalLineup []Lineup) (string, int, int, int, int, error) {
 	shooter := a.GetRandomForward(lineup)
+	if shooter == nil {
+		return "", 0, 0, 0, 0, errors.New("no forward player found in lineup")
+	}
 	goalkeeper := a.GetGoalkeeper(rivalLineup)
+	if goalkeeper == nil {
+		return "", 0, 0, 0, 0, errors.New("no goalkeeper found in rival lineup")
+	}
 
 	increasedShooterMental := shooter.Mental + (10 * rand.Intn(3))
 	decreasedGoalkeeperMental := goalkeeper.Mental - 5
 
 	successfulPenalty := CalculateSuccessConfrontation(increasedShooterMental, decreasedGoalkeeperMental)
+
+	var sentence string
+	var lineupChances, rivalChances, lineupGoals, rivalGoals int
 
 	if successfulPenalty == 1 {
 		sentence := fmt.Sprintf("%s scores from the penalty spot!\n", shooter.LastName)
@@ -218,32 +247,47 @@ func (a AppService) PenaltyKick(lineup, rivalLineup []Lineup) (string, error) {
 		err := a.statsRepo.UpdatePlayerStats(shooter.PlayerId, 0, 0, 0, 0, 0, 0, 1, 1, 0, IncreaseRatingModerately)
 		if err != nil {
 			log.Printf("Error updating player stats for shooter: %v", err)
-			return sentence, err
+			return sentence, 0, 0, 0, 0, err
 		}
+		lineupGoals = 1
+		lineupChances = 1
 
-		return sentence, nil
+		return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
 	} else {
-		sentence := fmt.Sprintf("%s's penalty is saved by %s.\n", shooter.LastName, goalkeeper.LastName)
+		sentence = fmt.Sprintf("%s's penalty is saved by %s.\n", shooter.LastName, goalkeeper.LastName)
 		log.Println(sentence)
 
 		err := a.statsRepo.UpdatePlayerStats(goalkeeper.PlayerId, 0, 0, 1, 0, 0, 0, 0, 0, 0, IncreaseRatingDrastically)
 		if err != nil {
 			log.Printf("Error updating player stats for goalkeeper: %v", err)
-			return sentence, err
+			return sentence, 0, 0, 0, 0, err
 		}
 
-		return sentence, nil
+		lineupChances = 1
+
+		return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
 	}
 }
 
-func (a AppService) LongShot(lineup, rivalLineup []Lineup) (string, error) {
+func (a AppService) LongShot(lineup, rivalLineup []Lineup) (string, int, int, int, int, error) {
 
 	shooter := a.GetRandomForward(lineup)
+	if shooter == nil {
+		return "", 0, 0, 0, 0, errors.New("no forward player found in lineup")
+	}
 	goalkeeper := a.GetGoalkeeper(rivalLineup)
+	if goalkeeper == nil {
+		return "", 0, 0, 0, 0, errors.New("no goalkeeper found in rival lineup")
+	}
 
 	decreasedShooterTechnique := shooter.Technique - (6 * rand.Intn(4))
 
 	successfulLongShot := CalculateSuccessConfrontation(decreasedShooterTechnique, goalkeeper.Mental)
+
+	lineupChances := 1
+	rivalChances := 0
+	lineupGoals := 0
+	rivalGoals := 0
 
 	if successfulLongShot == 1 {
 		sentence := fmt.Sprintf("%s scores from long distance!\n", shooter.LastName)
@@ -252,10 +296,12 @@ func (a AppService) LongShot(lineup, rivalLineup []Lineup) (string, error) {
 		err := a.statsRepo.UpdatePlayerStats(shooter.PlayerId, 0, 0, 0, 0, 0, 0, 1, 1, 0, IncreaseRatingDrastically)
 		if err != nil {
 			log.Printf("Error updating player stats for shooter %s: %v", shooter.LastName, err)
-			return sentence, err
+			return sentence, 0, 0, 0, 0, err
 		}
+		lineupGoals = 1
+		lineupChances = 1
 
-		return sentence, nil
+		return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
 	} else {
 		sentence := fmt.Sprintf("%s's long shot is saved by %s.\n", shooter.LastName, goalkeeper.LastName)
 		log.Printf("SAVE! %s's long shot is saved by %s.\n", shooter.LastName, goalkeeper.LastName)
@@ -263,10 +309,12 @@ func (a AppService) LongShot(lineup, rivalLineup []Lineup) (string, error) {
 		err := a.statsRepo.UpdatePlayerStats(goalkeeper.PlayerId, 0, 0, 1, 0, 0, 0, 0, 0, 0, IncreaseRatingSlightly)
 		if err != nil {
 			log.Printf("Error updating player stats for goalkeeper %s: %v", goalkeeper.LastName, err)
-			return sentence, err
+			return sentence, 0, 0, 0, 0, err
 		}
 
-		return sentence, nil
+		lineupChances = 1
+
+		return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
 	}
 }
 
