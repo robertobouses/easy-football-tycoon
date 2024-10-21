@@ -1,7 +1,7 @@
 BEGIN;
 
 CREATE TABLE eft.player_stats (
-    player_id UUID PRIMARY KEY,
+    playerid UUID PRIMARY KEY,
     appearances INT DEFAULT 0,
     blocks INT DEFAULT 0,
     saves INT DEFAULT 0,
@@ -12,7 +12,7 @@ CREATE TABLE eft.player_stats (
     goals INT DEFAULT 0,
     mvp INT DEFAULT 0,
     rating FLOAT DEFAULT 0.0,
-    FOREIGN KEY (player_id) REFERENCES eft.team (playerid)
+    FOREIGN KEY (playerid) REFERENCES eft.team (playerid)
 )
 
 COMMIT;

@@ -1,5 +1,5 @@
 SELECT
-    player_id,
+    playerid,
     appearances,
     blocks,
     saves,
