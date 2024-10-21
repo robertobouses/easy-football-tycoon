@@ -88,8 +88,9 @@ type StrategyRepository interface {
 }
 
 type StatsRepository interface {
-	UpdatePlayerStats(uuid.UUID, int, int, int, int, int, float64) error
+	UpdatePlayerStats(playerId uuid.UUID, appearances int, blocks int, saves int, aerialDuelsWon int, keyPass int, assists int, chances int, goals int, mvp int, rating float64) error
 	GetPlayerStats() ([]PlayerStats, error)
+	GetPlayerStatsById(playerId uuid.UUID) (*PlayerStats, error)
 }
 
 func NewApp(

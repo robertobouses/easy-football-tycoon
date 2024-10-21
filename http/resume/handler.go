@@ -34,7 +34,7 @@ type App interface {
 	RejectStaffSale(staff staff.Staff)
 
 	ProcessMatchSimulation() (app.Match, error)
-	ProcessMatchPlay() (app.Match, error)
+	ProcessMatchPlay() (app.Match, []app.EventResult, error)
 
 	ProcessInjury() (app.Player, error)
 	GetCurrentInjuredPlayer() (*app.Player, *int, error)

@@ -73,31 +73,3 @@ func (a *AppService) RunAutoPlayerDevelopmentByTraining(teamPlayers []Player) er
 	}
 	return nil
 }
-
-func ProbabilisticIncrement14() int {
-	if rand.Intn(7) == 4 {
-		return 1
-	}
-	return 0
-}
-
-func ProbabilisticIncrement20() int {
-	if rand.Intn(5) == 4 {
-		return 1
-	}
-	return 0
-}
-
-func ProbabilisticIncrement33() int {
-	if rand.Intn(3) == 2 {
-		return 1
-	}
-	return 0
-}
-
-func ProbabilisticIncrement66() int {
-	if rand.Intn(3) < 2 {
-		return 1
-	}
-	return 0
-}

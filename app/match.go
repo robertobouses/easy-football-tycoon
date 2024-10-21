@@ -10,10 +10,10 @@ type Match struct {
 	RivalName      string     `json:"rivalname"`
 	Team           TeamStats  `json:"team"`
 	Rival          TeamStats  `json:"rival"`
-	Result         string     `json: "result"`
+	Result         string     `json:"result"`
 }
 
-//TODO vistosidad?? y que sea motivo de despido
+//TODO vistosidad?? y que sea motivo de despido o sirve con chances
 
 type TeamStats struct {
 	BallPossession int `json:"ballpossession"`

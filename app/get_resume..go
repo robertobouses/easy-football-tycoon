@@ -203,23 +203,6 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 			return []Calendary{}, err
 		}
 	case "match":
-		if a.currentRivals == nil || len(*a.currentRivals) == 0 {
-			rivals, err := a.rivalRepo.GetRival()
-			if err != nil {
-				log.Println("Error en el procesamiento del partido: currentRivals no está inicializado o está vacío", err)
-
-				return []Calendary{}, err
-			}
-			log.Printf("Rivales obtenidos: %+v\n", rivals)
-
-			a.currentRivals = &rivals
-			log.Printf("Rivales disponibles para el partido: %+v\n", *a.currentRivals)
-
-		}
-		if a.currentRivals == nil || len(*a.currentRivals) == 0 {
-			log.Println("Error en el procesamiento del partido: currentRivals no está inicializado o está vacío")
-			return []Calendary{}, ErrNoRivalsAvailable
-		}
 
 		// match, err := a.ProcessMatchSimulation(day.CalendaryId)
 		// if err != nil {
