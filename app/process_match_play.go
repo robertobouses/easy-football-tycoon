@@ -35,7 +35,7 @@ func (a *AppService) ProcessMatchPlay() (Match, []EventResult, error) {
 	log.Printf("Día del partido: %d\n", matchDayNumber)
 
 	rivalLineup := a.SimulateRivalLineup(rival)
-
+	log.Println("rivalLineup, tras simular", rivalLineup)
 	numberOfMatchEvents, err := a.CalculateNumberOfMatchEvents()
 	if err != nil {
 		log.Println("error al obtener numberOfMatchEvents", err)

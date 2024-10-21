@@ -49,6 +49,10 @@ func (h Handler) PostMatchDecision(ctx *gin.Context) {
 	h.sendMatchResponse(ctx, match)
 
 	for _, event := range events {
+		if event.Event == "" {
+			continue
+		}
+
 		time.Sleep(1 * time.Second)
 
 		ctx.SSEvent("match_event", gin.H{
@@ -70,7 +74,7 @@ func (h Handler) sendMatchResponse(ctx *gin.Context, match app.Match) {
 					"goals":           match.Team.Goals,
 				},
 				"rival": gin.H{
-					"name":            match.RivalName,
+					"rival name":      match.RivalName,
 					"ball_possession": match.Rival.BallPossession,
 					"scoring_chances": match.Rival.ScoringChances,
 					"goals":           match.Rival.Goals,
