@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"time"
 
@@ -44,18 +45,23 @@ func (a *AppService) CalculateNumberOfMatchEvents() (int, error) {
 		numberOfMatchEvents = rand.Intn(11) + 12
 	}
 
+	log.Println("numberOfMatchEvents", numberOfMatchEvents)
 	return numberOfMatchEvents, nil
 }
 
-func DistributeMatchEvents(lineup, rival []Lineup, numberOfMatchEvents int, homeOrAwayString string) (int, int, error) {
+func DistributeMatchEvents(lineup, rivalLineup []Lineup, numberOfMatchEvents int, homeOrAwayString string) (int, int, error) {
+	log.Println("lineup en DistributeMatchEvents", lineup)
+	log.Println("rival en DistributeMatchEvents", rivalLineup)
 	lineupTotalQuality, err := CalculateQuality(lineup)
 	if err != nil {
 		return 0, 0, err
 	}
-	rivalTotalQuality, err := CalculateQuality(lineup)
+	log.Println("total lineup Quality", lineupTotalQuality)
+	rivalTotalQuality, err := CalculateQuality(rivalLineup)
 	if err != nil {
 		return 0, 0, err
 	}
+	log.Println("total rival Quality", rivalTotalQuality)
 	allQuality := lineupTotalQuality + rivalTotalQuality
 	var lineupEvents int
 	lineupProportion := float64(lineupTotalQuality) / float64(allQuality)
@@ -64,6 +70,8 @@ func DistributeMatchEvents(lineup, rival []Lineup, numberOfMatchEvents int, home
 	} else {
 		lineupEvents = int(lineupProportion*float64(numberOfMatchEvents)) - rand.Intn(4) - 2
 	}
+
+	log.Printf("number of lineup events %v, rival events %v ANTES DE RANDOMFACTOR", lineupEvents)
 
 	randomFactor := rand.Intn(11) - 5
 
@@ -77,6 +85,7 @@ func DistributeMatchEvents(lineup, rival []Lineup, numberOfMatchEvents int, home
 	if rivalEvents < 0 {
 		rivalEvents = 0
 	}
+	log.Printf("number of lineup events %v, rival events %v", lineupEvents, rivalEvents)
 	return lineupEvents, rivalEvents, nil
 }
 
@@ -98,18 +107,27 @@ func clamp(value int, min int, max int) int {
 func (a *AppService) SimulateRivalLineup(rival Rival) []Lineup {
 	rivalTypeLineup := make([]Lineup, 0, 11)
 
-	rivalTypeLineup = append(rivalTypeLineup, Lineup{
+	totalTechnique := 0
+	totalMental := 0
+	totalPhysique := 0
+
+	goalkeeper := Lineup{
 		PlayerId:  uuid.New(),
 		LastName:  "goalkeeper",
 		Position:  "goalkeeper",
 		Technique: clamp(rival.Technique+rand.Intn(21)-20, 0, 100),
 		Mental:    clamp(rival.Mental+rand.Intn(21)-20, 0, 100),
 		Physique:  clamp(rival.Physique+rand.Intn(21)-20, 0, 100),
-	})
+	}
+
+	totalTechnique += goalkeeper.Technique
+	totalMental += goalkeeper.Mental
+	totalPhysique += goalkeeper.Physique
+
+	rivalTypeLineup = append(rivalTypeLineup, goalkeeper)
 
 	maxDefenders := 5
 	maxMidfielders := 5
-
 	playersAssigned := 1
 
 	numDefenders := rand.Intn(maxDefenders-2) + 3
@@ -119,14 +137,20 @@ func (a *AppService) SimulateRivalLineup(rival Rival) []Lineup {
 	playersAssigned += numDefenders
 
 	for i := 0; i < numDefenders; i++ {
-		rivalTypeLineup = append(rivalTypeLineup, Lineup{
+		defender := Lineup{
 			PlayerId:  uuid.New(),
-			LastName:  "defender" + string(i+1),
+			LastName:  fmt.Sprintf("defender%d", i+1),
 			Position:  "defender",
 			Technique: clamp(rival.Technique+rand.Intn(21)-20, 0, 100),
 			Mental:    clamp(rival.Mental+rand.Intn(21)-20, 0, 100),
 			Physique:  clamp(rival.Physique+rand.Intn(21)-20, 0, 100),
-		})
+		}
+
+		totalTechnique += defender.Technique
+		totalMental += defender.Mental
+		totalPhysique += defender.Physique
+
+		rivalTypeLineup = append(rivalTypeLineup, defender)
 	}
 
 	numMidfielders := rand.Intn(maxMidfielders-2) + 3
@@ -136,26 +160,44 @@ func (a *AppService) SimulateRivalLineup(rival Rival) []Lineup {
 	playersAssigned += numMidfielders
 
 	for i := 0; i < numMidfielders; i++ {
-		rivalTypeLineup = append(rivalTypeLineup, Lineup{
+		midfielder := Lineup{
 			PlayerId:  uuid.New(),
-			LastName:  "midfielder" + string(i+1),
+			LastName:  fmt.Sprintf("midfielder%d", i+1),
 			Position:  "midfielder",
 			Technique: clamp(rival.Technique+rand.Intn(21)-20, 0, 100),
 			Mental:    clamp(rival.Mental+rand.Intn(21)-20, 0, 100),
 			Physique:  clamp(rival.Physique+rand.Intn(21)-20, 0, 100),
-		})
+		}
+
+		totalTechnique += midfielder.Technique
+		totalMental += midfielder.Mental
+		totalPhysique += midfielder.Physique
+
+		rivalTypeLineup = append(rivalTypeLineup, midfielder)
 	}
 
 	numForwards := 11 - playersAssigned
 	for i := 0; i < numForwards; i++ {
-		rivalTypeLineup = append(rivalTypeLineup, Lineup{
+		forward := Lineup{
 			PlayerId:  uuid.New(),
-			LastName:  "forward" + string(i+1),
+			LastName:  fmt.Sprintf("forward%d", i+1),
 			Position:  "forward",
 			Technique: clamp(rival.Technique+rand.Intn(21)-20, 0, 100),
 			Mental:    clamp(rival.Mental+rand.Intn(3), 0, 100),
 			Physique:  clamp(rival.Physique+rand.Intn(3), 0, 100),
-		})
+		}
+
+		totalTechnique += forward.Technique
+		totalMental += forward.Mental
+		totalPhysique += forward.Physique
+
+		rivalTypeLineup = append(rivalTypeLineup, forward)
+	}
+
+	for i := range rivalTypeLineup {
+		rivalTypeLineup[i].TotalTechnique = totalTechnique
+		rivalTypeLineup[i].TotalMental = totalMental
+		rivalTypeLineup[i].TotalPhysique = totalPhysique
 	}
 
 	return rivalTypeLineup
@@ -273,29 +315,50 @@ func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupE
 	}
 	var lineupResults []EventResult
 	var rivalResults []EventResult
-	var lineupScoreChances, rivalScoreChances, lineupGoals, rivalGoals int
+	var lineupChances, rivalChances, lineupGoals, rivalGoals int
 
 	for i := 0; i < numberOfLineupEvents; i++ {
 		event := lineupEvents[rand.Intn(len(lineupEvents))]
-		result, _, _, _, _, err := event.Execute()
-		minute := (i + 1) * 9
+		result, newLineupChances, newRivalChances, newLineupGoals, newRivalGoals, err := event.Execute()
 		if err != nil {
-			lineupResults = append(lineupResults, EventResult{Event: fmt.Sprintf("Error en el evento: %v", err), Minute: minute, AttackOrDefense: "lineup"})
-		} else {
-			lineupResults = append(lineupResults, EventResult{Event: result, Minute: minute, AttackOrDefense: "lineup"})
+			continue
 		}
-	}
 
+		lineupChances += newLineupChances
+		rivalChances += newRivalChances
+		lineupGoals += newLineupGoals
+		rivalGoals += newRivalGoals
+
+		minute := rand.Intn(90)
+		lineupResults = append(lineupResults, EventResult{
+			Event:           result,
+			Minute:          minute,
+			AttackOrDefense: "attack",
+		})
+		fmt.Printf("Generated event: %s at minute %d\n", result, minute)
+
+	}
 	for i := 0; i < numberOfRivalEvents; i++ {
 		event := rivalEvents[rand.Intn(len(rivalEvents))]
-		result, _, _, _, _, err := event.Execute()
-		minute := (i + 1) * 9
+		result, newRivalChances, newLineupChances, newRivalGoals, newLineupGoals, err := event.Execute()
 		if err != nil {
-			rivalResults = append(rivalResults, EventResult{Event: fmt.Sprintf("Error en el evento: %v", err), Minute: minute, AttackOrDefense: "rival"})
-		} else {
-			rivalResults = append(rivalResults, EventResult{Event: result, Minute: minute, AttackOrDefense: "rival"})
+			continue
 		}
+
+		lineupChances += newLineupChances
+		rivalChances += newRivalChances
+		lineupGoals += newLineupGoals
+		rivalGoals += newRivalGoals
+
+		minute := rand.Intn(90)
+		rivalResults = append(rivalResults, EventResult{
+			Event:           result,
+			Minute:          minute,
+			AttackOrDefense: "defense",
+		})
+		fmt.Printf("Generated event: %s at minute %d\n", result, minute)
+
 	}
 
-	return lineupResults, rivalResults, lineupScoreChances, rivalScoreChances, lineupGoals, rivalGoals
+	return lineupResults, rivalResults, lineupChances, rivalChances, lineupGoals, rivalGoals
 }

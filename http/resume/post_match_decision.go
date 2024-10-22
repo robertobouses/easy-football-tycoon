@@ -3,11 +3,14 @@ package resume
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/robertobouses/easy-football-tycoon/app"
 )
+
+var matchEventStore = make(map[string][]app.EventResult)
+var matchScoreStore = make(map[string]app.Match)
+var sessionID = "currentMatch"
 
 func (h Handler) PostMatchDecision(ctx *gin.Context) {
 	var request struct {
@@ -34,33 +37,39 @@ func (h Handler) PostMatchDecision(ctx *gin.Context) {
 			return
 		}
 
+		mu.Lock()
+		matchScoreStore[sessionID] = match
+		mu.Unlock()
+
+		mu.Lock()
+		matchEventStore[sessionID] = events
+		mu.Unlock()
+
+		matchIndex = 0
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"message": fmt.Sprintf("Iniciando partido contra %v. Haz clic para ver el siguiente evento.", match.RivalName),
+		})
+		return
+
 	case "simulate":
 		match, err = h.app.ProcessMatchSimulation()
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error al simular el partido"})
 			return
 		}
+		h.sendSimulatedMatchResponse(ctx, match)
+		return
 
 	default:
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Decisión inválida. Elige 'play' o 'simulate'."})
 		return
 	}
-
-	h.sendMatchResponse(ctx, match)
-
-	for _, event := range events {
-		time.Sleep(1 * time.Second)
-
-		ctx.SSEvent("match_event", gin.H{
-			"minute": event.Minute,
-			"event":  event.Event,
-		})
-	}
 }
-func (h Handler) sendMatchResponse(ctx *gin.Context, match app.Match) {
+func (h Handler) sendSimulatedMatchResponse(ctx *gin.Context, match app.Match) {
 	if match.MatchDayNumber != 0 {
 		ctx.JSON(http.StatusOK, gin.H{
-			"message":        "Match Playing",
+			"message":        "Simulación de partido completa",
 			"matchDayNumber": match.MatchDayNumber,
 			"venue":          match.HomeOrAway,
 			"match": gin.H{
@@ -70,7 +79,7 @@ func (h Handler) sendMatchResponse(ctx *gin.Context, match app.Match) {
 					"goals":           match.Team.Goals,
 				},
 				"rival": gin.H{
-					"name":            match.RivalName,
+					"rival_name":      match.RivalName,
 					"ball_possession": match.Rival.BallPossession,
 					"scoring_chances": match.Rival.ScoringChances,
 					"goals":           match.Rival.Goals,

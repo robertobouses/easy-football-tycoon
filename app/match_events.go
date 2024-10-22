@@ -180,7 +180,7 @@ func (a *AppService) Shot(lineup []Lineup, rivalLineup []Lineup, passer *Lineup)
 		successfulAgainstGoalkeeper := CalculateSuccessConfrontation(shooter.Technique, goalkeeper.Technique)
 
 		if successfulAgainstGoalkeeper == 1 {
-			sentence := fmt.Sprintf("%s scores a goal!\n", shooter.LastName)
+			sentence := fmt.Sprintf("GOOOOOL! %s scores a goal!\n", shooter.LastName)
 			log.Println(sentence)
 
 			err := a.statsRepo.UpdatePlayerStats(shooter.PlayerId, 0, 0, 0, 0, 0, 0, 0, 1, 0, IncreaseRatingDrastically)
@@ -241,7 +241,7 @@ func (a *AppService) PenaltyKick(lineup, rivalLineup []Lineup) (string, int, int
 	var lineupChances, rivalChances, lineupGoals, rivalGoals int
 
 	if successfulPenalty == 1 {
-		sentence := fmt.Sprintf("%s scores from the penalty spot!\n", shooter.LastName)
+		sentence := fmt.Sprintf("GOOOOOL! %s scores from the penalty spot!", shooter.LastName)
 		log.Println(sentence)
 
 		err := a.statsRepo.UpdatePlayerStats(shooter.PlayerId, 0, 0, 0, 0, 0, 0, 1, 1, 0, IncreaseRatingModerately)
@@ -290,7 +290,7 @@ func (a AppService) LongShot(lineup, rivalLineup []Lineup) (string, int, int, in
 	rivalGoals := 0
 
 	if successfulLongShot == 1 {
-		sentence := fmt.Sprintf("%s scores from long distance!\n", shooter.LastName)
+		sentence := fmt.Sprintf("GOOOOOL! %s scores from long distance!\n", shooter.LastName)
 		log.Printf("GOAL! %s scores a long shot!\n", shooter.LastName)
 
 		err := a.statsRepo.UpdatePlayerStats(shooter.PlayerId, 0, 0, 0, 0, 0, 0, 1, 1, 0, IncreaseRatingDrastically)

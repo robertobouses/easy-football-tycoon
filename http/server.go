@@ -118,6 +118,7 @@ func (s *Server) Run(port string) error {
 	resume.POST("/staff-signing-decision", s.resume.PostStaffSigningDecision)
 	resume.POST("/staff-sale-decision", s.resume.PostStaffSaleDecision)
 	resume.POST("/match-decision", s.resume.PostMatchDecision)
+	resume.POST("/match-next-event", s.resume.PostMatchNextEvent)
 
 	analytics := s.engine.Group("/analytics")
 	analytics.GET("", s.analytics.GetAnalytics)
