@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"sort"
 
 	"github.com/google/uuid"
 )
@@ -49,7 +50,13 @@ func (a *AppService) ProcessMatchPlay() (Match, []EventResult, error) {
 	}
 
 	lineupResults, rivalResults, lineupScoreChances, rivalScoreChances, lineupGoals, rivalGoals := a.GenerateEvents(lineup, rivalLineup, numberOfLineupEvents, numberOfRivalEvents)
+	breakMatch := EventResult{Minute: 45, Event: "Descanso"}
+	endMatch := EventResult{Minute: 90, Event: "Final del Partido"}
 	allEvents := append(lineupResults, rivalResults...)
+	allEvents = append(allEvents, breakMatch, endMatch)
+	sort.Slice(allEvents, func(i, j int) bool {
+		return allEvents[i].Minute < allEvents[j].Minute
+	})
 	totalTechnique := lineup[0].TotalTechnique
 	totalMental := lineup[0].TotalMental
 	totalPhysique := lineup[0].TotalPhysique
@@ -76,7 +83,10 @@ func (a *AppService) ProcessMatchPlay() (Match, []EventResult, error) {
 	}
 	log.Printf("Calidad total: jugador %d, rival %d, calidad total %d\n", lineupTotalQuality, rivalTotalQuality, allQuality)
 	lineupPercentagePossession, rivalPercentagePossession, err := a.CalculateBallPossession(totalTechnique, totalMental, lineupTotalQuality, rivalTotalQuality, allQuality, homeOrAwayString, resultOfStrategy["teamPossession"])
-
+	if err != nil {
+		log.Println("Error CalculateBallPossession:", err)
+		return Match{}, []EventResult{}, err
+	}
 	var result string
 	if lineupGoals > rivalGoals {
 		result = "WIN"
