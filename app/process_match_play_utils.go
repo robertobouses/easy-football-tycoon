@@ -71,14 +71,14 @@ func DistributeMatchEvents(lineup, rivalLineup []Lineup, numberOfMatchEvents int
 		lineupEvents = int(lineupProportion*float64(numberOfMatchEvents)) - rand.Intn(4) - 2
 	}
 
-	log.Printf("number of lineup events %v, rival events %v ANTES DE RANDOMFACTOR", lineupEvents)
+	log.Printf("number of lineup events %v ANTES DE RANDOMFACTOR", lineupEvents)
 
 	randomFactor := rand.Intn(11) - 5
 
 	lineupEvents += randomFactor
 
 	rivalEvents := numberOfMatchEvents - lineupEvents
-
+	log.Printf("number of lineup events %v, rival events %v Despues DE RANDOMFACTOR", lineupEvents, rivalEvents)
 	if lineupEvents <= 0 {
 		lineupEvents = 0
 	}
@@ -253,12 +253,12 @@ type Event struct {
 }
 
 type EventResult struct {
-	Event           string `json:"event"`
-	Minute          int    `json:"minute"`
-	AttackOrDefense string `json:"attackordefense"`
+	Event  string `json:"event"`
+	Minute int    `json:"minute"`
+	Team   string `json:"team"`
 }
 
-func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupEvents, numberOfRivalEvents int) ([]EventResult, []EventResult, int, int, int, int) {
+func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupEvents, numberOfRivalEvents int, rivalName string) ([]EventResult, []EventResult, int, int, int, int) {
 
 	lineupEvents := []Event{
 		{
@@ -321,9 +321,14 @@ func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupE
 		event := lineupEvents[rand.Intn(len(lineupEvents))]
 		result, newLineupChances, newRivalChances, newLineupGoals, newRivalGoals, err := event.Execute()
 		if err != nil {
+			fmt.Printf("Error executing lineup event: %v\n", err)
 			continue
 		}
-
+		if result == "" {
+			fmt.Println("Generated empty event for lineup!")
+		} else {
+			fmt.Printf("Generated lineup event: %s\n", result)
+		}
 		lineupChances += newLineupChances
 		rivalChances += newRivalChances
 		lineupGoals += newLineupGoals
@@ -331,9 +336,9 @@ func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupE
 
 		minute := rand.Intn(90)
 		lineupResults = append(lineupResults, EventResult{
-			Event:           result,
-			Minute:          minute,
-			AttackOrDefense: "attack",
+			Event:  result + "para tu equipo",
+			Minute: minute,
+			Team:   "tu equipo",
 		})
 		fmt.Printf("Generated event: %s at minute %d\n", result, minute)
 
@@ -342,6 +347,7 @@ func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupE
 		event := rivalEvents[rand.Intn(len(rivalEvents))]
 		result, newRivalChances, newLineupChances, newRivalGoals, newLineupGoals, err := event.Execute()
 		if err != nil {
+			fmt.Printf("Error executing rival event: %v\n", err)
 			continue
 		}
 
@@ -352,9 +358,9 @@ func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupE
 
 		minute := rand.Intn(90)
 		rivalResults = append(rivalResults, EventResult{
-			Event:           result,
-			Minute:          minute,
-			AttackOrDefense: "defense",
+			Event:  result + " para " + rivalName,
+			Minute: minute,
+			Team:   rivalName,
 		})
 		fmt.Printf("Generated event: %s at minute %d\n", result, minute)
 
