@@ -285,6 +285,12 @@ func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupE
 				return a.LongShot(lineup, rivalLineup)
 			},
 		},
+		{
+			"Falta Indirecta",
+			func() (string, int, int, int, int, error) {
+				return a.IndirectFreeKick(lineup, rivalLineup)
+			},
+		},
 	}
 
 	rivalEvents := []Event{
@@ -310,6 +316,12 @@ func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupE
 			"Tiro lejano",
 			func() (string, int, int, int, int, error) {
 				return a.LongShot(rivalLineup, lineup)
+			},
+		},
+		{
+			"Falta Indirecta",
+			func() (string, int, int, int, int, error) {
+				return a.IndirectFreeKick(rivalLineup, lineup)
 			},
 		},
 	}
