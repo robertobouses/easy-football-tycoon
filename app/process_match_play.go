@@ -49,7 +49,7 @@ func (a *AppService) ProcessMatchPlay() (Match, []EventResult, error) {
 		return Match{}, []EventResult{}, err
 	}
 
-	lineupResults, rivalResults, lineupScoreChances, rivalScoreChances, lineupGoals, rivalGoals := a.GenerateEvents(lineup, rivalLineup, numberOfLineupEvents, numberOfRivalEvents)
+	lineupResults, rivalResults, lineupScoreChances, rivalScoreChances, lineupGoals, rivalGoals := a.GenerateEvents(lineup, rivalLineup, numberOfLineupEvents, numberOfRivalEvents, rival.RivalName)
 	breakMatch := EventResult{Minute: 45, Event: "Descanso"}
 	endMatch := EventResult{Minute: 90, Event: "Final del Partido"}
 	allEvents := append(lineupResults, rivalResults...)
