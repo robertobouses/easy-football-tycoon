@@ -110,7 +110,7 @@ func (a AppService) KeyPass(lineup, rivalLineup []Lineup) (string, int, int, int
 	log.Printf("Selected passer: %+v, receiver: %+v", passer, receiver)
 
 	if passer == nil || receiver == nil {
-		return "", 0, 0, 0, 0, fmt.Errorf("no hay suficientes jugadores disponibles para realizar un pase")
+		return "no hay suficientes jugadores disponibles para realizar un pase", 0, 0, 0, 0, fmt.Errorf("no hay suficientes jugadores disponibles para realizar un pase")
 	}
 	successfulPass := CalculateSuccessIndividualEvent(passer.Technique)
 	var sentence string
@@ -154,33 +154,33 @@ func (a AppService) KeyPass(lineup, rivalLineup []Lineup) (string, int, int, int
 }
 
 func (a *AppService) Shot(lineup []Lineup, rivalLineup []Lineup, passer *Lineup) (string, int, int, int, int, error) {
-
+	//TODO FUNCION QUE IMPRIME UN VACÍO
 	shooter := a.GetRandomForward(lineup)
 	if shooter == nil {
-		return "", 0, 0, 0, 0, errors.New("no forward player found in lineup")
+		return "no forward player found in lineup", 0, 0, 0, 0, errors.New("no forward player found in lineup")
 	}
 	goalkeeper := a.GetGoalkeeper(rivalLineup)
 	if goalkeeper == nil {
-		return "", 0, 0, 0, 0, errors.New("no goalkeeper found in rival lineup")
+		return "no goalkeeper found in rival lineup", 0, 0, 0, 0, errors.New("no goalkeeper found in rival lineup")
 	}
 	defender := a.GetRandomDefender(rivalLineup)
 	if defender == nil {
-		return "", 0, 0, 0, 0, errors.New("no defender player found in lineup")
+		return "no defender player found in lineup", 0, 0, 0, 0, errors.New("no defender player found in lineup")
 	}
 
 	log.Printf("Shooter: %+v, Defender: %+v, Goalkeeper: %+v", shooter, defender, goalkeeper)
 
-	successfulAgainstDefender := CalculateSuccessConfrontation(shooter.Technique, defender.Technique)
-	log.Printf("Success against defender: %d", successfulAgainstDefender)
-
 	var sentence string
 	var lineupChances, rivalChances, lineupGoals, rivalGoals int
+
+	successfulAgainstDefender := CalculateSuccessConfrontation(shooter.Technique, defender.Technique)
+	log.Printf("Success against defender: %d", successfulAgainstDefender)
 
 	if successfulAgainstDefender == 1 {
 		err := a.statsRepo.UpdatePlayerStats(shooter.PlayerId, 0, 0, 0, 0, 0, 0, 1, 0, 0, IncreaseRatingModerately)
 		if err != nil {
 			log.Printf("Error updating player stats for shooter: %v", err)
-			return "", 0, 0, 0, 0, err
+			return "Error updating player stats for shooter", 0, 0, 0, 0, err
 		}
 		log.Printf("%s supera a %s.\n", shooter.LastName, defender.LastName)
 
@@ -232,11 +232,11 @@ func (a *AppService) Shot(lineup []Lineup, rivalLineup []Lineup, passer *Lineup)
 func (a *AppService) PenaltyKick(lineup, rivalLineup []Lineup) (string, int, int, int, int, error) {
 	shooter := a.GetRandomForward(lineup)
 	if shooter == nil {
-		return "", 0, 0, 0, 0, errors.New("no forward player found in lineup")
+		return "no forward player found in lineup", 0, 0, 0, 0, errors.New("no forward player found in lineup")
 	}
 	goalkeeper := a.GetGoalkeeper(rivalLineup)
 	if goalkeeper == nil {
-		return "", 0, 0, 0, 0, errors.New("no goalkeeper found in rival lineup")
+		return "no goalkeeper found in rival lineup", 0, 0, 0, 0, errors.New("no goalkeeper found in rival lineup")
 	}
 
 	increasedShooterMental := shooter.Mental + (10 * rand.Intn(3))
@@ -280,11 +280,11 @@ func (a AppService) LongShot(lineup, rivalLineup []Lineup) (string, int, int, in
 
 	shooter := a.GetRandomForward(lineup)
 	if shooter == nil {
-		return "", 0, 0, 0, 0, errors.New("no forward player found in lineup")
+		return "no forward player found in lineup", 0, 0, 0, 0, errors.New("no forward player found in lineup")
 	}
 	goalkeeper := a.GetGoalkeeper(rivalLineup)
 	if goalkeeper == nil {
-		return "", 0, 0, 0, 0, errors.New("no goalkeeper found in rival lineup")
+		return "no goalkeeper found in rival lineup", 0, 0, 0, 0, errors.New("no goalkeeper found in rival lineup")
 	}
 
 	decreasedShooterTechnique := shooter.Technique - (6 * rand.Intn(4))
@@ -329,19 +329,19 @@ func (a AppService) IndirectFreeKick(lineup, rivalLineup []Lineup) (string, int,
 
 	shooter := a.GetRandomMidfielder(lineup)
 	if shooter == nil {
-		return "", 0, 0, 0, 0, errors.New("no shooter player found in lineup")
+		return "no shooter player found in lineup", 0, 0, 0, 0, errors.New("no shooter player found in lineup")
 	}
 	defenderOnAttack := a.GetRandomDefender(lineup)
 	if defenderOnAttack == nil {
-		return "", 0, 0, 0, 0, errors.New("no defender player found in lineup")
+		return "no defender player found in lineup", 0, 0, 0, 0, errors.New("no defender player found in lineup")
 	}
 	rivalDefender := a.GetRandomDefender(rivalLineup)
 	if rivalDefender == nil {
-		return "", 0, 0, 0, 0, errors.New("no rivalDefender player found in lineup")
+		return "no rivalDefender player found in lineup", 0, 0, 0, 0, errors.New("no rivalDefender player found in lineup")
 	}
 	goalkeeper := a.GetGoalkeeper(rivalLineup)
 	if goalkeeper == nil {
-		return "", 0, 0, 0, 0, errors.New("no goalkeeper found in rival lineup")
+		return "no goalkeeper found in rival lineup", 0, 0, 0, 0, errors.New("no goalkeeper found in rival lineup")
 	}
 
 	increasedShooterTechnique := shooter.Technique + (4 * rand.Intn(6))
@@ -434,7 +434,7 @@ func (a AppService) Dribble(lineup, rivalLineup []Lineup) (string, int, int, int
 	log.Printf("Selected passer: %+v, receiver: %+v", dribbler, defender)
 
 	if dribbler == nil || defender == nil {
-		return "", 0, 0, 0, 0, fmt.Errorf("no hay suficientes jugadores disponibles para realizar un pase")
+		return "no hay suficientes jugadores disponibles para realizar un pase", 0, 0, 0, 0, fmt.Errorf("no hay suficientes jugadores disponibles para realizar un pase")
 	}
 	successfulDribble := CalculateSuccessIndividualEvent(dribbler.Technique)
 	var sentence string
@@ -469,6 +469,7 @@ func (a AppService) Dribble(lineup, rivalLineup []Lineup) (string, int, int, int
 			if resultOfEvent := ProbabilisticIncrement40(); resultOfEvent == 1 {
 				a.Shot(lineup, rivalLineup, dribbler)
 			} else {
+				a.currentePlayerOnMatchEvent = defender
 				a.Foul(lineup, rivalLineup, defender)
 			}
 
@@ -512,6 +513,7 @@ func (a AppService) Foul(lineup, rivalLineup []Lineup, defender *Lineup) (string
 
 	if probabilyYellowOrRedCard >= 1 {
 		sentence = "the referee puts his hand in his pocket"
+		a.currentePlayerOnMatchEvent = defender
 		a.YellowOrRedCard(lineup, defender)
 	}
 	if resultOfEvent >= 2 {
@@ -523,7 +525,7 @@ func (a AppService) Foul(lineup, rivalLineup []Lineup, defender *Lineup) (string
 		a.IndirectFreeKick(lineup, rivalLineup)
 
 	} else {
-		sentence = "the foul is in a dangerous area of ​​the field"
+		sentence = "the foul is in a dangerous area of the field"
 		a.DirectFreeKick(lineup, rivalLineup)
 	}
 	return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
@@ -537,7 +539,7 @@ func (a AppService) YellowOrRedCard(lineup []Lineup, defender *Lineup) (string, 
 	if defender == nil {
 		defender = a.GetRandomDefender(lineup)
 		if defender == nil {
-			return "", 0, 0, 0, 0, errors.New("no defender player found in lineup")
+			return "no defender player found in lineup", 0, 0, 0, 0, errors.New("no defender player found in lineup")
 		}
 	}
 
@@ -575,11 +577,11 @@ func (a AppService) DirectFreeKick(lineup, rivalLineup []Lineup) (string, int, i
 
 	shooter := a.GetRandomForward(lineup)
 	if shooter == nil {
-		return "", 0, 0, 0, 0, errors.New("no forward player found in lineup")
+		return "no forward player found in lineup", 0, 0, 0, 0, errors.New("no forward player found in lineup")
 	}
 	goalkeeper := a.GetGoalkeeper(rivalLineup)
 	if goalkeeper == nil {
-		return "", 0, 0, 0, 0, errors.New("no goalkeeper found in rival lineup")
+		return "no goalkeeper found in rival lineup", 0, 0, 0, 0, errors.New("no goalkeeper found in rival lineup")
 	}
 
 	decreasedShooterTechnique := shooter.Technique - (6 * rand.Intn(7))

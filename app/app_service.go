@@ -133,6 +133,8 @@ func NewApp(
 		currentRivals:        nil,
 		isHome:               true,
 		currentMatch:         nil,
+
+		currentePlayerOnMatchEvent: nil,
 	}
 }
 
@@ -164,4 +166,6 @@ type AppService struct {
 	currentRivals    *[]Rival
 	isHome           bool
 	currentMatch     *Match
+
+	currentePlayerOnMatchEvent *Lineup
 }
