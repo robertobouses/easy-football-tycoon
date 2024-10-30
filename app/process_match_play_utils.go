@@ -285,6 +285,24 @@ func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupE
 				return a.LongShot(lineup, rivalLineup)
 			},
 		},
+		{
+			" Lanzamiento de Falta Indirecta",
+			func() (string, int, int, int, int, error) {
+				return a.IndirectFreeKick(lineup, rivalLineup)
+			},
+		},
+		{
+			"Regate",
+			func() (string, int, int, int, int, error) {
+				return a.Dribble(lineup, rivalLineup)
+			},
+		},
+		{
+			"Falta",
+			func() (string, int, int, int, int, error) {
+				return a.Foul(lineup, rivalLineup, a.currentePlayerOnMatchEvent)
+			},
+		},
 	}
 
 	rivalEvents := []Event{
@@ -312,6 +330,24 @@ func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupE
 				return a.LongShot(rivalLineup, lineup)
 			},
 		},
+		{
+			" Lanzamiento de Falta Indirecta",
+			func() (string, int, int, int, int, error) {
+				return a.IndirectFreeKick(rivalLineup, lineup)
+			},
+		},
+		{
+			"Regate",
+			func() (string, int, int, int, int, error) {
+				return a.Dribble(rivalLineup, lineup)
+			},
+		},
+		{
+			"Falta",
+			func() (string, int, int, int, int, error) {
+				return a.Foul(rivalLineup, lineup, a.currentePlayerOnMatchEvent)
+			},
+		},
 	}
 	var lineupResults []EventResult
 	var rivalResults []EventResult
@@ -319,6 +355,7 @@ func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupE
 
 	for i := 0; i < numberOfLineupEvents; i++ {
 		event := lineupEvents[rand.Intn(len(lineupEvents))]
+		log.Println("evento de tu equipo", event)
 		result, newLineupChances, newRivalChances, newLineupGoals, newRivalGoals, err := event.Execute()
 		if err != nil {
 			fmt.Printf("Error executing lineup event: %v\n", err)
@@ -336,15 +373,16 @@ func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupE
 
 		minute := rand.Intn(90)
 		lineupResults = append(lineupResults, EventResult{
-			Event:  result + "para tu equipo",
+			Event:  result + " para tu equipo",
 			Minute: minute,
-			Team:   "tu equipo",
+			Team:   " tu equipo",
 		})
 		fmt.Printf("Generated event: %s at minute %d\n", result, minute)
 
 	}
 	for i := 0; i < numberOfRivalEvents; i++ {
 		event := rivalEvents[rand.Intn(len(rivalEvents))]
+		log.Println("evento del rival", event)
 		result, newRivalChances, newLineupChances, newRivalGoals, newLineupGoals, err := event.Execute()
 		if err != nil {
 			fmt.Printf("Error executing rival event: %v\n", err)
