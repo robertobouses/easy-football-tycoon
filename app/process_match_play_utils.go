@@ -303,6 +303,13 @@ func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupE
 				return a.Foul(lineup, rivalLineup, a.currentePlayerOnMatchEvent)
 			},
 		},
+
+		{
+			"Gran Ocasión",
+			func() (string, int, int, int, int, error) {
+				return a.GreatScoringChance(lineup)
+			},
+		},
 	}
 
 	rivalEvents := []Event{
@@ -346,6 +353,12 @@ func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupE
 			"Falta",
 			func() (string, int, int, int, int, error) {
 				return a.Foul(rivalLineup, lineup, a.currentePlayerOnMatchEvent)
+			},
+		},
+		{
+			"Gran Ocasión",
+			func() (string, int, int, int, int, error) {
+				return a.GreatScoringChance(rivalLineup)
 			},
 		},
 	}
