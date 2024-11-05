@@ -7,15 +7,9 @@ import (
 	"math/rand"
 )
 
-// Pass           = "Pass"
-// Shot           = "Shot"
-// Dribble        = "Dribble"
 // Header         = "Header"
 // Clearance      = "Clearance"
-// Foul           = "Foul"
-// FreeKick       = "Free Kick"
-// PenaltyKick    = "Penalty Kick"
-// ThrowIn        = "Throw In"
+
 // CornerKick     = "Corner Kick"
 // Offside        = "Offside"
 // Marking        = "Marking"
@@ -659,6 +653,76 @@ func (a AppService) GreatScoringChance(lineup []Lineup) (string, int, int, int, 
 		}
 		return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
 
+	}
+}
+
+func (a AppService) CornerKick(lineup, rivalLineup []Lineup) (string, int, int, int, int, error) {
+	var centerer *Lineup
+	var attacker, defender *Lineup
+	var sentence string
+	var lineupChances, rivalChances, lineupGoals, rivalGoals int
+
+	centerer = a.GetRandomMidfielder(lineup)
+
+	incrementedTechnique := centerer.Technique + rand.Intn(20)
+	prob := CalculateSuccessIndividualEvent(incrementedTechnique)
+	lineupChances = 1
+
+	if prob == 1 {
+		defender = a.GetRandomDefender(rivalLineup)
+		prob = ProbabilisticIncrement62()
+		if prob == 1 {
+			attacker = a.GetRandomDefender(lineup)
+		} else {
+			attacker = a.GetRandomMidfielder(lineup)
+		}
+		prob = CalculateSuccessConfrontation(attacker.Physique, defender.Physique)
+		if prob == 1 {
+			sentence = fmt.Sprintf("GOOOOOL, %s took the corner very well, and %s beats %s with a incredible jump and heads at goal", centerer.LastName, attacker.LastName, defender.LastName)
+			lineupGoals = 1
+			err := a.statsRepo.UpdatePlayerStats(centerer.PlayerId, 0, 0, 0, 0, 1, 1, 0, 0, 0, IncreaseRatingModerately)
+			if err != nil {
+				log.Printf("Error updating player stats for shooter %s: %v", centerer.LastName, err)
+				return sentence, 0, 0, 0, 0, err
+			}
+			err = a.statsRepo.UpdatePlayerStats(attacker.PlayerId, 0, 0, 0, 1, 0, 0, 1, 1, 0, IncreaseRatingConsiderably)
+			if err != nil {
+				log.Printf("Error updating player stats for shooter %s: %v", centerer.LastName, err)
+				return sentence, 0, 0, 0, 0, err
+			}
+			err = a.statsRepo.UpdatePlayerStats(defender.PlayerId, 0, 0, 0, 1, 0, 0, 0, 0, 0, DecreaseRatingModerately)
+			if err != nil {
+				log.Printf("Error updating player stats for shooter %s: %v", centerer.LastName, err)
+				return sentence, 0, 0, 0, 0, err
+			}
+			return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
+		} else {
+			sentence = fmt.Sprintf("%s takes the corner... but %s beats %s to the jump and clears the ball", centerer.LastName, defender.LastName, attacker.LastName)
+			err := a.statsRepo.UpdatePlayerStats(centerer.PlayerId, 0, 0, 0, 0, 1, 0, 0, 0, 0, IncreaseRatingSlightly)
+			if err != nil {
+				log.Printf("Error updating player stats for shooter %s: %v", centerer.LastName, err)
+				return sentence, 0, 0, 0, 0, err
+			}
+			err = a.statsRepo.UpdatePlayerStats(attacker.PlayerId, 0, 0, 0, 1, 0, 0, 0, 0, 0, DecreaseRatingSlightly)
+			if err != nil {
+				log.Printf("Error updating player stats for shooter %s: %v", centerer.LastName, err)
+				return sentence, 0, 0, 0, 0, err
+			}
+			err = a.statsRepo.UpdatePlayerStats(defender.PlayerId, 0, 0, 0, 1, 0, 0, 0, 0, 0, IncreaseRatingModerately)
+			if err != nil {
+				log.Printf("Error updating player stats for shooter %s: %v", centerer.LastName, err)
+				return sentence, 0, 0, 0, 0, err
+			}
+			return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
+		}
+	} else {
+		sentence = fmt.Sprintf("the corner was wasted by %s", centerer.LastName)
+		err := a.statsRepo.UpdatePlayerStats(centerer.PlayerId, 0, 0, 0, 0, 1, 0, 0, 0, 0, DecreaseRatingModerately)
+		if err != nil {
+			log.Printf("Error updating player stats for shooter %s: %v", centerer.LastName, err)
+			return sentence, 0, 0, 0, 0, err
+		}
+		return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
 	}
 }
 
