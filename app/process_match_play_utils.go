@@ -310,6 +310,12 @@ func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupE
 				return a.GreatScoringChance(lineup)
 			},
 		},
+		{
+			"Córner",
+			func() (string, int, int, int, int, error) {
+				return a.CornerKick(lineup, rivalLineup)
+			},
+		},
 	}
 
 	rivalEvents := []Event{
@@ -359,6 +365,12 @@ func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupE
 			"Gran Ocasión",
 			func() (string, int, int, int, int, error) {
 				return a.GreatScoringChance(rivalLineup)
+			},
+		},
+		{
+			"Córner",
+			func() (string, int, int, int, int, error) {
+				return a.CornerKick(rivalLineup, lineup)
 			},
 		},
 	}

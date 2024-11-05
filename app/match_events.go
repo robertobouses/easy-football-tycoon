@@ -7,23 +7,13 @@ import (
 	"math/rand"
 )
 
-// Pass           = "Pass"
-// Shot           = "Shot"
-// Dribble        = "Dribble"
 // Header         = "Header"
 // Clearance      = "Clearance"
-// Foul           = "Foul"
-// FreeKick       = "Free Kick"
-// PenaltyKick    = "Penalty Kick"
-// ThrowIn        = "Throw In"
-// CornerKick     = "Corner Kick"
 // Offside        = "Offside"
 // Marking        = "Marking"
 // Interception   = "Interception"
 // CounterAttack  = "Counter Attack"
 // GoalKick       = "Goal Kick"
-//YELLOW AND RED CARD
-//OFFSIDE
 
 //TODO JUGADOR RIVAL MEDIA DE STATS
 
@@ -177,6 +167,7 @@ func (a *AppService) Shot(lineup []Lineup, rivalLineup []Lineup, passer *Lineup)
 	log.Printf("Success against defender: %d", successfulAgainstDefender)
 
 	if successfulAgainstDefender == 1 {
+		sentence = fmt.Sprintf("%s escapes from %s's marking...", shooter.LastName, defender.LastName)
 		lineupChances = 1
 		log.Println("el delantero supera al defensa")
 		err := a.statsRepo.UpdatePlayerStats(shooter.PlayerId, 0, 0, 0, 0, 0, 0, 1, 0, 0, IncreaseRatingModerately)
@@ -189,10 +180,10 @@ func (a *AppService) Shot(lineup []Lineup, rivalLineup []Lineup, passer *Lineup)
 		successfulAgainstGoalkeeper := CalculateSuccessConfrontation(shooter.Technique, goalkeeper.Technique)
 
 		if successfulAgainstGoalkeeper == 1 {
-			lineupGoals = 1
-			log.Println("el delantero también supera al portero, es GOOL")
-			sentence = fmt.Sprintf("GOOOOOL! %s scores a goal!\n", shooter.LastName)
+			sentence += fmt.Sprintf(" %s shoots and also beats the goalkeeper... GOOOOOL! %s is just a spectator in the play %s scores a goal!\n", shooter.LastName, goalkeeper.LastName, shooter.LastName)
 			log.Println(sentence)
+			log.Println("el delantero también supera al portero, es GOOL")
+			lineupGoals = 1
 
 			err := a.statsRepo.UpdatePlayerStats(shooter.PlayerId, 0, 0, 0, 0, 0, 0, 0, 1, 0, IncreaseRatingDrastically)
 			if err != nil {
@@ -210,7 +201,7 @@ func (a *AppService) Shot(lineup []Lineup, rivalLineup []Lineup, passer *Lineup)
 
 			return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
 		} else {
-			sentence = fmt.Sprintf("%s's shot is saved by %s.\n", shooter.LastName, goalkeeper.LastName)
+			sentence += fmt.Sprintf(" %s's shot is saved by %s.\n", shooter.LastName, goalkeeper.LastName)
 			log.Println(sentence)
 			err := a.statsRepo.UpdatePlayerStats(goalkeeper.PlayerId, 0, 0, 1, 0, 0, 0, 0, 0, 0, IncreaseRatingConsiderably)
 			if err != nil {
@@ -222,7 +213,7 @@ func (a *AppService) Shot(lineup []Lineup, rivalLineup []Lineup, passer *Lineup)
 		lineupChances = 1
 	} else {
 		log.Printf("el defensa bloqueó el disparo en primera instancia")
-		sentence := fmt.Sprintf("%s's shot is blocked by %s.\n", shooter.LastName, defender.LastName)
+		sentence += fmt.Sprintf(" %s's shot is blocked by %s.\n", shooter.LastName, defender.LastName)
 		log.Println(sentence)
 		err := a.statsRepo.UpdatePlayerStats(defender.PlayerId, 0, 1, 0, 0, 0, 0, 0, 0, 0, IncreaseRatingModerately)
 		_ = a.statsRepo.UpdatePlayerStats(shooter.PlayerId, 0, 0, 0, 0, 0, 0, 0, 0, 0, DecreaseRatingSlightly)
@@ -365,7 +356,7 @@ func (a AppService) IndirectFreeKick(lineup, rivalLineup []Lineup) (string, int,
 	rivalGoals := 0
 
 	if successfulLongShot == 1 {
-		sentence := fmt.Sprintf("%s takes the free kick... It is a center to the area... %s and %s jump to fight for the center... %s head the ball...% can't do anything...  GOOOOOL! %s scores!\n", shooter.LastName, defenderOnAttack.LastName, rivalDefender.LastName, defenderOnAttack.LastName, goalkeeper.LastName, defenderOnAttack.LastName)
+		sentence := fmt.Sprintf("%s takes the free kick... It is a center to the area... %s and %s jump to fight for the center... %s head the ball...%s can't do anything...  GOOOOOL! %s scores!\n", shooter.LastName, defenderOnAttack.LastName, rivalDefender.LastName, defenderOnAttack.LastName, goalkeeper.LastName, defenderOnAttack.LastName)
 		log.Printf("GOAL! %s scores a long shot!\n", shooter.LastName)
 
 		err := a.statsRepo.UpdatePlayerStats(shooter.PlayerId, 0, 0, 0, 0, 1, 1, 0, 0, 0, IncreaseRatingConsiderably)
@@ -426,6 +417,9 @@ func (a AppService) IndirectFreeKick(lineup, rivalLineup []Lineup) (string, int,
 
 func (a AppService) Dribble(lineup, rivalLineup []Lineup) (string, int, int, int, int, error) {
 	var dribbler, defender *Lineup
+	var sentence string
+	var lineupChances, rivalChances, lineupGoals, rivalGoals int
+
 	prob := ProbabilisticIncrement20() + ProbabilisticIncrement20()
 	if prob <= 0 {
 		dribbler = a.GetRandomMidfielder(lineup)
@@ -443,13 +437,13 @@ func (a AppService) Dribble(lineup, rivalLineup []Lineup) (string, int, int, int
 	if dribbler == nil || defender == nil {
 		return "no hay suficientes jugadores disponibles para realizar un pase", 0, 0, 0, 0, fmt.Errorf("no hay suficientes jugadores disponibles para realizar un pase")
 	}
+
+	sentence = fmt.Sprintf("%s tries a dribbling", dribbler.LastName)
 	successfulDribble := CalculateSuccessIndividualEvent(dribbler.Technique)
-	var sentence string
-	var lineupChances, rivalChances, lineupGoals, rivalGoals int
 
 	if successfulDribble == 1 {
 		log.Printf("Pass success calculated: %d", successfulDribble)
-		sentence := fmt.Sprintf("%s try a dribbling", dribbler.LastName)
+		sentence += " and succeeds..."
 		log.Println(sentence)
 
 		err := a.statsRepo.UpdatePlayerStats(dribbler.PlayerId, 0, 0, 0, 0, 0, 0, 0, 0, 0, IncreaseRatingSlightly)
@@ -459,7 +453,7 @@ func (a AppService) Dribble(lineup, rivalLineup []Lineup) (string, int, int, int
 		}
 		successfulConfrontation := CalculateSuccessConfrontation(dribbler.Technique, defender.Technique)
 		if successfulConfrontation == 1 {
-			sentence := fmt.Sprintf("%s dribbled %s", dribbler.LastName, defender.LastName)
+			sentence += fmt.Sprintf(" %s dribbled %s...", dribbler.LastName, defender.LastName)
 
 			err := a.statsRepo.UpdatePlayerStats(dribbler.PlayerId, 0, 0, 0, 0, 0, 0, 1, 0, 0, IncreaseRatingSlightly)
 			if err != nil {
@@ -474,15 +468,19 @@ func (a AppService) Dribble(lineup, rivalLineup []Lineup) (string, int, int, int
 			lineupChances = 1
 
 			if resultOfEvent := ProbabilisticIncrement40(); resultOfEvent == 1 {
+				sentence += " the occasion ends with a shot"
+				log.Println("the occasion ends with a shot")
 				a.Shot(lineup, rivalLineup, dribbler)
 			} else {
+				sentence += " the occasion ends with a foul"
+				log.Println("the occasion ends with a shot")
 				a.currentePlayerOnMatchEvent = defender
 				a.Foul(lineup, rivalLineup, defender)
 			}
 
 			return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
 		} else {
-			sentence := fmt.Sprintf("%s lost the dribbled against %s", dribbler.LastName, defender.LastName)
+			sentence += fmt.Sprintf(" but %s lost the dribbled against %s", dribbler.LastName, defender.LastName)
 
 			err := a.statsRepo.UpdatePlayerStats(dribbler.PlayerId, 0, 0, 0, 0, 0, 0, 0, 0, 0, DecreaseRatingModerately)
 			if err != nil {
@@ -498,8 +496,8 @@ func (a AppService) Dribble(lineup, rivalLineup []Lineup) (string, int, int, int
 
 		return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
 	}
+	sentence += fmt.Sprintf(" Oh Noo, %s trips over the ball, and fails the dribble", dribbler.LastName)
 
-	sentence = fmt.Sprintf("%s fails to make a key pass to %s.", dribbler.LastName, defender.LastName)
 	log.Println(sentence)
 
 	_ = a.statsRepo.UpdatePlayerStats(dribbler.PlayerId, 0, 0, 0, 0, 0, 0, 0, 0, 0, DecreaseRatingSlightly)
@@ -542,6 +540,7 @@ func (a AppService) Foul(lineup, rivalLineup []Lineup, defender *Lineup) (string
 func (a AppService) YellowOrRedCard(lineup []Lineup, defender *Lineup) (string, int, int, int, int, error) {
 	var sentence string
 	var lineupChances, rivalChances, lineupGoals, rivalGoals, probabilyYellowCard int
+	sentence = "The referee puts his hand in his pocket"
 
 	if defender == nil {
 		defender = a.GetRandomDefender(lineup)
@@ -554,12 +553,12 @@ func (a AppService) YellowOrRedCard(lineup []Lineup, defender *Lineup) (string, 
 
 	if probabilyIncrementByAgressive >= 1 {
 		probabilyYellowCard = ProbabilisticIncrement62()
+	} else {
+		probabilyYellowCard = ProbabilisticIncrement75()
 	}
 
-	probabilyYellowCard = ProbabilisticIncrement75()
-
 	if probabilyYellowCard >= 1 {
-		sentence = fmt.Sprintf("The referee gives %v a yellow card", defender.LastName)
+		sentence += fmt.Sprintf("The referee gives %v a yellow card", defender.LastName)
 		err := a.statsRepo.UpdatePlayerStats(defender.PlayerId, 0, 0, 0, 0, 0, 0, 0, 0, 0, DecreaseRatingSlightly)
 		if err != nil {
 			log.Printf("Error updating player stats for shooter: %v", err)
@@ -568,10 +567,16 @@ func (a AppService) YellowOrRedCard(lineup []Lineup, defender *Lineup) (string, 
 
 	} else {
 
-		sentence = fmt.Sprintf("The referee gives %v a red card", defender.LastName)
-		err := a.statsRepo.UpdatePlayerStats(defender.PlayerId, 0, 0, 0, 0, 0, 0, 0, 0, 0, DecreaseRatingDrastically)
+		sentence += fmt.Sprintf("The referee gives %v a red card", defender.LastName)
+		log.Println("el jugador fue expulsado de la alineación")
+		err := a.lineupRepo.DeletePlayerFromLineup(defender.PlayerId)
 		if err != nil {
-			log.Printf("Error updating player stats for shooter: %v", err)
+			log.Printf("Error delete player: %v", err)
+			return sentence, 0, 0, 0, 0, err
+		}
+		err = a.statsRepo.UpdatePlayerStats(defender.PlayerId, 0, 0, 0, 0, 0, 0, 0, 0, 0, DecreaseRatingDrastically)
+		if err != nil {
+			log.Printf("Error updating player stats: %v", err)
 			return sentence, 0, 0, 0, 0, err
 		}
 	}
@@ -643,7 +648,7 @@ func (a AppService) GreatScoringChance(lineup []Lineup) (string, int, int, int, 
 	lineupChances = 1
 	if prob == 1 {
 		lineupGoals = 1
-		sentence = fmt.Sprintf("%s score a the great easy chance", shooter.LastName)
+		sentence = fmt.Sprintf("%s score a great easy chance", shooter.LastName)
 		err := a.statsRepo.UpdatePlayerStats(shooter.PlayerId, 0, 0, 0, 0, 0, 0, 1, 1, 0, IncreaseRatingModerately)
 		if err != nil {
 			log.Printf("Error updating player stats for shooter %s: %v", shooter.LastName, err)
@@ -662,41 +667,72 @@ func (a AppService) GreatScoringChance(lineup []Lineup) (string, int, int, int, 
 	}
 }
 
-// func (a AppService) AerialDuel(header, defender Player) {
-// 	log.Printf("%s engages in an aerial duel.\n", player.LastName)
-// }
+func (a AppService) CornerKick(lineup, rivalLineup []Lineup) (string, int, int, int, int, error) {
+	var centerer *Lineup
+	var attacker, defender *Lineup
+	var sentence string
+	var lineupChances, rivalChances, lineupGoals, rivalGoals int
 
-// func (a AppService) Clearance(clearer Player) {
-// 	log.Printf("%s makes a clearance.\n", player.LastName)
-// }
+	centerer = a.GetRandomMidfielder(lineup)
 
-// func (a AppService) Foul(defender Player) {
-// 	log.Printf("%s commits a foul.\n", player.LastName)
-// }
+	incrementedTechnique := centerer.Technique + rand.Intn(20)
+	prob := CalculateSuccessIndividualEvent(incrementedTechnique)
+	lineupChances = 1
 
-// func (a AppService) FreeKick(foulShooter, goalkeeper Player) {
-// 	log.Printf("%s takes a free kick.\n", player.LastName)
-// }
-
-// func (a AppService) PenaltyKick(penaltyShooter, goalkeeper Player) {
-// 	log.Printf("%s takes a penalty kick.\n", player.LastName)
-// }
-
-// func (a AppService) Corner(cornerShooter, receiver Player) {
-// 	log.Printf("%s takes a corner in attack.\n", player.LastName)
-// }
-
-// func (a AppService) Marking(forwarder, defender Player) {
-// 	log.Printf("%s is marking an opponent.\n", player.LastName)
-// }
-
-// func (a AppService) Interception(defender Player) {
-// 	log.Printf("%s makes an interception.\n", player.LastName)
-// }
-
-// func (a AppService) CounterAttack(counterpuncher1, counterpuncher2, counterpuncher3 Player) {
-// 	log.Printf("%s starts a counter-attack.\n", player.LastName)
-// }
-
-// func (a AppService) GoalKick(goalkeeper Player) {
-// 	log.Printf("%s takes a goal kick.\n", player.LastName)}
+	if prob == 1 {
+		defender = a.GetRandomDefender(rivalLineup)
+		prob = ProbabilisticIncrement62()
+		if prob == 1 {
+			attacker = a.GetRandomDefender(lineup)
+		} else {
+			attacker = a.GetRandomMidfielder(lineup)
+		}
+		prob = CalculateSuccessConfrontation(attacker.Physique, defender.Physique)
+		if prob == 1 {
+			sentence = fmt.Sprintf("GOOOOOL, %s took the corner very well, and %s beats %s with a incredible jump and heads at goal", centerer.LastName, attacker.LastName, defender.LastName)
+			lineupGoals = 1
+			err := a.statsRepo.UpdatePlayerStats(centerer.PlayerId, 0, 0, 0, 0, 1, 1, 0, 0, 0, IncreaseRatingModerately)
+			if err != nil {
+				log.Printf("Error updating player stats for shooter %s: %v", centerer.LastName, err)
+				return sentence, 0, 0, 0, 0, err
+			}
+			err = a.statsRepo.UpdatePlayerStats(attacker.PlayerId, 0, 0, 0, 1, 0, 0, 1, 1, 0, IncreaseRatingConsiderably)
+			if err != nil {
+				log.Printf("Error updating player stats for shooter %s: %v", centerer.LastName, err)
+				return sentence, 0, 0, 0, 0, err
+			}
+			err = a.statsRepo.UpdatePlayerStats(defender.PlayerId, 0, 0, 0, 1, 0, 0, 0, 0, 0, DecreaseRatingModerately)
+			if err != nil {
+				log.Printf("Error updating player stats for shooter %s: %v", centerer.LastName, err)
+				return sentence, 0, 0, 0, 0, err
+			}
+			return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
+		} else {
+			sentence = fmt.Sprintf("%s takes the corner... but %s beats %s to the jump and clears the ball", centerer.LastName, defender.LastName, attacker.LastName)
+			err := a.statsRepo.UpdatePlayerStats(centerer.PlayerId, 0, 0, 0, 0, 1, 0, 0, 0, 0, IncreaseRatingSlightly)
+			if err != nil {
+				log.Printf("Error updating player stats for shooter %s: %v", centerer.LastName, err)
+				return sentence, 0, 0, 0, 0, err
+			}
+			err = a.statsRepo.UpdatePlayerStats(attacker.PlayerId, 0, 0, 0, 1, 0, 0, 0, 0, 0, DecreaseRatingSlightly)
+			if err != nil {
+				log.Printf("Error updating player stats for shooter %s: %v", centerer.LastName, err)
+				return sentence, 0, 0, 0, 0, err
+			}
+			err = a.statsRepo.UpdatePlayerStats(defender.PlayerId, 0, 0, 0, 1, 0, 0, 0, 0, 0, IncreaseRatingModerately)
+			if err != nil {
+				log.Printf("Error updating player stats for shooter %s: %v", centerer.LastName, err)
+				return sentence, 0, 0, 0, 0, err
+			}
+			return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
+		}
+	} else {
+		sentence = fmt.Sprintf("the corner was wasted by %s", centerer.LastName)
+		err := a.statsRepo.UpdatePlayerStats(centerer.PlayerId, 0, 0, 0, 0, 1, 0, 0, 0, 0, DecreaseRatingModerately)
+		if err != nil {
+			log.Printf("Error updating player stats for shooter %s: %v", centerer.LastName, err)
+			return sentence, 0, 0, 0, 0, err
+		}
+		return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
+	}
+}

@@ -10,6 +10,7 @@ type LineupRepository interface {
 	GetLineup() ([]Lineup, error)
 	PostLineup(player Player) error
 	PlayerExistsInLineup(playerId uuid.UUID) (bool, error)
+	DeletePlayerFromLineup(playerId uuid.UUID) error
 }
 
 type TeamRepository interface {
