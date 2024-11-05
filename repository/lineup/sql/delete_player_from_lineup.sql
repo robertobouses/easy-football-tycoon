@@ -1,0 +1,1 @@
+DELETE FROM eft.lineup WHERE playerid = $1;

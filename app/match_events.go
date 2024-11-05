@@ -540,6 +540,7 @@ func (a AppService) Foul(lineup, rivalLineup []Lineup, defender *Lineup) (string
 func (a AppService) YellowOrRedCard(lineup []Lineup, defender *Lineup) (string, int, int, int, int, error) {
 	var sentence string
 	var lineupChances, rivalChances, lineupGoals, rivalGoals, probabilyYellowCard int
+	sentence = "The referee puts his hand in his pocket"
 
 	if defender == nil {
 		defender = a.GetRandomDefender(lineup)
@@ -557,7 +558,7 @@ func (a AppService) YellowOrRedCard(lineup []Lineup, defender *Lineup) (string, 
 	}
 
 	if probabilyYellowCard >= 1 {
-		sentence = fmt.Sprintf("The referee gives %v a yellow card", defender.LastName)
+		sentence += fmt.Sprintf("The referee gives %v a yellow card", defender.LastName)
 		err := a.statsRepo.UpdatePlayerStats(defender.PlayerId, 0, 0, 0, 0, 0, 0, 0, 0, 0, DecreaseRatingSlightly)
 		if err != nil {
 			log.Printf("Error updating player stats for shooter: %v", err)
@@ -566,10 +567,16 @@ func (a AppService) YellowOrRedCard(lineup []Lineup, defender *Lineup) (string, 
 
 	} else {
 
-		sentence = fmt.Sprintf("The referee gives %v a red card", defender.LastName)
-		err := a.statsRepo.UpdatePlayerStats(defender.PlayerId, 0, 0, 0, 0, 0, 0, 0, 0, 0, DecreaseRatingDrastically)
+		sentence += fmt.Sprintf("The referee gives %v a red card", defender.LastName)
+		log.Println("el jugador fue expulsado de la alineación")
+		err := a.lineupRepo.DeletePlayerFromLineup(defender.PlayerId)
 		if err != nil {
-			log.Printf("Error updating player stats for shooter: %v", err)
+			log.Printf("Error delete player: %v", err)
+			return sentence, 0, 0, 0, 0, err
+		}
+		err = a.statsRepo.UpdatePlayerStats(defender.PlayerId, 0, 0, 0, 0, 0, 0, 0, 0, 0, DecreaseRatingDrastically)
+		if err != nil {
+			log.Printf("Error updating player stats: %v", err)
 			return sentence, 0, 0, 0, 0, err
 		}
 	}
