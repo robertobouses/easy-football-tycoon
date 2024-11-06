@@ -4,16 +4,31 @@ import (
 	"log"
 	"math/rand"
 	"time"
+
+	"github.com/google/uuid"
 )
 
-func (a *AppService) ProcessInjury() (Player, error) {
+func (a *AppService) ProcessInjury(playerId uuid.UUID) (Player, error) {
+	var player Player
+	var err error
+
+	if playerId != uuid.Nil {
+		playerPtr, err := a.teamRepo.GetPlayerByPlayerId(playerId)
+		if err != nil {
+			log.Println("Error en GetPlayerByPlayerId dentro de ProcessInjury:", err)
+			return Player{}, err
+		}
+		player = *playerPtr
+	} else {
+		player, err = a.GetRandomPlayer()
+		if err != nil {
+			log.Println("Error al obtener un jugador aleatorio en ProcessInjury:", err)
+			return Player{}, err
+		}
+	}
 	analytics, err := a.analyticsRepo.GetAnalytics()
 	if err != nil {
 		log.Println("Error al extraer GetAnalytics", err)
-		return Player{}, err
-	}
-	player, err := a.GetRandomPlayer()
-	if err != nil {
 		return Player{}, err
 	}
 
@@ -22,12 +37,8 @@ func (a *AppService) ProcessInjury() (Player, error) {
 	a.SetCurrentInjuredPlayer(&player, &injuryDays)
 	a.RunAutoPlayerDeclineByInjury(player.PlayerId, injuryDays)
 
-	if err != nil {
-		log.Println("Error al actualizar los datos del jugador", err)
-		return Player{}, err
-	}
-
 	return player, nil
+
 }
 
 func (a *AppService) calculateInjurySeverity(physiotherapy int) int {

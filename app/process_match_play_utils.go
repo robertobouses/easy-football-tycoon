@@ -232,7 +232,7 @@ func GetRandomPlayer(players []Lineup) *Lineup {
 	rand.Seed(time.Now().UnixNano())
 	return &players[rand.Intn(len(players))]
 }
-func GetRandomPlayerExcludingGoalkeeper(lineup []Lineup) *Lineup {
+func (a *AppService) GetRandomPlayerExcludingGoalkeeper(lineup []Lineup) *Lineup {
 	players := filterOutGoalkeepers(lineup)
 	return GetRandomPlayer(players)
 }
