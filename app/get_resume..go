@@ -2,6 +2,8 @@ package app
 
 import (
 	"log"
+
+	"github.com/google/uuid"
 )
 
 func (a *AppService) GetResume() ([]Calendary, error) {
@@ -181,7 +183,7 @@ func (a *AppService) GetResume() ([]Calendary, error) {
 			return []Calendary{}, err
 		}
 	case "injury":
-		player, err := a.ProcessInjury()
+		player, err := a.ProcessInjury(uuid.Nil)
 		if err != nil {
 			log.Println("Error APP get_resume, ProcessInjury", err)
 			return []Calendary{}, err
