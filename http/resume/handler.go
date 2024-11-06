@@ -1,6 +1,7 @@
 package resume
 
 import (
+	"github.com/google/uuid"
 	"github.com/robertobouses/easy-football-tycoon/app"
 	"github.com/robertobouses/easy-football-tycoon/app/signings"
 	"github.com/robertobouses/easy-football-tycoon/app/staff"
@@ -36,7 +37,7 @@ type App interface {
 	ProcessMatchSimulation() (app.Match, error)
 	ProcessMatchPlay() (app.Match, []app.EventResult, error)
 
-	ProcessInjury() (app.Player, error)
+	ProcessInjury(uuid.UUID) (app.Player, error)
 	GetCurrentInjuredPlayer() (*app.Player, *int, error)
 	SetCurrentInjuredPlayer(*app.Player, *int)
 

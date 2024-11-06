@@ -736,3 +736,12 @@ func (a AppService) CornerKick(lineup, rivalLineup []Lineup) (string, int, int, 
 		return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
 	}
 }
+
+func (a AppService) InjuryDuringMatch(lineup []Lineup) (string, int, int, int, int, error) {
+	var injuredPlayer *Lineup
+	var sentence string
+	injuredPlayer = a.GetRandomPlayerExcludingGoalkeeper(lineup)
+
+	sentence = fmt.Sprintf("There is a player lying on the ground... wow he is %s, he looks like he will need assistance...", injuredPlayer.LastName)
+	return sentence, 0, 0, 0, 0, nil
+}
