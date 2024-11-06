@@ -742,6 +742,14 @@ func (a AppService) InjuryDuringMatch(lineup []Lineup) (string, int, int, int, i
 	var sentence string
 	injuredPlayer = a.GetRandomPlayerExcludingGoalkeeper(lineup)
 
+	player, err := a.ProcessInjury(injuredPlayer.PlayerId)
+	if err != nil {
+		log.Printf("error al procesar la lesión, valor para error: %v, valor para jugador: %v", err, player)
+	}
 	sentence = fmt.Sprintf("There is a player lying on the ground... wow he is %s, he looks like he will need assistance...", injuredPlayer.LastName)
+	err = a.lineupRepo.DeletePlayerFromLineup(injuredPlayer.PlayerId)
+	if err != nil {
+		log.Println("error al borrar el jugador de la alineación durante la lesión en partido", err)
+	}
 	return sentence, 0, 0, 0, 0, nil
 }
