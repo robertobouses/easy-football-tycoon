@@ -316,6 +316,12 @@ func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupE
 				return a.CornerKick(lineup, rivalLineup)
 			},
 		},
+		{
+			"Fuera de Juego",
+			func() (string, int, int, int, int, error) {
+				return a.Offside(lineup, rivalLineup)
+			},
+		},
 	}
 
 	rivalEvents := []Event{
@@ -371,6 +377,12 @@ func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupE
 			"Córner",
 			func() (string, int, int, int, int, error) {
 				return a.CornerKick(rivalLineup, lineup)
+			},
+		},
+		{
+			"Fuera de Juego",
+			func() (string, int, int, int, int, error) {
+				return a.Offside(rivalLineup, lineup)
 			},
 		},
 	}
