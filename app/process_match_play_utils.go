@@ -322,6 +322,17 @@ func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupE
 				return a.Offside(lineup, rivalLineup)
 			},
 		},
+		{
+			"Cabezazo",
+			func() (string, int, int, int, int, error) {
+				return a.Headed(lineup, rivalLineup)
+			},
+		}, {
+			"Contragolpe",
+			func() (string, int, int, int, int, error) {
+				return a.CounterAttack(lineup, rivalLineup)
+			},
+		},
 	}
 
 	rivalEvents := []Event{
@@ -383,6 +394,17 @@ func (a AppService) GenerateEvents(lineup, rivalLineup []Lineup, numberOfLineupE
 			"Fuera de Juego",
 			func() (string, int, int, int, int, error) {
 				return a.Offside(rivalLineup, lineup)
+			},
+		},
+		{
+			"Cabezazo",
+			func() (string, int, int, int, int, error) {
+				return a.Headed(rivalLineup, lineup)
+			},
+		}, {
+			"Contragolpe",
+			func() (string, int, int, int, int, error) {
+				return a.CounterAttack(rivalLineup, lineup)
 			},
 		},
 	}
