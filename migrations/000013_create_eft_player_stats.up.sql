@@ -1,5 +1,3 @@
-BEGIN;
-
 CREATE TABLE eft.player_stats (
     playerid UUID PRIMARY KEY,
     appearances INT DEFAULT 0,
@@ -13,6 +11,4 @@ CREATE TABLE eft.player_stats (
     mvp INT DEFAULT 0,
     rating FLOAT DEFAULT 0.0,
     FOREIGN KEY (playerid) REFERENCES eft.team (playerid)
-)
-
-COMMIT;
+);
