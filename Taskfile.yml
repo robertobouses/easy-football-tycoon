@@ -20,3 +20,8 @@ tasks:
     desc: "Run all migrations down"
     cmds:
       - "{{.migrate}} -path {{.MIGRATION_DIR}} -database {{.DATABASE_URL}} down all"
+
+  seed-db:
+    desc: "Seed the database with initial data"
+    cmds:
+      - psql "{{.DATABASE_URL}}" -f "{{.MIGRATION_DIR}}/seed_data.sql"

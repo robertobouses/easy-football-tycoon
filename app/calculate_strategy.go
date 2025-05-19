@@ -67,7 +67,7 @@ func (a *AppService) CalculatePossessionChancesByFormation(lineup []Lineup, form
 
 	totalDefendersQuality, err := getTwoBestPlayers(lineup, "defender")
 	totalMidfieldersQuality, err := getTwoBestPlayers(lineup, "midfielder")
-	totalForwardersQuality, err := getTwoBestPlayers(lineup, "forwarder")
+	totalForwardersQuality, err := getTwoBestPlayers(lineup, "forward")
 
 	switch formation {
 	case "4-4-2":
@@ -131,7 +131,7 @@ func (a *AppService) CalculatePossessionChancesByFormation(lineup []Lineup, form
 func (a *AppService) CalculatePossessionChancesByPlayingStyle(lineup []Lineup, playingStyle string) (teamPossession, teamChances, rivalChances float64, physique int, err error) {
 	totalDefendersQuality, err := getTwoBestPlayers(lineup, "defender")
 	totalMidfieldersQuality, err := getTwoBestPlayers(lineup, "midfielder")
-	totalForwardersQuality, err := getTwoBestPlayers(lineup, "forwarder")
+	totalForwardersQuality, err := getTwoBestPlayers(lineup, "forward")
 
 	switch playingStyle {
 

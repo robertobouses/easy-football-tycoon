@@ -16,8 +16,7 @@ const (
 )
 
 func (a *AppService) RunAutoPlayerDevelopmentByTraining(teamPlayers []Player) error {
-	//al acabar año cambio age y cambio valor y salary decidir si se negocia renovacion
-	//TODO GESTION ERRORES EN FORMULAS AUTOCALCULO DE JUGADORES Y STAFF
+
 	analytics, err := a.analyticsRepo.GetAnalytics()
 	if err != nil {
 		log.Println("error al obtener analytics")
