@@ -1,6 +1,6 @@
 BEGIN;
 
-CREATE TABLE bank (
+CREATE TABLE eft.bank (
     transactionid UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     transactiondate TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     amount INT NOT NULL,
